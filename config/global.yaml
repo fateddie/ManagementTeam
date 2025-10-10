@@ -1,0 +1,72 @@
+# Global Configuration for AI Management Layer System
+# Version: 1.0
+# Last Updated: 2025-10-10
+
+system:
+  name: "AI Management Layer System"
+  version: "1.0.0"
+  environment: "development"  # development, staging, production
+  root_directory: "/ManagementTeam"
+
+paths:
+  agents: "src/agents"
+  utils: "src/utils"
+  scripts: "scripts"
+  logs: "logs"
+  memory: "memory"
+  data: "data"
+  projects: "projects"
+  docs: "docs/system"
+  config: "config"
+
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  console_output: true
+  file_output: true
+  max_file_size_mb: 10
+  backup_count: 5
+
+agents:
+  timeout_seconds: 300
+  retry_attempts: 3
+  retry_delay_seconds: 5
+  max_concurrent_agents: 5
+
+memory:
+  provider: "mem0"  # mem0, neo4j
+  retention_days: 365
+  auto_summarize: true
+  summarize_threshold_entries: 100
+
+security:
+  api_rate_limit_per_minute: 60
+  require_api_key: false  # Set to true in production
+  max_file_upload_size_mb: 50
+  allowed_file_types:
+    - ".py"
+    - ".yaml"
+    - ".md"
+    - ".json"
+    - ".txt"
+
+performance:
+  cache_enabled: true
+  cache_ttl_seconds: 3600
+  async_execution: true
+  max_memory_usage_mb: 1024
+
+features:
+  planner_agent_enabled: true
+  documentation_agent_enabled: true
+  execution_agent_enabled: true
+  reflection_agent_enabled: true
+  memory_agent_enabled: true
+  dashboard_enabled: false  # Phase 2
+
+monitoring:
+  health_check_interval_seconds: 60
+  metrics_collection_enabled: true
+  alert_on_errors: true
+  slack_notifications: false  # Phase 2
+

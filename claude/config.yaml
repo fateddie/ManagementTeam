@@ -1,0 +1,47 @@
+# CLAUDE CONFIGURATION FILE
+version: 1.0
+project_name: "AI Management-Team"
+description: "Modular multi-agent orchestration framework for business and trading automation."
+maintainer: "Rob"
+
+# Directories Claude should consider as context when reasoning
+context_dirs:
+  - docs/system
+  - src
+  - config
+
+# Files Claude should always read before large updates
+always_load:
+  - docs/system/management_team_charter_v1.0.md
+  - docs/system/management_team_rules.yaml
+  - docs/system/management_team_agent_definitions.yaml
+  - docs/system/system_context.yaml
+  - docs/system/project_progress_plan.md
+  - docs/system/change_log.md
+
+# Code style enforcement
+coding_style:
+  python_version: "3.11"
+  max_line_length: 88
+  docstring_format: "Google"
+  linting: true
+  autoformat: true
+
+# Safety & compliance
+safe_editing:
+  ask_confirmation_before_overwrite: true
+  redact_sensitive_info: true
+  never_commit_env_files: true
+
+# Logging behavior
+logging:
+  level: "INFO"
+  log_to_file: true
+  log_file: "logs/claude_activity.log"
+
+# Collaboration guidelines
+collaboration:
+  require_founder_approval: true
+  enforce_tdr_updates: true
+  notify_via_slack: false  # future integration hook
+

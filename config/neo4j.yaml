@@ -1,0 +1,116 @@
+# Neo4j Graph Database Configuration
+# Version: 1.0
+# Status: Phase 2 (Planned for Q2 2026)
+# Last Updated: 2025-10-10
+
+neo4j:
+  # Connection Settings
+  connection:
+    uri_env_var: "NEO4J_URI"  # e.g., bolt://localhost:7687 or neo4j+s://xxx.databases.neo4j.io
+    username_env_var: "NEO4J_USERNAME"
+    password_env_var: "NEO4J_PASSWORD"
+    database: "management_team"
+    
+  # Connection Pool
+  pool:
+    max_connection_lifetime: 3600  # seconds
+    max_connection_pool_size: 50
+    connection_acquisition_timeout: 60  # seconds
+    
+  # Performance
+  performance:
+    fetch_size: 1000
+    max_retry_time: 30  # seconds
+    initial_retry_delay: 1  # seconds
+    retry_delay_multiplier: 2.0
+    retry_delay_jitter_factor: 0.2
+
+  # Schema Configuration
+  schema:
+    # Node Types
+    node_labels:
+      - "Agent"
+      - "Project"
+      - "Memory"
+      - "Decision"
+      - "Task"
+      - "User"
+      - "Document"
+      
+    # Relationship Types
+    relationship_types:
+      - "CREATED_BY"
+      - "DEPENDS_ON"
+      - "RELATES_TO"
+      - "CONTAINS"
+      - "APPROVED_BY"
+      - "EXECUTED_BY"
+      - "REFERENCES"
+      
+    # Indexes (for performance)
+    indexes:
+      - label: "Memory"
+        property: "timestamp"
+      - label: "Project"
+        property: "name"
+      - label: "Agent"
+        property: "agent_id"
+      - label: "Decision"
+        property: "decision_id"
+        
+    # Constraints
+    constraints:
+      - label: "Project"
+        property: "project_id"
+        type: "unique"
+      - label: "Agent"
+        property: "agent_id"
+        type: "unique"
+
+  # Data Migration (from Mem0)
+  migration:
+    enabled: false  # Enable when ready for Phase 2
+    source: "mem0"
+    batch_size: 500
+    parallel_workers: 4
+    validation_enabled: true
+    rollback_on_error: true
+    
+  # Graph Algorithms
+  algorithms:
+    enabled: false  # Enable in Phase 2
+    pagerank_enabled: true  # For finding important memories
+    community_detection: true  # For clustering related information
+    path_finding: true  # For tracing decision chains
+
+  # Query Optimization
+  query:
+    default_limit: 100
+    max_query_time_seconds: 30
+    enable_query_logging: true
+    slow_query_threshold_ms: 1000
+
+  # Backup & Maintenance
+  maintenance:
+    auto_backup_enabled: true
+    backup_schedule: "daily"  # hourly, daily, weekly
+    backup_retention_days: 30
+    auto_vacuum_enabled: true
+    vacuum_schedule: "weekly"
+
+  # Monitoring
+  monitoring:
+    metrics_enabled: true
+    health_check_interval_seconds: 60
+    alert_on_connection_failure: true
+    alert_on_slow_queries: true
+    performance_sampling_rate: 0.1  # 10% of queries
+
+# Integration with Mem0 (Dual-Write Period)
+dual_write:
+  enabled: false  # Enable during migration period
+  primary_system: "mem0"  # mem0 or neo4j
+  sync_interval_seconds: 60
+  conflict_resolution: "primary_wins"  # primary_wins, latest_wins
+  validation_enabled: true
+

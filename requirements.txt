@@ -1,0 +1,15 @@
+# Core dependencies
+requests
+pandas
+numpy
+pyyaml
+python-dotenv
+
+# Dashboard & Visualization
+streamlit
+
+# Optional future tools
+slack_sdk
+chromadb
+fastapi
+uvicorn

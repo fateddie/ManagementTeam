@@ -1,0 +1,87 @@
+{
+  "template_version": "1.1",
+  "project_name": "{{ project_name }}",
+  "generated_at": "{{ generated_at }}",
+  "last_updated": "{{ last_updated }}",
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "{{ milestone_1_name }}",
+      "description": "{{ milestone_1_description }}",
+      "phase": "P1",
+      "start_date": "{{ milestone_1_start }}",
+      "end_date": "{{ milestone_1_end }}",
+      "duration_days": "{{ milestone_1_duration }}",
+      "status": "pending",
+      "progress_percentage": 0,
+      "dependencies": [],
+      "deliverables": [
+        "{{ milestone_1_deliverable_1 }}",
+        "{{ milestone_1_deliverable_2 }}"
+      ],
+      "success_criteria": "{{ milestone_1_criteria }}",
+      "owner": "{{ milestone_1_owner }}",
+      "completion_date": null,
+      "notes": []
+    },
+    {
+      "id": "M2",
+      "name": "{{ milestone_2_name }}",
+      "description": "{{ milestone_2_description }}",
+      "phase": "P2",
+      "start_date": "{{ milestone_2_start }}",
+      "end_date": "{{ milestone_2_end }}",
+      "duration_days": "{{ milestone_2_duration }}",
+      "status": "pending",
+      "progress_percentage": 0,
+      "dependencies": [
+        "M1"
+      ],
+      "deliverables": [
+        "{{ milestone_2_deliverable_1 }}",
+        "{{ milestone_2_deliverable_2 }}"
+      ],
+      "success_criteria": "{{ milestone_2_criteria }}",
+      "owner": "{{ milestone_2_owner }}",
+      "completion_date": null,
+      "notes": []
+    },
+    {
+      "id": "M3",
+      "name": "{{ milestone_3_name }}",
+      "description": "{{ milestone_3_description }}",
+      "phase": "P3",
+      "start_date": "{{ milestone_3_start }}",
+      "end_date": "{{ milestone_3_end }}",
+      "duration_days": "{{ milestone_3_duration }}",
+      "status": "pending",
+      "progress_percentage": 0,
+      "dependencies": [
+        "M2"
+      ],
+      "deliverables": [
+        "{{ milestone_3_deliverable_1 }}",
+        "{{ milestone_3_deliverable_2 }}"
+      ],
+      "success_criteria": "{{ milestone_3_criteria }}",
+      "owner": "{{ milestone_3_owner }}",
+      "completion_date": null,
+      "notes": []
+    }
+  ],
+  "status_definitions": {
+    "pending": "Not yet started",
+    "in_progress": "Currently being worked on",
+    "blocked": "Waiting on dependencies or external factors",
+    "completed": "Successfully finished",
+    "cancelled": "No longer required or deprioritized"
+  },
+  "metadata": {
+    "total_milestones": 3,
+    "completed_milestones": 0,
+    "overall_progress": 0,
+    "estimated_completion": "{{ estimated_completion }}",
+    "generated_by": "planner_agent"
+  }
+}
+

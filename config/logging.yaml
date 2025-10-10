@@ -1,0 +1,162 @@
+# Logging Configuration for AI Management Layer System
+# Version: 1.0
+# Last Updated: 2025-10-10
+
+version: 1
+disable_existing_loggers: false
+
+# Formatters define how log messages are structured
+formatters:
+  standard:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+  
+  detailed:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(funcName)s() - %(message)s'
+    datefmt: '%Y-%m-%d %H:%M:%S'
+  
+  json:
+    class: 'pythonjsonlogger.jsonlogger.JsonFormatter'
+    format: '%(asctime)s %(name)s %(levelname)s %(filename)s %(lineno)d %(funcName)s %(message)s'
+
+# Handlers define where logs are sent
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: INFO
+    formatter: standard
+    stream: ext://sys.stdout
+  
+  file_general:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: detailed
+    filename: logs/agent_activity.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 5
+    encoding: utf8
+  
+  file_planner:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: detailed
+    filename: logs/planner.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 3
+    encoding: utf8
+  
+  file_errors:
+    class: logging.handlers.RotatingFileHandler
+    level: ERROR
+    formatter: detailed
+    filename: logs/errors.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 10
+    encoding: utf8
+  
+  file_memory:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: json
+    filename: logs/memory_operations.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 5
+    encoding: utf8
+
+# Loggers define logging behavior for different parts of the application
+loggers:
+  # Planner Agent Logger
+  planner_agent:
+    level: DEBUG
+    handlers:
+      - console
+      - file_planner
+      - file_general
+    propagate: false
+  
+  # Documentation Agent Logger
+  documentation_agent:
+    level: DEBUG
+    handlers:
+      - console
+      - file_general
+    propagate: false
+  
+  # Execution Agent Logger
+  execution_agent:
+    level: DEBUG
+    handlers:
+      - console
+      - file_general
+    propagate: false
+  
+  # Reflection Agent Logger
+  reflection_agent:
+    level: DEBUG
+    handlers:
+      - console
+      - file_general
+    propagate: false
+  
+  # Memory Agent Logger
+  memory_agent:
+    level: DEBUG
+    handlers:
+      - console
+      - file_memory
+      - file_general
+    propagate: false
+  
+  # Orchestrator Logger
+  orchestrator:
+    level: INFO
+    handlers:
+      - console
+      - file_general
+    propagate: false
+  
+  # Memory System Logger
+  memory_system:
+    level: DEBUG
+    handlers:
+      - console
+      - file_memory
+    propagate: false
+
+# Root logger configuration (catches everything else)
+root:
+  level: WARNING
+  handlers:
+    - console
+    - file_general
+    - file_errors
+
+# Log Rotation and Retention Settings
+retention:
+  general_logs_days: 30
+  error_logs_days: 90
+  memory_logs_days: 60
+  debug_logs_days: 7
+  archive_compressed: true
+
+# Performance Settings
+performance:
+  async_logging: false  # Set to true for high-volume scenarios
+  buffer_size: 1000
+  flush_interval_seconds: 5
+
+# Privacy and Security
+security:
+  redact_sensitive_data: true
+  sensitive_patterns:
+    - 'password'
+    - 'api_key'
+    - 'token'
+    - 'secret'
+  pii_detection: true
+  pii_patterns:
+    - 'email'
+    - 'phone'
+    - 'ssn'
+    - 'credit_card'
+

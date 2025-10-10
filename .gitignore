@@ -1,0 +1,95 @@
+# ==============================================
+# .gitignore for AI Management Layer System
+# ==============================================
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg
+MANIFEST
+
+# --- Virtual Environments ---
+venv/
+ENV/
+env/
+.venv
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# --- Logs and Runtime Data ---
+logs/
+*.log
+
+# --- Generated Project Data ---
+projects/*/planning/summary_report.json
+projects/*/planning/reflection_report.md
+
+# --- Memory and Data ---
+memory/*.json
+data/raw/
+data/processed/
+data/exports/
+
+# --- Environment Variables & Secrets ---
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+config/*key*
+config/*.key
+*.sqlite
+*.db
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# --- Temporary Files ---
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# --- Coverage Reports ---
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# --- pytest ---
+.pytest_cache/
+.tox/
+
+# --- Jupyter Notebook ---
+.ipynb_checkpoints
+
+# Keep important files even in ignored directories
+!config/templates/
+!docs/system/

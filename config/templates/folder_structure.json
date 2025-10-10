@@ -1,0 +1,63 @@
+{
+  "template_version": "1.1",
+  "description": "Standard folder structure for new projects created by Planner Agent",
+  "project_root": "<project-name>",
+  "structure": {
+    "planning": [
+      "project_plan.yaml",
+      "roadmap.md",
+      "milestones.json",
+      "missing_info.md"
+    ],
+    "docs": [
+      "README.md",
+      "PRD.md",
+      "tech_spec.md",
+      "ERD.png",
+      "DFD.png",
+      "progress_log.md"
+    ],
+    "control": [
+      "Claude.md",
+      "Rules.md",
+      "ProgressLog.md"
+    ],
+    "environment": [
+      "environment.sh",
+      "requirements.txt",
+      ".env",
+      ".env.example"
+    ],
+    "memory": [
+      "mem0_adapter.py",
+      "policies.yaml",
+      "neo4j_exporter.py",
+      "context.json",
+      "decisions.json"
+    ],
+    "src": [],
+    "tests": [],
+    "data": {
+      "raw": [],
+      "processed": [],
+      "exports": []
+    },
+    "logs": [],
+    "root_files": [
+      "README.md"
+    ]
+  },
+  "file_templates": {
+    "README.md": "templates/project_readme.md",
+    "project_plan.yaml": "templates/project_plan.yaml",
+    "roadmap.md": "templates/roadmap.md",
+    "missing_info.md": "templates/missing_info.md",
+    "milestones.json": "templates/milestones.json"
+  },
+  "creation_settings": {
+    "auto_create_directories": true,
+    "auto_populate_templates": true,
+    "validate_structure": true,
+    "log_creation": true
+  }
+}

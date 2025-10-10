@@ -1,0 +1,76 @@
+# Mem0 Memory Configuration
+# Version: 1.0
+# Last Updated: 2025-10-10
+
+mem0:
+  # Phase 1: Using Mem0 cloud service (first 6 months)
+  provider: "mem0_cloud"
+  api_endpoint: "https://api.mem0.ai/v1"
+  
+  # API Configuration
+  api:
+    key_env_var: "MEM0_API_KEY"  # Set in .env file
+    timeout_seconds: 30
+    retry_attempts: 3
+    rate_limit_per_minute: 100
+
+  # Memory Organization
+  organization:
+    workspace_id: "management_team"
+    collections:
+      - name: "agent_memories"
+        description: "Memories from all agents"
+      - name: "project_context"
+        description: "Project-specific context and decisions"
+      - name: "user_preferences"
+        description: "User preferences and patterns"
+      - name: "technical_decisions"
+        description: "TDRs and technical choices"
+
+  # Memory Policies
+  policies:
+    # Retention
+    default_retention_days: 365
+    critical_memory_retention_days: 1825  # 5 years
+    
+    # Auto-cleanup
+    auto_cleanup_enabled: true
+    cleanup_interval_days: 30
+    
+    # Summarization
+    auto_summarize: true
+    summarize_threshold_entries: 100
+    summary_strategy: "llm_based"  # llm_based, rule_based
+    
+    # Privacy
+    pii_detection_enabled: true
+    auto_redact_pii: true
+    encryption_at_rest: true
+
+  # Search Configuration
+  search:
+    default_top_k: 10
+    similarity_threshold: 0.7
+    include_metadata: true
+    enable_semantic_search: true
+
+  # Embedding Configuration
+  embeddings:
+    model: "text-embedding-ada-002"  # OpenAI model
+    dimension: 1536
+    batch_size: 100
+
+  # Export Configuration (for Neo4j migration)
+  export:
+    enabled: true
+    format: "json"  # json, csv
+    output_directory: "memory/exports"
+    schedule: "weekly"  # daily, weekly, monthly
+    
+# Phase 2: Neo4j migration settings (for future use)
+neo4j_migration:
+  enabled: false
+  target_date: "2026-04-01"
+  migration_strategy: "gradual"  # gradual, cutover
+  dual_write_enabled: false  # Write to both systems during migration
+
