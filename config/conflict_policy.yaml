@@ -1,0 +1,89 @@
+# ==============================================
+# conflict_policy.yaml
+# Phase 9 - Conflict Resolution Policy
+# ==============================================
+# Defines weights, thresholds, and escalation rules for agent voting
+
+# Agent weights for voting (higher = more influence)
+agent_weights:
+  StrategyAgent: 2.0              # High weight for strategic decisions
+  TechnicalArchitectAgent: 2.0    # High weight for technical decisions
+  PlanningAgent: 1.5              # Moderate weight for planning
+  ResearchAgent: 1.0              # Standard weight for research
+  DocumentationAgent: 0.5         # Lower weight for documentation
+  ReportingAgent: 0.5             # Lower weight for reporting
+
+# Confidence thresholds
+thresholds:
+  minimum_confidence: 0.7         # Below this requires escalation
+  strong_consensus: 0.9           # Above this bypasses escalation
+  disagreement_tolerance: 2       # Max number of different votes before escalation
+
+# Escalation rules
+escalation:
+  enabled: true
+  human_review_required: true
+  notification_channels:
+    - email
+    - slack
+  escalation_timeout_hours: 24
+  default_action_on_timeout: "conditional"  # approve | reject | conditional
+
+# Decision priorities (in order of preference)
+decision_priority:
+  - approve
+  - conditional
+  - skip
+  - reject
+
+# Conflict resolution strategies
+resolution_strategies:
+  # When agents disagree
+  disagreement:
+    strategy: "weighted_vote"     # weighted_vote | highest_confidence | escalate
+    min_participants: 2
+    
+  # When confidence is low
+  low_confidence:
+    strategy: "escalate"          # escalate | accept | reject
+    threshold: 0.7
+    
+  # When flags are raised
+  flagged_concerns:
+    strategy: "escalate"          # escalate | investigate | accept
+    critical_flags:               # These always escalate
+      - security_risk
+      - compliance_violation
+      - data_loss_risk
+    warning_flags:                # These may escalate based on count
+      - cost_risk
+      - timeline_risk
+      - complexity_risk
+
+# Voting rules
+voting_rules:
+  require_minimum_votes: true
+  minimum_votes: 2
+  allow_skip_votes: true
+  skip_breaks_tie: false
+
+# Logging and audit
+audit:
+  log_all_decisions: true
+  save_decision_artifacts: true
+  decision_history_retention_days: 90
+  
+# Phase-specific overrides
+phase_overrides:
+  strategy:
+    agent_weights:
+      StrategyAgent: 3.0          # Even higher weight in strategy phase
+  
+  technical:
+    agent_weights:
+      TechnicalArchitectAgent: 3.0  # Even higher weight in tech phase
+  
+  validation:
+    thresholds:
+      minimum_confidence: 0.9     # Stricter threshold for validation
+

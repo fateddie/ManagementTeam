@@ -1,37 +1,44 @@
 # AI Management Team – Claude Code Project
 
-**Version:** 1.0  
-**Date:** 2025-10-08  
-**Owner:** Founder (Rob)
+**Version:** 2.0 - With Agent Protocol & Conflict Resolution  
+**Date:** 2025-10-11  
+**Owner:** Rob Freyne  
+**Repository:** https://github.com/fateddie/ManagementTeam  
+**Status:** 🟢 Production Ready - All 9 Phases Complete
 
 ---
 
 ## 🎯 Quick Start
 
-### macOS/Linux
+### Using CLI (Recommended)
 
 ```bash
-# Initialize environment
-./setup_environment.sh
+# Install dependencies
+pip install -r requirements.txt
 
-# Activate virtual environment
-source .venv/bin/activate
+# Run full 6-agent pipeline
+python cli/manage.py run
 
-# Run orchestrator
-python scripts/orchestrator.py
+# Run validation tests
+python cli/manage.py validate
+
+# Check system status
+python cli/manage.py status
+
+# List all commands
+python cli/manage.py list
 ```
 
-### Windows
+### Traditional Method
 
-```batch
-REM Initialize environment
-setup_environment.bat
+```bash
+# Activate virtual environment
+source .venv/bin/activate  # macOS/Linux
+# or
+.venv\Scripts\activate  # Windows
 
-REM Activate virtual environment
-.venv\Scripts\activate
-
-REM Run orchestrator
-python scripts\orchestrator.py
+# Run orchestrator directly
+python agents/orchestrator/orchestrator.py
 ```
 
 ---
@@ -66,22 +73,52 @@ ManagementTeam/
 
 ## 🤖 AI Management Team Agents
 
-1. **Strategy Agent** - Market positioning & prioritization
-2. **Financial Agent** - ROI validation & budgeting
-3. **Technical Architect** - Architecture & compliance
-4. **Operations Agent** - Execution planning
-5. **Data Agent** - Performance metrics & learning
+1. **StrategyAgent** - Strategic planning & goal extraction
+2. **TechnicalArchitectAgent** - System architecture & design
+3. **PlanningAgent** - Unified planning & roadmapping
+4. **ResearchAgent** - AI-powered validation (Perplexity)
+5. **DocumentationAgent** - Professional documentation generation
+6. **ReportingAgent** - Quality control & validation
+
+### 🔗 Agent Protocol (Phase 9)
+
+All agents now use standardized `AgentOutput` protocol:
+- **Structured communication** between agents
+- **Weighted voting** for conflict resolution
+- **Human escalation** for complex decisions
+- **Audit trail** for all decisions
+- **Configurable policies** via YAML
 
 ---
 
 ## 🚀 Next Steps
 
-1. Review `/docs/system/README_management_team.md`
-2. Initialize a project: `python scripts/init_management_team.py "ProjectName"`
-3. Configure `/config/.env` with your API keys
-4. Run the orchestrator: `python scripts/orchestrator.py`
+1. **Quick Start:** `python cli/manage.py run`
+2. **Configure API Keys:** Add to `config/.env` (see `config/.env.example`)
+3. **Run Tests:** `python cli/manage.py validate`
+4. **Check Status:** `python cli/manage.py status`
+5. **View Decisions:** Check `outputs/decisions/` for agent decisions
+
+## 📊 System Features
+
+- ✅ **6 AI Agents** - Complete workflow automation
+- ✅ **CLI Interface** - User-friendly commands
+- ✅ **CI/CD Integration** - GitHub Actions automated
+- ✅ **Agent Protocol** - Standardized communication
+- ✅ **Conflict Resolution** - Intelligent voting system
+- ✅ **Automated Testing** - 100% test coverage
+- ✅ **Quality Control** - Automated validation
+
+## 📚 Key Documentation
+
+- **SYSTEM_100_PERCENT_COMPLETE.md** - Complete system overview
+- **QUICK_START.md** - Fast setup guide
+- **docs/system/CI_CD_SETUP.md** - GitHub Actions setup
+- **docs/system/PRD.md** - Product requirements
+- **outputs/PHASE_*_SUMMARY.md** - Phase completion summaries
 
 ---
 
-**Maintained by:** Strategy Agent (under Founder review)  
-**Last Updated:** 2025-10-08
+**Maintained by:** AI Management Team  
+**Last Updated:** 2025-10-11  
+**All 9 Phases:** ✅ Complete

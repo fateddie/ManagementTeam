@@ -7,6 +7,7 @@
 ## 🎯 Overview
 
 The Management Team system includes automated CI/CD via GitHub Actions that:
+
 - ✅ Runs validation tests on every push
 - ✅ Executes full pipeline on main/dev branches
 - ✅ Uploads build artifacts
@@ -41,12 +42,12 @@ Navigate to: **Repository Settings → Secrets and variables → Actions**
 
 Add the following secrets:
 
-| Secret Name | Description | Required |
-|-------------|-------------|----------|
-| `OPENAI_API_KEY` | OpenAI API key for agents | Optional* |
-| `PERPLEXITY_API_KEY` | Perplexity API key for research | Optional* |
+| Secret Name          | Description                     | Required   |
+| -------------------- | ------------------------------- | ---------- |
+| `OPENAI_API_KEY`     | OpenAI API key for agents       | Optional\* |
+| `PERPLEXITY_API_KEY` | Perplexity API key for research | Optional\* |
 
-*Optional for validation-only runs
+\*Optional for validation-only runs
 
 ### 2. Enable GitHub Actions
 
@@ -57,12 +58,14 @@ Add the following secrets:
 ### 3. Test the Workflow
 
 **Option A: Push to dev branch**
+
 ```bash
 git checkout -b dev
 git push origin dev
 ```
 
 **Option B: Manual trigger**
+
 1. Go to **Actions** tab
 2. Select "Management Team CI/CD"
 3. Click "Run workflow"
@@ -76,6 +79,7 @@ git push origin dev
 ### Job 1: build-and-test
 
 **Steps:**
+
 1. ✅ Checkout repository
 2. ✅ Set up Python 3.11
 3. ✅ Install dependencies
@@ -88,6 +92,7 @@ git push origin dev
 10. ✅ Auto-commit (main only)
 
 **Triggers:**
+
 - Push to `main` or `dev`
 - Pull requests to `main`
 - Manual dispatch
@@ -95,6 +100,7 @@ git push origin dev
 ### Job 2: code-quality
 
 **Steps:**
+
 1. ✅ Checkout repository
 2. ✅ Set up Python
 3. ✅ Check syntax
@@ -104,6 +110,7 @@ git push origin dev
 ### Job 3: documentation-check
 
 **Steps:**
+
 1. ✅ Checkout repository
 2. ✅ Verify required docs
 3. ✅ Generate documentation summary
@@ -113,18 +120,21 @@ git push origin dev
 ## 📊 Workflow Behavior
 
 ### Pull Requests
+
 - Runs validation tests only
 - Does not execute full pipeline
 - No auto-commit
 - Artifacts uploaded for review
 
 ### Dev Branch Pushes
+
 - Runs validation tests
 - Executes full pipeline
 - Uploads artifacts
 - No auto-commit
 
 ### Main Branch Pushes
+
 - Runs validation tests
 - Executes full pipeline
 - Uploads artifacts
@@ -166,11 +176,13 @@ management-team-artifacts-<run-number>/
 ### API Keys Management
 
 **DO:**
+
 - ✅ Store API keys in GitHub Secrets
 - ✅ Never commit keys to repository
 - ✅ Use environment variables in workflow
 
 **DON'T:**
+
 - ❌ Hardcode API keys in code
 - ❌ Commit `.env` files
 - ❌ Share secrets in logs
@@ -178,6 +190,7 @@ management-team-artifacts-<run-number>/
 ### File Protection
 
 The CI workflow:
+
 - ✅ Does NOT modify `/config/`
 - ✅ Does NOT modify `/docs/` (except auto-summaries)
 - ✅ Only writes to `/outputs/` and `/logs/`
@@ -203,6 +216,7 @@ Set up branch protection for `main`:
 **Cause:** Missing or invalid output files
 
 **Solution:**
+
 ```bash
 # Run locally first
 python cli/manage.py validate
@@ -219,6 +233,7 @@ python cli/manage.py run
 **Cause:** Missing GitHub Secrets
 
 **Solution:**
+
 1. Add `OPENAI_API_KEY` and/or `PERPLEXITY_API_KEY` to secrets
 2. Or run validation-only (doesn't need API keys)
 
@@ -227,6 +242,7 @@ python cli/manage.py run
 **Cause:** Insufficient permissions
 
 **Solution:**
+
 - Verify `GITHUB_TOKEN` has write permissions
 - Check repository settings → Actions → General
 - Enable "Read and write permissions"
@@ -236,6 +252,7 @@ python cli/manage.py run
 **Cause:** Full pipeline includes API calls
 
 **Solution:**
+
 - Use `pull_request` event (validation only)
 - Or add timeout limits in workflow
 - Or mock API calls for CI
@@ -247,6 +264,7 @@ python cli/manage.py run
 ### GitHub Actions Dashboard
 
 View workflow status:
+
 - **Actions** tab shows all runs
 - Green ✅ = success
 - Red ❌ = failure
@@ -255,6 +273,7 @@ View workflow status:
 ### Workflow Summary
 
 Each run includes:
+
 - ✅ Validation results
 - ✅ Code statistics
 - ✅ Documentation status
@@ -263,6 +282,7 @@ Each run includes:
 ### Notifications
 
 Configure in: **Settings → Notifications**
+
 - Email on workflow failure
 - Slack integration available
 - GitHub app notifications
@@ -278,11 +298,11 @@ Add to `.github/workflows/management_team.yml`:
 ```yaml
 on:
   schedule:
-    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+    - cron: "0 2 * * *" # Daily at 2 AM UTC
   workflow_dispatch:
     inputs:
       phase:
-        description: 'Phase to run (1-6, or blank for all)'
+        description: "Phase to run (1-6, or blank for all)"
         required: false
 ```
 
@@ -295,7 +315,7 @@ jobs:
   test:
     strategy:
       matrix:
-        python-version: ['3.10', '3.11', '3.12']
+        python-version: ["3.10", "3.11", "3.12"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-python@v5
@@ -308,11 +328,11 @@ jobs:
 Add deployment step:
 
 ```yaml
-    - name: Deploy to production
-      if: github.ref == 'refs/heads/main'
-      run: |
-        # Your deployment script
-        ./deploy.sh
+- name: Deploy to production
+  if: github.ref == 'refs/heads/main'
+  run: |
+    # Your deployment script
+    ./deploy.sh
 ```
 
 ---
@@ -341,6 +361,7 @@ Add deployment step:
 **Setup Complete!** 🎉
 
 Your Management Team system now has fully automated CI/CD with:
+
 - Continuous validation
 - Automated testing
 - Artifact preservation
@@ -351,4 +372,3 @@ Your Management Team system now has fully automated CI/CD with:
 
 **Last Updated:** Phase 8 Implementation  
 **Status:** Production Ready
-

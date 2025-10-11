@@ -1,0 +1,12 @@
+agent_name: StrategyAgent
+decision: approve
+reasoning: Strategic goals align with business objectives
+data_for_next_agent:
+  goals:
+  - goal1
+  - goal2
+  priority: high
+confidence: 0.95
+flags: []
+timestamp: 2025-10-11 18:58:45 UTC
+metadata: {}
