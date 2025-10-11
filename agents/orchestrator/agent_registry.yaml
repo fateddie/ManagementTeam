@@ -30,3 +30,8 @@ agents:
     path: "agents.documentation_agent.documentation_agent:DocumentationAgent"
     active: true # ✅ Phase 5 - NOW ACTIVE
     stage: 5
+
+  - name: ReportingAgent
+    path: "agents.reporting_agent.reporting_agent:ReportingAgent"
+    active: true # ✅ Phase 6 - NOW ACTIVE
+    stage: 6
