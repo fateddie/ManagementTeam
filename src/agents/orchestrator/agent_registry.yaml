@@ -1,0 +1,50 @@
+# ==============================================
+# agent_registry.yaml
+# ==============================================
+# Central registry of all agents in the Management Team system.
+# Orchestrator uses this to dynamically load and execute agents.
+
+agents:
+  - name: StrategyAgent
+    path: "agents.strategy_agent.strategy_agent:StrategyAgent"
+    active: false  # Phase 2
+    stage: 1
+    description: "Evaluates business value and strategic alignment"
+    
+  - name: TechnicalArchitectAgent
+    path: "agents.technical_architect.architect_agent:TechnicalArchitectAgent"
+    active: false  # Phase 2
+    stage: 2
+    description: "Assesses technical feasibility and architecture"
+    
+  - name: PlanningAgent
+    path: "agents.planning_agent.planning_agent:PlanningAgent"
+    active: true  # Currently operational
+    stage: 3
+    description: "Generates milestones and project plans from context"
+    
+  - name: ResearchAgent
+    path: "integrations.perplexity_connector:PerplexityConnector"
+    active: true  # Currently operational
+    stage: 4
+    description: "Provides external research and validation via Perplexity AI"
+    
+  - name: DocumentationAgent
+    path: "agents.documentation_agent.documentation_agent:DocumentationAgent"
+    active: false  # Phase 3
+    stage: 5
+    description: "Generates ERDs, DFDs, and technical specifications"
+
+# Configuration
+orchestration:
+  mode: "sequential"  # sequential | parallel | hybrid
+  stop_on_error: false  # Continue even if one agent fails
+  require_all_active: false  # Can run with some agents inactive
+  timeout_per_agent_seconds: 300
+  
+logging:
+  enabled: true
+  log_path: "logs/orchestrator.log"
+  level: "INFO"
+  include_agent_output: true
+

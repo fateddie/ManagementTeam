@@ -1,0 +1,33 @@
+# ==============================================
+# agent_registry.yaml
+# Phase 1.5 - Agent Registry
+# ==============================================
+# Lists all agents with their module paths and activation status.
+# Orchestrator uses this to dynamically load and execute agents.
+
+agents:
+  - name: StrategyAgent
+    path: "agents.strategy_agent.strategy_agent:StrategyAgent"
+    active: true  # ✅ Phase 2 - NOW ACTIVE
+    stage: 1
+    
+  - name: TechnicalArchitectAgent
+    path: "agents.technical_architect.architect_agent:TechnicalArchitectAgent"
+    active: false  # Phase 2
+    stage: 2
+    
+  - name: PlanningAgent
+    path: "agents.planning_agent.planning_agent:PlanningAgent"
+    active: true  # ✅ Currently operational
+    stage: 3
+    
+  - name: ResearchAgent
+    path: "integrations.perplexity_connector:PerplexityConnector"
+    active: true  # ✅ Currently operational
+    stage: 4
+    
+  - name: DocumentationAgent
+    path: "agents.documentation_agent.documentation_agent:DocumentationAgent"
+    active: false  # Phase 3
+    stage: 5
+

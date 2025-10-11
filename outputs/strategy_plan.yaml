@@ -1,0 +1,14 @@
+project:
+  name: AI Management Layer System
+  summary: Extracted from PRD using fallback method
+goals:
+- 'Primary Goal:'
+- 2. Core Objectives
+constraints: []
+milestones: []
+risks: []
+priorities:
+  must_have: []
+  should_have: []
+  could_have: []
+  wont_have: []
