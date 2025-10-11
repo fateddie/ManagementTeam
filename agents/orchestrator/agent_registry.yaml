@@ -28,5 +28,5 @@ agents:
 
   - name: DocumentationAgent
     path: "agents.documentation_agent.documentation_agent:DocumentationAgent"
-    active: false # Phase 3
+    active: true # ✅ Phase 5 - NOW ACTIVE
     stage: 5
