@@ -8,26 +8,25 @@
 agents:
   - name: StrategyAgent
     path: "agents.strategy_agent.strategy_agent:StrategyAgent"
-    active: true  # ✅ Phase 2 - NOW ACTIVE
+    active: true # ✅ Phase 2 - NOW ACTIVE
     stage: 1
-    
+
   - name: TechnicalArchitectAgent
     path: "agents.technical_architect.architect_agent:TechnicalArchitectAgent"
-    active: false  # Phase 2
+    active: true # ✅ Phase 3 - NOW ACTIVE
     stage: 2
-    
+
   - name: PlanningAgent
     path: "agents.planning_agent.planning_agent:PlanningAgent"
-    active: true  # ✅ Currently operational
+    active: true # ✅ Currently operational
     stage: 3
-    
+
   - name: ResearchAgent
     path: "integrations.perplexity_connector:PerplexityConnector"
-    active: true  # ✅ Currently operational
+    active: true # ✅ Currently operational
     stage: 4
-    
+
   - name: DocumentationAgent
     path: "agents.documentation_agent.documentation_agent:DocumentationAgent"
-    active: false  # Phase 3
+    active: false # Phase 3
     stage: 5
-
