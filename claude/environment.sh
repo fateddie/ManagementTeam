@@ -42,7 +42,18 @@ mkdir -p projects
 export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
 export MANAGEMENT_TEAM_ROOT="$(pwd)"
 
+# Load central .env file
+if [ -f "config/.env" ]; then
+    echo "🔑 Loading API keys from config/.env..."
+    export $(grep -v '^#' config/.env | xargs)
+    echo "✅ Environment variables loaded"
+else
+    echo "⚠️  config/.env not found"
+    echo "💡 Copy config/.env.example to config/.env and add your API keys"
+fi
+
 echo "✅ Environment setup complete!"
 echo "💡 To activate the environment, run: source venv/bin/activate"
 echo "💡 PYTHONPATH is set to include: $(pwd)/src"
+echo "💡 All API keys loaded from: config/.env"
 

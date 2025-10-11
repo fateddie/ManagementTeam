@@ -1,0 +1,24 @@
+# -----------------------------------------------------
+# 10. Research Triggers (Perplexity auto-calls)
+# -----------------------------------------------------
+research_triggers:
+  enabled: true
+  throttle_hours: 6 # don’t call again for same topic inside this window
+  min_evidence: 1 # how many sources are “enough” to accept
+  topics:
+    - name: "Milestone Framework"
+      when_missing_sections: ["Milestones", "Roadmap"]
+      keyword_hints:
+        ["milestone", "phase gate", "release plan", "iteration plan"]
+      query: "latest 2024-2025 software project milestone and phase-gate frameworks for AI products; concise, cited"
+      focus: "research"
+    - name: "Risk Management"
+      when_missing_sections: ["Risks", "Risk Register"]
+      keyword_hints: ["risk", "mitigation", "assumption", "constraint"]
+      query: "current best practices for lightweight risk registers in agile AI projects; include templates; cite sources"
+      focus: "research"
+    - name: "Requirements Decomposition"
+      when_missing_sections: ["Scope", "Deliverables"]
+      keyword_hints: ["requirements", "decompose", "MoSCoW", "RICE", "priority"]
+      query: "modern requirement decomposition & prioritization methods (MoSCoW, RICE) with examples for trading dashboards"
+      focus: "research"

@@ -5,6 +5,9 @@ numpy
 pyyaml
 python-dotenv
 
+# AI & Research
+perplexity
+
 # Dashboard & Visualization
 streamlit
 

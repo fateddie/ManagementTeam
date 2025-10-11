@@ -1,0 +1,134 @@
+# =====================================================
+# planning_agent_context.yaml
+# Purpose: Defines how the Planning Agent gathers, ranks,
+# and fuses contextual data before creating or updating a plan.
+# =====================================================
+
+context_pipeline:
+  version: 1.0
+  description: >
+    Context ingestion and reasoning rules for the Planning Agent.
+    The agent must always ground its reasoning in attached project documents
+    (PRD, roadmap, system architecture, constraints) before producing outputs.
+
+# -----------------------------------------------------
+# 1. File Discovery Rules
+# -----------------------------------------------------
+file_sources:
+  - path: "./docs"
+    include_extensions: [".md", ".txt", ".yaml", ".json"]
+    recursive: true
+  - path: "./config"
+    include_extensions: [".yaml", ".yml", ".json"]
+    recursive: true
+  - path: "./context"
+    include_extensions: [".md", ".txt"]
+    recursive: true
+
+# -----------------------------------------------------
+# 2. Context Priority Ranking
+# Determines which files have the most authority.
+# -----------------------------------------------------
+priority_hierarchy:
+  - PRD.md
+  - roadmap.md
+  - system_architecture.md
+  - claude.md
+  - project_config.yaml
+  - constraints.yaml
+  - research_notes.md
+  - user_prompt.txt
+
+# -----------------------------------------------------
+# 3. Parsing & Fusion Rules
+# -----------------------------------------------------
+parsing:
+  summarize_long_docs: true # auto-summarize large documents (>10k tokens)
+  extract_sections: true # detect sections: Goals, Scope, Features, Risks, etc.
+  preserve_code_blocks: true # keep code snippets intact
+  remove_noise: true # ignore changelogs, placeholder text, etc.
+
+fusion:
+  method: "semantic_merge" # merge by topic similarity, not by file order
+  fallback: "hierarchical_merge" # use PRD as base if semantic fails
+  max_context_tokens: 18000 # limit combined context size
+  include_file_metadata: true
+
+# -----------------------------------------------------
+# 4. Validation & Guardrails
+# -----------------------------------------------------
+validation:
+  require_prd: true
+  min_sections_required: ["Goals", "Scope", "Deliverables", "Risks"]
+  on_missing_prd: "abort"
+  on_missing_sections: "request_completion"
+
+# -----------------------------------------------------
+# 5. Memory & Retrieval
+# -----------------------------------------------------
+memory:
+  type: "vector_store"
+  provider: "local" # or "supabase", "pinecone", "neo4j" if integrated
+  embedding_model: "text-embedding-3-large"
+  refresh_on_file_change: true
+  search_mode: "hybrid" # keyword + semantic
+  max_results: 10
+
+# -----------------------------------------------------
+# 6. Planning Cycle Behavior
+# -----------------------------------------------------
+planning_cycle:
+  stages:
+    - name: "context_check"
+      goal: "Ensure full context available before planning"
+      action: "summarize and verify inputs"
+    - name: "scope_analysis"
+      goal: "Parse PRD for scope, constraints, and objectives"
+      action: "extract structured data from PRD.md"
+    - name: "dependency_mapping"
+      goal: "Identify dependencies between tasks"
+      action: "link features to components and milestones"
+    - name: "milestone_generation"
+      goal: "Generate sequential milestones with timelines"
+      action: "produce roadmap.md"
+    - name: "review_cycle"
+      goal: "Validate milestones vs. constraints and resources"
+      action: "flag inconsistencies or scope creep"
+
+# -----------------------------------------------------
+# 7. Output Rules
+# -----------------------------------------------------
+outputs:
+  main_files:
+    - "roadmap.md"
+    - "milestones.md"
+    - "dependency_map.yaml"
+  format:
+    roadmap: "markdown"
+    dependencies: "yaml"
+  include_references: true
+  include_context_summary: true
+
+# -----------------------------------------------------
+# 8. Logging & Auditing
+# -----------------------------------------------------
+logging:
+  enabled: true
+  path: "./logs/planning_agent.log"
+  level: "INFO"
+  include_context_hash: true
+  include_source_files: true
+  redact_sensitive_data: true
+
+# -----------------------------------------------------
+# 9. Iteration Rules
+# -----------------------------------------------------
+iteration:
+  auto_replan_on_context_change: true
+  context_refresh_interval_hours: 2
+  user_confirmation_before_major_revision: true
+  store_revision_history: true
+# =====================================================
+# End of File
+# =====================================================
+

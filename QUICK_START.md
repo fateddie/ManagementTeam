@@ -4,6 +4,24 @@
 
 ---
 
+## 🔑 First Time Setup
+
+### Set Up API Keys (One Time Only)
+
+```bash
+# 1. Copy the template
+cp config/.env.example config/.env
+
+# 2. Edit with your actual keys
+nano config/.env
+# (Add your PERPLEXITY_API_KEY, etc.)
+
+# 3. Load environment
+source activate.sh
+```
+
+---
+
 ## 🚀 Common Commands
 
 ### Create a New Project
@@ -163,6 +181,7 @@ Before running:
 - [ ] Dependencies installed (`pip install -r requirements.txt`)
 - [ ] In correct directory
 - [ ] Templates folder exists
+- [ ] **API keys set in `config/.env`** (copy from `config/.env.example`)
 
 After running:
 
