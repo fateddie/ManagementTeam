@@ -1,523 +1,119 @@
 # ==============================================
-# Swing FX Trading Assistant - Project Plan
+# Project Plan Template (v1.1)
+# Used by Planner Agent for project scaffolding
 # ==============================================
 
 meta:
-  title: "Swing FX Trading Assistant (Trading Copilot)"
+  title: ""
   author: "Rob Freyne"
   date_created: "2025-10-11"
-  date_updated: "2025-10-11"
-  version: "2.1.0-alpha"
-  status: "active"
-  description: >
-    A modular AI-assisted trading application integrating Interactive Brokers for live data,
-    TradingView for charting, and multi-agent analytics for discretionary swing trading.
-    MVP focuses on 7 core agents (Market Data Collector, Risk Sentiment Engine, Portfolio, Macro,
-    Sentiment, COT, Technical, Risk Manager). The Risk Sentiment Engine (RSE) provides cross-asset
-    risk regime scoring (-100 to +100) from equities, volatility, USD, rates, commodities, and gold.
-    Future phases include voice interface, Trade Planner, Mentor, and Coordinator agents.
+  version: "1.0"
+  status: "draft"  # draft | active | archived
 
 project:
   overview:
-    summary: >
-      Build a professional-grade AI Trading Copilot that provides deep market insight, performance analytics,
-      and structured top-down analysis for discretionary trading. The system uses modular agents with
-      persistent memory, structured workflows, and human-in-the-loop decision support. Phase 1 (MVP) delivers
-      core analytics via Next.js dashboard. Phase 2 adds voice interface and advanced planning/mentoring agents.
+    summary: ""
     goals:
-      - "Provide comprehensive portfolio analytics (drawdown, win rate, expectancy, exposure)"
-      - "Implement Risk Sentiment Engine (RSE) for cross-asset risk regime scoring"
-      - "Perform top-down analysis integrating RSE, macro, sentiment, COT, and technical layers"
-      - "Implement real-time risk monitoring with damage control alerts"
-      - "Present results via Next.js dashboard with TradingView chart integration"
-      - "Maintain historical context using Supabase for data persistence"
-      - "Enable modular, sequential development with phase-gate quality control"
+      - ""
+      - ""
+      - ""
     scope:
       include:
-        - "Interactive Brokers TWS API integration for real trade data and positions"
-        - "TradingView widget embedding for multi-timeframe chart analysis"
-        - "7 core agents: Market Data Collector, Risk Sentiment Engine (RSE), Portfolio, Macro, Sentiment, COT, Technical, Risk Manager"
-        - "RSE cross-asset scoring: SPX, NDX, DXY, VIX, UST10Y, UST2Y, BRENT, XAU"
-        - "Next.js + Tailwind UI with FastAPI backend"
-        - "Supabase/Postgres for data persistence and caching"
-        - "Real-time risk alerts (drawdown, damage control levels)"
-        - "Docker containerization for deployment"
-        - "Alpha Vantage integration for historical data"
-        - "Economic calendar and news sentiment APIs"
+        - ""
+        - ""
+        - ""
       exclude:
-        - "Automated trade execution (human-in-the-loop only)"
-        - "Voice interface (deferred to Phase 2)"
-        - "Trade Planner Agent (Phase 2)"
-        - "Mentor/Memory Agent with vector search (Phase 2)"
-        - "Coordinator Agent for multi-agent orchestration (Phase 2)"
-        - "Real-time tick data or HFT capabilities"
-        - "Financial advice or recommendations"
+        - ""
+        - ""
     stakeholders:
-      - name: "Rob Freyne"
-        role: "Product Owner / Trader / Developer"
-        responsibility: "Define requirements, develop modules, validate strategy alignment, test dashboard"
-      - name: "Planner Agent"
-        role: "Project Orchestrator"
-        responsibility: "Generate project structure, coordinate development flow, track milestones"
+      - name: ""
+        role: ""
+        responsibility: ""
+      - name: ""
+        role: ""
+        responsibility: ""
 
 objectives:
   - id: "OBJ-001"
-    description: "Establish reliable data connectivity to Interactive Brokers, Alpha Vantage, and TradingView"
-    success_metric: "95% uptime on data sync, retrieval under 3s per pair, TradingView widgets render correctly"
-    priority: "high"
-
+    description: ""
+    success_metric: ""
+    priority: "high"  # high | medium | low
+  
   - id: "OBJ-002"
-    description: "Build modular 7-agent analytics system (Market Data Collector, Risk Sentiment Engine, Portfolio, Macro, Sentiment, COT, Technical, Risk Manager)"
-    success_metric: "All 7 agents operational, producing structured JSON output, integration tests passing 100%, RSE regime classification 95% accurate"
-    priority: "high"
-
-  - id: "OBJ-003"
-    description: "Create Next.js dashboard with TradingView integration and real-time updates"
-    success_metric: "Dashboard loads in <3s, charts render, websocket updates working, mobile responsive"
-    priority: "high"
-
-  - id: "OBJ-004"
-    description: "Implement Risk Manager with drawdown calculation and damage control alerts"
-    success_metric: "Drawdown tracking accurate to 0.1%, alerts trigger within 5s of threshold breach"
-    priority: "high"
-
-  - id: "OBJ-005"
-    description: "Ensure system security, compliance, and governance adherence"
-    success_metric: "API keys encrypted, no unauthorized trading, phase-gate checklist 100% complete per module"
-    priority: "high"
-
-  - id: "OBJ-006"
-    description: "Enable sequential module development with documentation discipline"
-    success_metric: "Each module passes phase-gate before next begins, CHANGELOG updated per version"
+    description: ""
+    success_metric: ""
     priority: "medium"
 
 milestones:
   - id: "M1"
-    name: "Data Integration Layer"
-    description: "Connect to Interactive Brokers API, Alpha Vantage, and embed TradingView widgets; implement Market Data Collector module"
-    start_date: "2025-10-14"
-    end_date: "2025-10-16"
-    duration_days: 3
+    name: ""
+    description: ""
+    start_date: ""
+    end_date: ""
+    duration_days: 
     dependencies: []
-    deliverables:
-      - "/src/services/ib_broker.py - IBKR TWS API integration"
-      - "/src/services/alpha_vantage.py - Historical data connector"
-      - "/src/modules/market_data/collector.py - Market Data Collector module"
-      - "Supabase market_data_cache table operational"
-      - "TradingView widget integration prototype"
-      - "Test connection scripts with 95%+ success rate"
-      - "Sample data exports in /data/ folder"
-      - "API credentials secured in .env with encryption"
-    phase_gate_criteria:
-      - "Real-time IBKR data fetched and cached"
-      - "Alpha Vantage historical data retrieved for 2+ pairs"
-      - "TradingView charts render in test environment"
-      - "Unit tests pass 100%"
-      - "Documentation updated (README + CHANGELOG)"
-
+  
   - id: "M2"
-    name: "7-Agent Analytics Engine (including RSE)"
-    description: "Develop Risk Sentiment Engine (RSE) and all core analysis agents: Portfolio, Macro, Sentiment, COT, Technical, Risk Manager"
-    start_date: "2025-10-17"
-    end_date: "2025-10-22"
-    duration_days: 6
+    name: ""
+    description: ""
+    start_date: ""
+    end_date: ""
+    duration_days: 
     dependencies:
       - "M1"
-    deliverables:
-      - "/backend/modules/rse/engine.py - Risk Sentiment Engine core scoring logic"
-      - "/backend/modules/rse/config.yaml - RSE weights, hysteresis, staleness thresholds"
-      - "/backend/modules/rse/cache.py - Redis/Supabase caching layer for RSE (30s TTL)"
-      - "/src/agents/portfolio_agent.py - Drawdown, win rate, expectancy, per-pair performance"
-      - "/src/agents/macro_agent.py - Economic calendar integration, macro trends analysis (RSE-weighted)"
-      - "/src/agents/sentiment_agent.py - News sentiment scoring (hawkish/dovish bias, RSE regime filter)"
-      - "/src/agents/cot_agent.py - CFTC COT report analysis for institutional positioning"
-      - "/src/agents/technical_agent.py - Support/resistance detection, trend analysis (RSE confluence)"
-      - "/src/modules/risk_manager/core.py - Risk Manager with drawdown + damage control (RSE-adjusted)"
-      - "Supabase tables: rse_snapshots, sentiment_snapshots, macro_events, trades, risk_alerts, damage_control_levels"
-      - "Agent integration tests with mock data (including RSE pipeline)"
-      - "Daily composite analysis report generation with RSE regime context"
-    phase_gate_criteria:
-      - "RSE scores calculated accurately (±5 points vs manual calculation)"
-      - "RSE regime classification 95% precision on historical data"
-      - "RSE component staleness monitoring operational (<20min critical, <60min non-critical)"
-      - "Each agent returns structured JSON/dict output"
-      - "Risk Manager calculates drawdown within 0.1% accuracy"
-      - "Sentiment + Macro snapshots stored correctly"
-      - "All 7 agents (including RSE) pass integration tests"
-      - "Performance benchmarks met (<3s response per agent, <500ms RSE score computation)"
-      - "Documentation complete (PRD + module READMEs including RSE spec)"
-
+  
   - id: "M3"
-    name: "Next.js Dashboard & Visualization"
-    description: "Build production-ready Next.js frontend with TradingView integration, FastAPI backend, and real-time updates"
-    start_date: "2025-10-23"
-    end_date: "2025-10-26"
-    duration_days: 4
+    name: ""
+    description: ""
+    start_date: ""
+    end_date: ""
+    duration_days: 
     dependencies:
       - "M2"
-    deliverables:
-      - "/frontend/pages/dashboard.tsx - Main dashboard UI"
-      - "/frontend/components/portfolio_panel.tsx - Portfolio analytics display"
-      - "/frontend/components/tradingview_chart.tsx - TradingView widget component"
-      - "/frontend/components/risk_alerts.tsx - Real-time risk alert panel"
-      - "/backend/api/routes.py - FastAPI endpoint definitions"
-      - "/backend/api/websocket.py - Websocket handler for real-time updates"
-      - "Tailwind + DaisyUI styling implementation"
-      - "Responsive mobile layout"
-      - "Docker Compose configuration for deployment"
-    phase_gate_criteria:
-      - "Dashboard loads in <3s"
-      - "TradingView charts render correctly with custom indicators"
-      - "All agent data displayed in appropriate tabs"
-      - "Websocket updates work without lag"
-      - "Mobile responsive design validated"
-      - "User acceptance testing (UAT) passed"
-      - "Deployment documentation complete"
-
-  - id: "M4"
-    name: "Testing, Validation & MVP Release"
-    description: "Comprehensive testing of all modules, validation against success criteria, generate v2.1.0 release"
-    start_date: "2025-10-27"
-    end_date: "2025-10-28"
-    duration_days: 2
-    dependencies:
-      - "M3"
-    deliverables:
-      - "/tests/integration/test_full_pipeline.py - End-to-end integration tests"
-      - "/tests/performance/benchmark_results.json - Performance test results"
-      - "/docs/reflection_report.md - Final reflection with lessons learned"
-      - "/logs/final_validation.log - Validation test logs"
-      - "v2.0.0 release tag on GitHub"
-      - "Deployment to production environment"
-      - "User documentation and onboarding guide"
-    phase_gate_criteria:
-      - "All integration tests pass (100%)"
-      - "Performance benchmarks met (see success criteria)"
-      - "Risk alerts tested with live data"
-      - "Security audit complete (API keys, auth)"
-      - "Phase-gate checklist 100% for all modules"
-      - "CHANGELOG and version tags accurate"
-      - "Founder (Rob) approval for production deployment"
 
 risks:
   - id: "RSK-001"
-    description: "Interactive Brokers API instability, rate limiting, or authentication issues"
-    impact: "high"
-    likelihood: "medium"
-    mitigation_strategy: "Implement retry logic with exponential backoff, cache frequently accessed data, maintain fallback demo account, monitor API status dashboard"
-
+    description: ""
+    impact: "high"  # high | medium | low
+    likelihood: "medium"  # high | medium | low
+    mitigation_strategy: ""
+  
   - id: "RSK-002"
-    description: "Alpha Vantage data latency or quota limits affecting historical data retrieval"
+    description: ""
     impact: "medium"
     likelihood: "medium"
-    mitigation_strategy: "Cache historical data locally in Supabase, implement fallback data sources, upgrade API tier if needed, use daily batch updates"
-
-  - id: "RSK-003"
-    description: "News sentiment API drift, inconsistency, or provider downtime"
-    impact: "medium"
-    likelihood: "medium"
-    mitigation_strategy: "Use multiple sentiment providers (FXStreet, FinBERT), implement confidence scoring, manual validation checkpoints, cache recent sentiment data"
-
-  - id: "RSK-004"
-    description: "TradingView widget integration complexity or rendering issues"
-    impact: "medium"
-    likelihood: "low"
-    mitigation_strategy: "Use official TradingView library, prototype early in M1, start with core KPIs, incremental feature rollout, fallback to static charts if needed"
-
-  - id: "RSK-005"
-    description: "CFTC COT data availability, parsing errors, or format changes"
-    impact: "low"
-    likelihood: "medium"
-    mitigation_strategy: "Cache weekly COT data, validate against multiple sources (TradingView, COT repo), implement data quality checks, version control parsing logic"
-
-  - id: "RSK-006"
-    description: "Phase-gate discipline breakdown leading to technical debt accumulation"
-    impact: "high"
-    likelihood: "low"
-    mitigation_strategy: "Strict enforcement of development_flow.md, mandatory documentation updates, no merge without phase-gate checklist completion"
-
-  - id: "RSK-007"
-    description: "Next.js + FastAPI integration complexity affecting development velocity"
-    impact: "medium"
-    likelihood: "medium"
-    mitigation_strategy: "Start with REST API before websockets, use Docker Compose for consistent dev environment, prototype key integrations early"
+    mitigation_strategy: ""
 
 resources:
   people:
-    - name: "Rob Freyne"
-      role: "Full-Stack Developer / Product Owner"
-      availability: "Full-time"
-
-    - name: "Planner Agent"
-      role: "Project Coordinator / Documentation"
-      availability: "On-demand"
-
+    - name: ""
+      role: ""
+      availability: ""
+    
+    - name: ""
+      role: ""
+      availability: ""
+  
   tools:
-    - name: "Interactive Brokers TWS API"
-      purpose: "Real trade data, positions, account information"
-      license: "Account-based (demo + live available)"
-      documentation: "https://www.interactivebrokers.com/en/trading/tws-api.php"
-
-    - name: "Alpha Vantage API"
-      purpose: "Historical FX market data for swing timeframes"
-      license: "Free tier 5 calls/min, Premium tier available"
-      documentation: "https://www.alphavantage.co/documentation/"
-
-    - name: "TradingView Widgets"
-      purpose: "Chart visualization and technical indicators"
-      license: "Free with attribution"
-      documentation: "https://www.tradingview.com/widget/"
-
-    - name: "CFTC COT Reports"
-      purpose: "Institutional positioning data (weekly)"
-      license: "Public domain"
-      source: "https://github.com/NDelventhal/cot_reports"
-
-    - name: "Next.js 14+"
-      purpose: "Frontend framework with App Router"
-      license: "Open source (MIT)"
-
-    - name: "FastAPI"
-      purpose: "Backend REST + WebSocket API"
-      license: "Open source (MIT)"
-
-    - name: "Supabase"
-      purpose: "Postgres database + real-time subscriptions"
-      license: "Free tier available, Pro tier for production"
-
-    - name: "Docker + Docker Compose"
-      purpose: "Containerization and deployment"
-      license: "Open source"
+    - name: ""
+      purpose: ""
+      license: ""
+    
+    - name: ""
+      purpose: ""
+      license: ""
 
 success_criteria:
-  - metric: "Data sync success rate"
-    target: "≥ 95% of daily runs successful"
-    method: "Monitor logs, track API errors, alert on failures"
-
-  - metric: "Dashboard load time"
-    target: "< 3 seconds per tab/page"
-    method: "Performance profiling, Lighthouse scores, user session analytics"
-
-  - metric: "Agent response latency"
-    target: "< 3 seconds per agent analysis"
-    method: "Benchmark tests, production monitoring"
-
-  - metric: "Risk alert timeliness"
-    target: "< 5 seconds from threshold breach to alert"
-    method: "Integration tests with simulated threshold events"
-
-  - metric: "Test coverage"
-    target: "100% pass rate on unit + integration tests"
-    method: "pytest execution, CI/CD pipeline gates"
-
-  - metric: "Phase-gate completion"
-    target: "100% checklist items completed per module"
-    method: "Manual review against development_flow.md criteria"
-
-  - metric: "Documentation completeness"
-    target: "All modules documented in PRD, README, CHANGELOG"
-    method: "Documentation review checklist per phase"
-
-  - metric: "Analysis alignment"
-    target: "Qualitative match with manual trading strategy"
-    method: "Manual validation, trader feedback, adjustment iterations"
-
-  - metric: "User engagement"
-    target: "Daily active use during EU & US trading sessions (8+ hours/day)"
-    method: "Usage analytics, session logs, feature utilization tracking"
-
-architecture:
-  technology_stack:
-    frontend:
-      framework: "Next.js 14+ (App Router)"
-      styling: "Tailwind CSS + DaisyUI"
-      charts: "TradingView Widgets (JavaScript library)"
-      state: "React Context + Zustand (lightweight state management)"
-      websocket: "Native WebSocket API + React hooks"
-    backend:
-      framework: "FastAPI (Python 3.10+)"
-      api_style: "REST + WebSocket"
-      validation: "Pydantic models"
-      async: "asyncio + uvicorn"
-    database:
-      primary: "Supabase (Postgres 15+)"
-      caching: "Redis (optional for high-frequency data)"
-      orm: "SQLAlchemy + asyncpg"
-    deployment:
-      containers: "Docker + Docker Compose"
-      orchestration: "Docker Swarm or Kubernetes (future)"
-      ci_cd: "GitHub Actions"
-      hosting: "VPS or cloud provider (DigitalOcean, AWS, GCP)"
-    agents:
-      language: "Python 3.10+"
-      framework: "Custom agent classes (modular design)"
-      orchestration: "Sequential execution (Phase 1), LangGraph consideration (Phase 2)"
-    data_sources:
-      broker: "Interactive Brokers TWS API"
-      historical: "Alpha Vantage REST API"
-      sentiment: "News APIs (FXStreet, NewsAPI, FinBERT)"
-      cot: "CFTC COT Reports (GitHub repo + direct CFTC API)"
-      calendar: "TradingEconomics or Forex Factory"
-
-  module_organization:
-    structure: |
-      /project-root/
-      ├── backend/
-      │   ├── modules/
-      │   │   ├── market_data/
-      │   │   │   ├── collector.py
-      │   │   │   └── tests/
-      │   │   ├── sentiment_agent/
-      │   │   │   ├── core.py
-      │   │   │   └── tests/
-      │   │   ├── risk_manager/
-      │   │   │   ├── core.py
-      │   │   │   └── tests/
-      │   │   └── [other agents]/
-      │   ├── api/
-      │   │   ├── routes.py
-      │   │   └── websocket.py
-      │   ├── db/
-      │   │   ├── schema.sql
-      │   │   └── migrations/
-      │   └── utils/
-      │       ├── auth.py
-      │       └── logging.py
-      ├── frontend/
-      │   ├── components/
-      │   ├── pages/
-      │   ├── hooks/
-      │   └── styles/
-      ├── tests/
-      │   ├── integration/
-      │   ├── performance/
-      │   └── uat/
-      ├── docs/
-      │   ├── PRD.md
-      │   ├── development_flow.md
-      │   ├── tech_spec.md
-      │   └── CHANGELOG.md
-      ├── docker-compose.yml
-      └── README.md
-
-  agent_definitions:
-    - name: "Market Data Collector"
-      module_path: "/modules/market_data/collector.py"
-      purpose: "Fetch and cache market quotes, positions, instrument metadata from IBKR and TradingView"
-      inputs: "IBKR API endpoints, TradingView REST feeds"
-      outputs: "Cached market data in Supabase (market_data_cache table)"
-      dependencies: "None (root module)"
-
-    - name: "Risk Sentiment Engine (RSE)"
-      module_path: "/backend/modules/rse/engine.py"
-      purpose: "Compute cross-asset risk regime score (-100 to +100) from 7 components: Equities, Volatility, USD, Rates, Curve, Oil, Gold"
-      inputs: "SPX, NDX, DXY, VIX, UST10Y, UST2Y, BRENT, XAU from Market Data Collector"
-      outputs: "RSE score, regime classification (risk-on/off/neutral), component breakdown, confidence, staleness flags → Supabase rse_snapshots table"
-      dependencies: "Market Data Collector"
-      configuration: "Weights, hysteresis thresholds, pair-specific overrides (JPY, CHF, commodity FX) in /backend/modules/rse/config.yaml"
-      performance_requirements: "Score computation <500ms, cache TTL 30s intraday/600s daily, staleness monitoring <20min critical/<60min non-critical"
-
-    - name: "Portfolio Agent"
-      module_path: "/src/agents/portfolio_agent.py"
-      purpose: "Calculate portfolio metrics: drawdown, win rate, expectancy, per-pair performance"
-      inputs: "Trades table from Supabase"
-      outputs: "Portfolio analytics JSON"
-      dependencies: "Market Data Collector"
-
-    - name: "Macro Agent"
-      module_path: "/src/agents/macro_agent.py"
-      purpose: "Analyze macro trends, economic calendar events, policy shifts (RSE-weighted bias)"
-      inputs: "Economic calendar APIs, central bank statements, RSE regime score"
-      outputs: "Macro snapshot with bias and event impact scores, RSE context"
-      dependencies: "Market Data Collector, Risk Sentiment Engine (RSE)"
-
-    - name: "Sentiment Agent"
-      module_path: "/modules/sentiment_agent/core.py"
-      purpose: "Score market sentiment (hawkish/dovish) from news, filtered by RSE regime"
-      inputs: "News APIs (FXStreet, NewsAPI), FinBERT model, RSE regime classification"
-      outputs: "Sentiment snapshots in Supabase with RSE regime context"
-      dependencies: "Market Data Collector, Risk Sentiment Engine (RSE)"
-
-    - name: "COT Agent"
-      module_path: "/src/agents/cot_agent.py"
-      purpose: "Analyze CFTC COT reports for institutional net positioning, contextualized by RSE"
-      inputs: "CFTC COT data (weekly), RSE regime score"
-      outputs: "COT analysis with positioning trends and RSE regime correlation"
-      dependencies: "Market Data Collector, Risk Sentiment Engine (RSE)"
-
-    - name: "Technical Agent"
-      module_path: "/src/agents/technical_agent.py"
-      purpose: "Detect support/resistance levels, trend direction, volatility zones with RSE confluence scoring"
-      inputs: "Historical price data from Alpha Vantage + TradingView, RSE regime score"
-      outputs: "Technical analysis with key levels, confluence scores adjusted by RSE"
-      dependencies: "Market Data Collector, Risk Sentiment Engine (RSE)"
-
-    - name: "Risk Manager"
-      module_path: "/modules/risk_manager/core.py"
-      purpose: "Monitor portfolio risk: drawdown, exposure, damage control levels (RSE-adjusted thresholds)"
-      inputs: "Trades table, damage_control_levels table, current positions, RSE volatility component"
-      outputs: "Risk alerts, drawdown metrics, threshold breach notifications with RSE volatility adjustment"
-      dependencies: "Portfolio Agent, Market Data Collector, Risk Sentiment Engine (RSE)"
-
-  future_agents:
-    - name: "Trade Planner Agent"
-      phase: "Phase 2 (v3.0)"
-      purpose: "Compile insights from all agents into structured trade plan with checklists"
-
-    - name: "Mentor Agent"
-      phase: "Phase 2 (v3.0)"
-      purpose: "Provide discipline coaching, trade review, critique of trade logic"
-
-    - name: "Coordinator Agent"
-      phase: "Phase 2 (v3.0)"
-      purpose: "Aggregate conflicting agent opinions, orchestrate multi-agent workflows"
-
-    - name: "Voice Interface"
-      phase: "Phase 2 (v3.0)"
-      purpose: "Enable voice-to-agent interaction via Whisper STT + ElevenLabs TTS"
-
-governance:
-  development_flow:
-    approach: "Sequential, phase-gated module development"
-    principles:
-      - "Each module developed, tested, documented before next begins"
-      - "Independent modules with minimal shared state"
-      - "Documentation discipline: PRD, README, CHANGELOG updated per phase"
-      - "Feature flags for experimental features"
-      - "Iterative improvement, no wholesale rewrites"
-    phase_gate_checklist:
-      - "Functionality: Module performs core tasks without dependency errors"
-      - "Testing: Unit + integration tests executed successfully (100% pass rate)"
-      - "Database: Schema validated against Supabase"
-      - "Docs: PRD + README + CHANGELOG updated"
-      - "Performance: Meets latency/accuracy benchmarks"
-      - "Approval: Founder (Rob) validates deliverable before merge"
-
-  versioning:
-    major: "Structural or architectural overhaul (e.g., 2.0.0 → 3.0.0)"
-    minor: "New module or significant feature addition (e.g., 2.0.0 → 2.1.0)"
-    patch: "Bug fix, test update, documentation refinement (e.g., 2.0.0 → 2.0.1)"
-
-  change_control:
-    process:
-      - "Log proposed change in CHANGELOG.md"
-      - "Assess impact on schema, APIs, existing modules"
-      - "Rob signs off before implementation"
-      - "Develop on dedicated feature branch"
-      - "Increment version appropriately"
-      - "Merge only after phase-gate criteria met"
+  - metric: ""
+    target: ""
+    method: ""
+  
+  - metric: ""
+    target: ""
+    method: ""
 
 notes:
-  - "This project represents the first domain-specific validation of the ManagementTeam framework"
-  - "PRD v2.1 focuses on MVP (7 agents including RSE), expanding from v2.0 (6 agents)"
-  - "Risk Sentiment Engine (RSE) added as cross-asset risk regime engine (SPX/NDX/DXY/VIX/UST10Y/UST2Y/BRENT/XAU)"
-  - "RSE provides -100 to +100 score with risk-on/off/neutral classification, feeding all analysis agents"
-  - "System explicitly does NOT execute trades - human-in-the-loop only"
-  - "Technology stack shifted from Streamlit to Next.js for production-grade UI"
-  - "Supabase replaces SQLite for scalable data persistence"
-  - "FastAPI backend enables REST + WebSocket real-time updates"
-  - "Docker containerization ensures consistent deployment across environments"
-  - "Future enhancements: voice interface, ML bias detection, vector memory (ChromaDB)"
-  - "MVP timeline extended from 14 days to 15 days to accommodate RSE development (M2: 5 days → 6 days)"
-  - "Generated by Planner Agent v1.1 with comprehensive PRD integration, updated with RSE specification"
-  - "Follows governance model from development_flow.md"
+  - ""
+  - ""
+  - "Generated by Planner Agent v1.1"
+  - "Template location: /config/templates/project_plan.yaml"
