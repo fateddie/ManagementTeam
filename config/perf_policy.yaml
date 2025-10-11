@@ -1,0 +1,66 @@
+# ==============================================
+# perf_policy.yaml
+# Phase 11 - Performance & Parallel Execution
+# ==============================================
+# Defines parallel execution groups, cache settings, and lazy evaluation rules
+
+version: 1
+
+# Which agents can run together (no data dependencies among them)
+parallel_groups:
+  - ["StrategyAgent", "ResearchAgent"]   # Can run concurrently
+
+# Agents that must run strictly after parallel groups (sequential)
+post_parallel_order:
+  - "TechnicalArchitectAgent"  # Needs strategy_plan.yaml
+  - "PlanningAgent"            # Needs strategy + technical
+  - "DocumentationAgent"       # Needs all plans
+  - "ReportingAgent"           # Must run last
+
+# Cache & Lazy rules
+cache:
+  enabled: true
+  ttl_hours: 24
+  cache_dir: "./.cache"
+  
+lazy:
+  enabled: true
+  # If all inputs unchanged since last success -> skip agent (reuse cached output)
+  strict_inputs:
+    StrategyAgent:
+      - "docs/system/PRD.md"
+      - "config/planning_agent_context.yaml"
+    
+    TechnicalArchitectAgent:
+      - "outputs/strategy_plan.yaml"
+    
+    PlanningAgent:
+      - "outputs/strategy_plan.yaml"
+      - "outputs/technical_design.yaml"
+      - "outputs/context.yaml"
+    
+    ResearchAgent:
+      - "outputs/project_plan.yaml"
+      - "outputs/technical_design.yaml"
+    
+    DocumentationAgent:
+      - "outputs/project_plan.yaml"
+      - "outputs/technical_design.yaml"
+    
+    ReportingAgent:
+      - "outputs/*.yaml"
+      - "outputs/*.md"
+
+# Performance monitoring
+monitoring:
+  log_timing: true
+  log_cache_hits: true
+  log_lazy_skips: true
+  timing_format: "seconds"  # seconds | milliseconds
+
+# Optimization settings
+optimization:
+  max_parallel_agents: 4
+  timeout_per_agent_seconds: 300
+  enable_fast_fail: false  # Stop all on first failure
+
