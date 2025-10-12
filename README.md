@@ -1,10 +1,10 @@
 # AI Management Team – Claude Code Project
 
-**Version:** 2.0 - With Agent Protocol & Conflict Resolution  
-**Date:** 2025-10-11  
+**Version:** 3.0 - With Vertical & Strategic Planning  
+**Date:** 2025-10-12  
 **Owner:** Rob Freyne  
 **Repository:** https://github.com/fateddie/ManagementTeam  
-**Status:** 🟢 Production Ready - All 9 Phases Complete
+**Status:** 🟢 Production Ready - All 13 Phases Complete
 
 ---
 
@@ -16,8 +16,12 @@
 # Install dependencies
 pip install -r requirements.txt
 
-# Run full 6-agent pipeline
+# Run full 8-agent pipeline
 python cli/manage.py run
+
+# Or run new workflow: Idea → Decision → Project
+python scripts/run_vertical_agent.py inputs/ideas.json
+python scripts/run_strategic_planner.py
 
 # Run validation tests
 python cli/manage.py validate
@@ -73,12 +77,17 @@ ManagementTeam/
 
 ## 🤖 AI Management Team Agents
 
-1. **StrategyAgent** - Strategic planning & goal extraction
-2. **TechnicalArchitectAgent** - System architecture & design
-3. **PlanningAgent** - Unified planning & roadmapping
-4. **ResearchAgent** - AI-powered validation (Perplexity)
-5. **DocumentationAgent** - Professional documentation generation
-6. **ReportingAgent** - Quality control & validation
+### **New: Business Vertical System** (Phases 12-13)
+1. **VerticalAgent** - Evaluates & scores business ideas (RICE/ICE)
+2. **StrategicPlannerAgent** - Decides what to build next (with human approval)
+
+### **Core Planning System** (Phases 1-11)
+3. **StrategyAgent** - Strategic planning & goal extraction
+4. **TechnicalArchitectAgent** - System architecture & design
+5. **PlanningAgent** - Unified planning & roadmapping
+6. **ResearchAgent** - AI-powered validation (Perplexity)
+7. **DocumentationAgent** - Professional documentation generation
+8. **ReportingAgent** - Quality control & validation
 
 ### 🔗 Agent Protocol (Phase 9)
 
@@ -101,24 +110,36 @@ All agents now use standardized `AgentOutput` protocol:
 
 ## 📊 System Features
 
-- ✅ **6 AI Agents** - Complete workflow automation
+- ✅ **8 AI Agents** - Complete workflow automation
+- ✅ **Idea-to-Project Pipeline** - Evaluate, decide, build in minutes
+- ✅ **Human-in-the-Loop** - Approval gates for strategic decisions
+- ✅ **RICE/ICE Scoring** - Business vertical evaluation
+- ✅ **Interactive Dashboard** - Streamlit visualization
 - ✅ **CLI Interface** - User-friendly commands
 - ✅ **CI/CD Integration** - GitHub Actions automated
 - ✅ **Agent Protocol** - Standardized communication
 - ✅ **Conflict Resolution** - Intelligent voting system
+- ✅ **Performance Optimization** - Caching & parallel execution
 - ✅ **Automated Testing** - 100% test coverage
 - ✅ **Quality Control** - Automated validation
 
 ## 📚 Key Documentation
 
-- **SYSTEM_100_PERCENT_COMPLETE.md** - Complete system overview
-- **QUICK_START.md** - Fast setup guide
-- **docs/system/CI_CD_SETUP.md** - GitHub Actions setup
+- **QUICK_START.md** - ⭐ Start here! Complete workflow guide
+- **PROJECT_INDEX.md** - Navigation hub for all documentation
+- **FINAL_SYSTEM_STATUS.md** - Complete system overview
+- **DOCUMENTATION_STATUS.md** - Documentation audit
+- **outputs/PHASE_*_SUMMARY.md** - All 13 phase summaries
 - **docs/system/PRD.md** - Product requirements
-- **outputs/PHASE_*_SUMMARY.md** - Phase completion summaries
+- **docs/system/CI_CD_SETUP.md** - GitHub Actions setup
+
+### **New Agent Documentation:**
+- **agents/vertical_agent/README.md** - Business idea evaluator
+- **agents/strategic_planner/README.md** - Strategic decision maker
+- **dashboards/VERTICAL_DASHBOARD_README.md** - Interactive dashboard
 
 ---
 
 **Maintained by:** AI Management Team  
-**Last Updated:** 2025-10-11  
-**All 9 Phases:** ✅ Complete
+**Last Updated:** 2025-10-12  
+**All 13 Phases:** ✅ Complete (11 core + 2 enhancements)

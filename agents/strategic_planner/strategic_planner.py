@@ -34,6 +34,9 @@ try:
 except ImportError:
     AgentOutput = None
 
+# Import summary parser utility
+from src.utils.summary_parser import parse_vertical_summary, validate_summary
+
 
 class StrategicPlannerAgent:
     """
@@ -125,7 +128,8 @@ class StrategicPlannerAgent:
         """
         Load recommendation from Vertical Agent output.
         
-        Tries YAML first, falls back to parsing markdown.
+        Uses summary_parser utility for clean, reliable parsing.
+        Tries YAML first, then markdown.
         
         Returns:
             Dict with recommendation data or None
@@ -133,65 +137,48 @@ class StrategicPlannerAgent:
         # Try YAML scores file first (most reliable)
         if self.scores_path.exists():
             try:
-                with open(self.scores_path, 'r') as f:
-                    data = yaml.safe_load(f)
+                summary = parse_vertical_summary(str(self.scores_path))
+                
+                # Validate
+                if not validate_summary(str(self.scores_path)):
+                    print(f"⚠️  Invalid YAML format")
+                    return None
+                
                 print(f"✅ Loaded vertical scores from {self.scores_path}")
-                return data
+                
+                # Convert to expected format
+                return {
+                    'top_choice': summary['top'],
+                    'all_ranked': summary.get('ranked', []),
+                    'framework': summary.get('framework', 'RICE')
+                }
+                
             except Exception as e:
                 print(f"⚠️  Failed to load YAML: {e}")
         
-        # Fallback to parsing markdown
+        # Fallback to parsing markdown using utility
         if self.recommendation_path.exists():
             try:
-                recommendation = self._parse_recommendation_md()
+                summary = parse_vertical_summary(str(self.recommendation_path))
+                
+                # Validate
+                if not validate_summary(str(self.recommendation_path)):
+                    print(f"⚠️  Invalid markdown format")
+                    return None
+                
                 print(f"✅ Parsed recommendation from {self.recommendation_path}")
-                return recommendation
+                
+                # Convert to expected format
+                return {
+                    'top_choice': summary['top'],
+                    'all_ranked': summary.get('ranked', []),
+                    'framework': summary.get('framework', 'RICE')
+                }
+                
             except Exception as e:
                 print(f"⚠️  Failed to parse markdown: {e}")
         
         print("❌ No vertical recommendation found")
-        return None
-    
-    def _parse_recommendation_md(self) -> Dict:
-        """
-        Parse recommendation.md to extract top choice.
-        
-        Returns:
-            Dict with basic recommendation data
-        """
-        with open(self.recommendation_path, 'r') as f:
-            lines = f.readlines()
-        
-        top_name = None
-        score = None
-        
-        for i, line in enumerate(lines):
-            # Look for "**Name**" after "Top Recommendation"
-            if "## 🏆 Top" in line:
-                # Next few lines should have the name
-                for j in range(i+1, min(i+10, len(lines))):
-                    if lines[j].startswith("**") and not lines[j].startswith("**Score"):
-                        top_name = lines[j].strip().replace("**", "")
-                        break
-            
-            # Look for score
-            if "**Score**:" in line or "RICE Score:" in line:
-                parts = line.split("`")
-                if len(parts) >= 2:
-                    try:
-                        score = float(parts[1])
-                    except:
-                        pass
-        
-        if top_name:
-            return {
-                'top_choice': {
-                    'name': top_name,
-                    'score': score or 0
-                },
-                'all_ranked': [{'name': top_name, 'score': score or 0}]
-            }
-        
         return None
     
     def _make_strategic_decision(

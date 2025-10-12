@@ -39,6 +39,46 @@ This is the **AI Management Layer System** - a modular AI agent framework that p
 - Every significant change requires a TDR (Technical Decision Record)
 - Every project phase requires a progress update
 
+### **⚠️ CRITICAL: Documentation Alignment Rule**
+**Before any Git commit, ensure ALL documentation is updated and aligned:**
+
+1. **Update Version Numbers**
+   - README.md (version, date, phase count)
+   - FINAL_SYSTEM_STATUS.md (agent count, phase list)
+   - QUICK_START.md (new features, commands)
+   
+2. **Update Agent Lists**
+   - README.md (agent count and names)
+   - FINAL_SYSTEM_STATUS.md (agent table)
+   - PROJECT_INDEX.md (if new docs added)
+   - agents/orchestrator/agent_registry.yaml (new agents)
+   
+3. **Create Phase Summary**
+   - outputs/PHASE_X_SUMMARY.md for new phases
+   - Include: objectives, deliverables, tests, success criteria
+   
+4. **Update Navigation**
+   - PROJECT_INDEX.md (add new docs)
+   - QUICK_START.md (add new commands)
+   - DOCUMENTATION_STATUS.md (audit status)
+
+**✅ Checklist Before Commit:**
+- [ ] All agent counts updated (6 → 7 → 8, etc.)
+- [ ] All phase counts updated (9 → 11 → 13, etc.)
+- [ ] All version numbers incremented
+- [ ] All dates updated to current
+- [ ] New features added to QUICK_START.md
+- [ ] New agents added to README.md
+- [ ] Navigation updated in PROJECT_INDEX.md
+- [ ] Phase summary created (if new phase)
+
+**Why This Matters:**
+- Prevents documentation drift
+- Ensures all docs tell the same story
+- Makes onboarding easier
+- Maintains professional quality
+- Avoids confusion for users
+
 ## Memory System Rules
 - Use Mem0 for phase 1 (first 6 months)
 - Design all memory interfaces to be database-agnostic
