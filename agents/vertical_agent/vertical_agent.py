@@ -204,6 +204,7 @@ def _generate_proactive_suggestions(top: Dict, all_ranked: List[Dict]) -> List[s
 def _write_recommendation_file(recommendation: Dict, framework: str = "RICE"):
     """
     Write recommendation to markdown file for easy reference.
+    Uses Jinja2 template if available, falls back to direct generation.
     
     Args:
         recommendation: Full recommendation dict
@@ -214,6 +215,44 @@ def _write_recommendation_file(recommendation: Dict, framework: str = "RICE"):
     output_dir = Path("./outputs")
     output_dir.mkdir(exist_ok=True)
     
+    output_file = output_dir / "recommendation.md"
+    
+    # Try to use Jinja2 template first
+    template_path = Path(__file__).parent / "templates" / "vertical_summary.md"
+    if template_path.exists():
+        try:
+            from jinja2 import Template
+            
+            with open(template_path, 'r') as f:
+                template = Template(f.read())
+            
+            # Prepare template context
+            all_ranked = recommendation.get('all_ranked', [])
+            scores = [v['score'] for v in all_ranked] if all_ranked else [0]
+            
+            context = {
+                'top': recommendation.get('top_choice', {}),
+                'ranked': all_ranked,
+                'proactive_notes': recommendation.get('proactive_notes', []),
+                'framework': framework,
+                'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                'min_score': min(scores) if scores else 0,
+                'max_score': max(scores) if scores else 0
+            }
+            
+            # Render template
+            output_content = template.render(**context)
+            
+            with open(output_file, 'w') as f:
+                f.write(output_content)
+            
+            print(f"📄 Recommendation saved to {output_file} (using template)")
+            return
+            
+        except Exception as e:
+            print(f"⚠️  Template rendering failed, using fallback: {e}")
+    
+    # Fallback to direct generation if template not available
     output_file = output_dir / "recommendation.md"
     
     top = recommendation.get('top_choice')

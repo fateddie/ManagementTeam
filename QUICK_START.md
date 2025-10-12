@@ -52,12 +52,14 @@ python scripts/run_vertical_agent.py inputs/ideas.json
 ```
 
 **What the scores mean (1-10):**
+
 - **Reach:** How many customers? (Higher = more customers)
 - **Impact:** How much value? (Higher = bigger improvement)
 - **Confidence:** How sure are you? (Higher = more certain)
 - **Effort:** How hard to build? (Lower = easier, better!)
 
 **Options:**
+
 ```bash
 # Use ICE framework instead
 python scripts/run_vertical_agent.py inputs/ideas.json --framework ICE
