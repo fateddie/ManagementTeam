@@ -12,13 +12,15 @@
 Built two powerful enhancement agents:
 
 ### **Phase 14: Opportunity Ranking Agent**
+
 - Advanced 7-criteria weighted scoring
 - Custom weight configuration
 - Risk flag detection
 - Bonus multipliers
 - Detailed markdown reports
 
-### **Phase 15: Idea Refinement Agent**  
+### **Phase 15: Idea Refinement Agent**
+
 - Turns vague ideas into clear concepts
 - AI-powered refinement (OpenAI)
 - Critique and clarification
@@ -32,6 +34,7 @@ Built two powerful enhancement agents:
 ### **Phase 14: Opportunity Ranking**
 
 **Files:**
+
 - ✅ `agents/opportunity_ranking/opportunity_ranking_agent.py`
 - ✅ `config/weights/weight_config.yaml`
 - ✅ `src/utils/score_utils.py`
@@ -39,6 +42,7 @@ Built two powerful enhancement agents:
 - ✅ `data/opportunity/idea_blocks.json`
 
 **Features:**
+
 - 7 strategic criteria scoring
 - Custom weights (sum to 23)
 - JSON + Markdown outputs
@@ -47,6 +51,7 @@ Built two powerful enhancement agents:
 ### **Phase 15: Idea Refinement**
 
 **Files:**
+
 - ✅ `agents/refinement_agent/refinement_agent.py`
 - ✅ `agents/refinement_agent/prompts/refinement_prompt.md`
 - ✅ `cli/utils/prompts.py`
@@ -56,6 +61,7 @@ Built two powerful enhancement agents:
 - ✅ `streamlit_app/app.py`
 
 **Features:**
+
 - AI-powered idea refinement
 - Vague → Clear concept transformation
 - Integrated scoring (6 VC criteria)
@@ -71,7 +77,7 @@ VAGUE IDEA ("AI Call Catcher")
         ↓
 Phase 15: Refinement Agent
    • Critiques vagueness
-   • Asks clarifying questions  
+   • Asks clarifying questions
    • Suggests niches
    • Outputs: "AI Receptionist for Hair Salons"
         ↓
@@ -98,6 +104,7 @@ COMPLETE PROJECT STRUCTURE
 ## 📊 Test Results
 
 ### **Refinement Test:**
+
 ```
 Input: "AI Call Catcher"
 Output: {
@@ -112,6 +119,7 @@ Output: {
 ```
 
 ### **Opportunity Ranking Test:**
+
 ```
 Input: 3 business ideas with 7 criteria each
 Output:
@@ -124,11 +132,12 @@ Output:
 ```
 
 ### **Integrated Pipeline Test:**
+
 ```
 Command: python scripts/run_refine_and_score.py "AI Call Catcher"
 
 Step 1: Refinement ✅
-Step 2: Scoring ✅  
+Step 2: Scoring ✅
 Step 3: Save ✅
 
 Total Time: < 10 seconds
@@ -139,21 +148,25 @@ Total Time: < 10 seconds
 ## 🎮 Usage
 
 ### **Quick Refinement:**
+
 ```bash
 python scripts/run_refiner.py "AI Call Catcher"
 ```
 
 ### **Advanced Scoring:**
+
 ```bash
 python scripts/run_opportunity_ranking.py
 ```
 
 ### **Full Pipeline:**
+
 ```bash
 python scripts/run_refine_and_score.py "AI Call Catcher"
 ```
 
 ### **Interactive Dashboard:**
+
 ```bash
 streamlit run streamlit_app/app.py
 ```
@@ -164,13 +177,13 @@ streamlit run streamlit_app/app.py
 
 **Total Agents:** 10 (was 8, +2 new)
 
-| Stage | Agent | Purpose |
-|-------|-------|---------|
-| **0.4** | **Refinement** | Turn vague → clear |
-| **0.5** | Vertical | RICE scoring |
-| **0.6** | **Opportunity Ranking** | Advanced 7-criteria |
-| **0.7** | Strategic Planner | Decision + approval |
-| **1-6** | Core agents | Strategy → Reporting |
+| Stage   | Agent                   | Purpose              |
+| ------- | ----------------------- | -------------------- |
+| **0.4** | **Refinement**          | Turn vague → clear   |
+| **0.5** | Vertical                | RICE scoring         |
+| **0.6** | **Opportunity Ranking** | Advanced 7-criteria  |
+| **0.7** | Strategic Planner       | Decision + approval  |
+| **1-6** | Core agents             | Strategy → Reporting |
 
 **Total Phases:** 15 (was 13, +2 new)
 
@@ -221,4 +234,3 @@ streamlit run streamlit_app/app.py
 _Management Team AI System_  
 _Phases 14-15: Advanced Scoring & Refinement_  
 _All Systems Operational_ 🚀
-
