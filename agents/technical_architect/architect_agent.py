@@ -78,12 +78,13 @@ class TechnicalArchitectAgent:
         
         # Read strategy plan
         strategy_text = self.strategy_path.read_text(encoding='utf-8')
-        
+        strategy_data = yaml.safe_load(strategy_text)
+
         # Generate technical design
         if self.llm_enabled:
             technical_design = self._generate_with_llm(strategy_text)
         else:
-            technical_design = self._generate_fallback_design(strategy_text)
+            technical_design = self._generate_fallback_design(strategy_text, strategy_data)
         
         # Save as YAML
         yaml_output = yaml.safe_dump(
@@ -132,11 +133,24 @@ STRATEGY PLAN:
         data = yaml.safe_load(yaml_text)
         return data
     
-    def _generate_fallback_design(self, strategy_text: str = "") -> Dict[str, Any]:
-        """Fallback technical design without LLM."""
-        design = {
-            "project": "AI Management Layer System",
-            "modules": [
+    def _generate_fallback_design(self, strategy_text: str = "", strategy_data: Dict[str, Any] = None) -> Dict[str, Any]:
+        """Enhanced fallback technical design - uses recommended_modules from strategy if available."""
+
+        # Extract project name from strategy
+        project_name = "AI Management Layer System"
+        if strategy_data and 'project' in strategy_data:
+            if isinstance(strategy_data['project'], dict):
+                project_name = strategy_data['project'].get('name', project_name)
+            elif isinstance(strategy_data['project'], str):
+                project_name = strategy_data['project']
+
+        # Check if strategy contains recommended modules from addendum
+        modules = []
+        if strategy_data and 'recommended_modules' in strategy_data:
+            modules = strategy_data['recommended_modules']
+        else:
+            # Fallback to generic modules
+            modules = [
                 {
                     "name": "PlanningAgent",
                     "purpose": "Converts strategy YAML to roadmap and milestones",
@@ -158,7 +172,11 @@ STRATEGY PLAN:
                     "outputs": ["session_summary.md", "logs"],
                     "dependencies": ["All active agents"]
                 }
-            ],
+            ]
+
+        design = {
+            "project": project_name,
+            "modules": modules,
             "data_models": [
                 {
                     "name": "ProjectPlan",

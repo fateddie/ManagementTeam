@@ -1,50 +1,53 @@
 # Technical Specification
 
-**Generated:** 2025-10-11 19:50  
+**Generated:** 2025-10-11 20:43  
 
 ---
 
 ## 🏗️  System Modules
 
-### PlanningAgent
+### MethodologyEngine
 
-**Purpose:** Converts strategy YAML to roadmap and milestones  
+**Purpose:** Bias formation using multi-timeframe analysis (Monthly→Weekly→Daily→4H).  
 
 **Inputs:**  
-- strategy_plan.yaml  
+- price_data  
+- cot_data  
+- sentiment_feeds  
 
 **Outputs:**  
-- roadmap.md  
-- project_plan.yaml  
-
-**Dependencies:** ResearchAgent  
+- directional_bias  
+- market_narrative  
 
 ---
 
-### ResearchAgent
+### TechnicalFramework
 
-**Purpose:** Fetches external frameworks and references  
+**Purpose:** Confluence scoring (0–10) combining timeframe alignment, momentum, and sentiment.  
 
 **Inputs:**  
-- research_queries  
+- price_data  
+- structure_levels  
+- indicators  
 
 **Outputs:**  
-- research_summaries  
+- scored_setups  
+- trade_signals  
 
 ---
 
-### Orchestrator
+### RiskManager
 
-**Purpose:** Controls sequencing and logging across agents  
+**Purpose:** Drawdown monitoring (5%/10% thresholds) and damage control.  
 
 **Inputs:**  
-- agent_registry.yaml  
+- positions  
+- account_balance  
+- market_volatility  
 
 **Outputs:**  
-- session_summary.md  
-- logs  
-
-**Dependencies:** All active agents  
+- exposure_alerts  
+- hedge_recommendations  
 
 ---
 

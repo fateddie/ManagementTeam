@@ -38,20 +38,29 @@ class StrategyAgent:
     """
     
     def __init__(
-        self, 
-        prd_path: str = "./docs/system/PRD.md",
-        output_path: str = "./outputs/strategy_plan.yaml"
+        self,
+        prd_path: str = "./projects/swing-fx-trading-assistant/docs/trading_strategy_prd.md",
+        output_path: str = "./outputs/strategy_plan.yaml",
+        addendum_path: str = None
     ):
         """
         Initialize Strategy Agent.
-        
+
         Args:
             prd_path: Path to PRD markdown file
             output_path: Where to save strategy_plan.yaml
+            addendum_path: Optional path to YAML addendum with milestones/risks/modules/phases
         """
         self.prd_path = Path(prd_path)
         self.output_path = Path(output_path)
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # Auto-detect addendum file in same directory as PRD
+        if addendum_path is None:
+            potential_addendum = self.prd_path.parent / (self.prd_path.stem + "_addendum.yaml")
+            self.addendum_path = potential_addendum if potential_addendum.exists() else None
+        else:
+            self.addendum_path = Path(addendum_path) if addendum_path else None
         
         # Initialize OpenAI client if available
         if OPENAI_AVAILABLE:
@@ -69,22 +78,26 @@ class StrategyAgent:
     def run(self) -> Dict[str, Any]:
         """
         Main execution method - analyze PRD and generate strategy plan.
-        
+
         Returns:
             Dictionary containing strategy plan data
         """
         # Read PRD
         if not self.prd_path.exists():
             raise FileNotFoundError(f"PRD not found: {self.prd_path}")
-        
+
         prd_text = self.prd_path.read_text(encoding='utf-8')
-        
+
         # Generate strategy plan
         if self.llm_enabled:
             strategy_data = self._generate_with_llm(prd_text)
         else:
             strategy_data = self._generate_fallback(prd_text)
-        
+
+        # Merge addendum if available
+        if self.addendum_path and self.addendum_path.exists():
+            strategy_data = self._merge_addendum(strategy_data)
+
         # Save as YAML
         yaml_output = yaml.safe_dump(strategy_data, sort_keys=False, default_flow_style=False)
         self.output_path.write_text(yaml_output, encoding='utf-8')
@@ -126,11 +139,26 @@ PRD Content:
         return data
     
     def _generate_fallback(self, prd_text: str) -> Dict[str, Any]:
-        """Fallback strategy extraction without LLM (rule-based)."""
+        """Enhanced fallback strategy extraction with YAML frontmatter and section parsing."""
+
+        # 1. Extract YAML frontmatter if present
+        project_name = "AI Management Layer System"
+        project_summary = "Extracted from PRD using enhanced fallback method"
+
+        yaml_match = re.search(r'^---\n(.*?)\n---', prd_text, re.DOTALL | re.MULTILINE)
+        if yaml_match:
+            try:
+                yaml_data = yaml.safe_load(yaml_match.group(1))
+                if 'project' in yaml_data:
+                    project_name = yaml_data['project'].get('name', project_name)
+                    project_summary = yaml_data['project'].get('description', project_summary)
+            except:
+                pass
+
         strategy = {
             "project": {
-                "name": "AI Management Layer System",
-                "summary": "Extracted from PRD using fallback method"
+                "name": project_name,
+                "summary": project_summary
             },
             "goals": [],
             "constraints": [],
@@ -143,28 +171,147 @@ PRD Content:
                 "wont_have": []
             }
         }
-        
-        # Simple extraction from PRD
+
+        # 2. Parse document into sections
+        sections = {}
+        current_section = None
+        current_content = []
+
         for line in prd_text.splitlines():
-            line_lower = line.lower()
-            
-            # Extract goals
-            if any(word in line_lower for word in ["goal", "objective"]) and line.strip().startswith(("-", "*", "##")):
-                strategy["goals"].append(line.strip("- *#").strip())
-            
-            # Extract constraints
-            if "constraint" in line_lower and line.strip().startswith(("-", "*")):
-                strategy["constraints"].append(line.strip("- *").strip())
-            
-            # Extract risks
-            if "risk" in line_lower and line.strip().startswith(("-", "*")):
-                strategy["risks"].append({
-                    "id": f"R{len(strategy['risks'])+1}",
-                    "description": line.strip("- *").strip(),
-                    "mitigation": "To be defined"
-                })
-        
+            # Detect section headers (## or ###)
+            if line.strip().startswith('##'):
+                if current_section:
+                    sections[current_section] = current_content
+                current_section = line.strip('#').strip()
+                current_content = []
+            elif current_section:
+                current_content.append(line)
+
+        if current_section:
+            sections[current_section] = current_content
+
+        # 3. Extract goals from relevant sections
+        goal_sections = ['1.2 Goals', 'Goals', '1. Overview', 'Purpose']
+        for section_name in goal_sections:
+            if section_name in sections:
+                for line in sections[section_name]:
+                    line_stripped = line.strip()
+                    if line_stripped.startswith(('-', '*')) and len(line_stripped) > 5:
+                        goal = line_stripped.strip('- *').strip()
+                        if goal and not goal.startswith('#'):
+                            strategy['goals'].append(goal)
+
+        # 4. Extract constraints from Non-Functional Requirements
+        constraint_sections = ['4. Non-Functional Requirements', 'Non-Functional Requirements', 'Constraints']
+        for section_name in constraint_sections:
+            if section_name in sections:
+                table_rows = self._parse_markdown_table(sections[section_name])
+                for row in table_rows:
+                    if 'Requirement' in row and row['Requirement']:
+                        strategy['constraints'].append(row['Requirement'])
+                    elif 'Area' in row and 'Requirement' in row:
+                        strategy['constraints'].append(f"{row['Area']}: {row['Requirement']}")
+
+        # 5. Extract risks
+        risk_sections = ['Risks', '8. Risks & Mitigation', 'Risk Management']
+        for section_name in risk_sections:
+            if section_name in sections:
+                for line in sections[section_name]:
+                    line_stripped = line.strip()
+                    if line_stripped.startswith(('-', '*')) and 'risk' in line_stripped.lower():
+                        strategy['risks'].append({
+                            "id": f"R{len(strategy['risks'])+1}",
+                            "description": line_stripped.strip('- *').strip(),
+                            "mitigation": "To be defined"
+                        })
+
+        # 6. Extract dependencies as potential milestones
+        dep_sections = ['5. Dependencies', 'Dependencies', 'Technology Stack']
+        for section_name in dep_sections:
+            if section_name in sections:
+                for line in sections[section_name]:
+                    line_stripped = line.strip()
+                    if line_stripped.startswith(('-', '*', '**')) and len(line_stripped) > 10:
+                        dep = line_stripped.strip('- *').strip()
+                        if dep and ':' in dep:
+                            milestone_desc = f"Integrate {dep.split(':')[0]}"
+                            strategy['milestones'].append({
+                                "id": f"M{len(strategy['milestones'])+1}",
+                                "description": milestone_desc,
+                                "duration_days": 14
+                            })
+
+        # 7. Extract acceptance criteria as priorities
+        accept_sections = ['7. Acceptance Criteria', 'Acceptance Criteria', 'Success Criteria']
+        for section_name in accept_sections:
+            if section_name in sections:
+                for line in sections[section_name]:
+                    line_stripped = line.strip()
+                    if line_stripped.startswith(('-', '*', '✅')) and len(line_stripped) > 5:
+                        priority = line_stripped.strip('- *✅').strip()
+                        if priority:
+                            strategy['priorities']['must_have'].append(priority)
+
+        # 8. Validation: Remove malformed entries
+        strategy['goals'] = [g for g in strategy['goals'] if not g.startswith('1.') and len(g) > 10]
+        strategy['constraints'] = [c for c in strategy['constraints'] if len(c) > 10]
+
         return strategy
+
+    def _parse_markdown_table(self, lines: list) -> list:
+        """Parse markdown table into list of dicts."""
+        rows = []
+        headers = []
+
+        for line in lines:
+            if '|' not in line:
+                continue
+            cells = [cell.strip() for cell in line.split('|')]
+            cells = [c for c in cells if c]  # Remove empty cells
+
+            if not headers and cells:
+                headers = cells
+            elif cells and not line.strip().startswith('|--'):  # Skip separator row
+                if len(cells) == len(headers):
+                    row_dict = dict(zip(headers, cells))
+                    rows.append(row_dict)
+
+        return rows
+
+    def _merge_addendum(self, strategy_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Merge data from YAML addendum file into strategy plan.
+        Addendum takes precedence for milestones, risks, and modules.
+        Phases are added to strategy data.
+        """
+        try:
+            addendum_text = self.addendum_path.read_text(encoding='utf-8')
+            addendum = yaml.safe_load(addendum_text)
+
+            if not addendum:
+                return strategy_data
+
+            # Merge milestones (addendum overrides)
+            if 'milestones' in addendum and addendum['milestones']:
+                strategy_data['milestones'] = addendum['milestones']
+
+            # Merge risks (addendum overrides)
+            if 'risks' in addendum and addendum['risks']:
+                strategy_data['risks'] = addendum['risks']
+
+            # Add phases (new field)
+            if 'phases' in addendum and addendum['phases']:
+                strategy_data['phases'] = addendum['phases']
+
+            # Store modules for Technical Architect to consume
+            if 'modules' in addendum and addendum['modules']:
+                strategy_data['recommended_modules'] = addendum['modules']
+
+            return strategy_data
+
+        except Exception as e:
+            print(f"⚠️  Error merging addendum: {e}")
+            return strategy_data
 
 
 # ==============================================

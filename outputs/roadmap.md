@@ -1,17 +1,30 @@
-# 📅 Project Roadmap – {'name': 'AI Management Layer System', 'summary': 'Extracted from PRD using fallback method'}
+# 📅 Project Roadmap – {'name': 'Trading Strategy Reference System', 'summary': 'Defines the methodology, technical analysis framework, and risk-management logic for Rob Freyne’s discretionary swing-trading system.  Serves as a foundational document for Claude and management-layer AI agents.\n'}
 
-**Generated:** 2025-10-11 19:50:12  
+**Generated:** 2025-10-11 20:43:17  
 
 ---
 
 ## 🎯 Strategic Goals
 
-1. Primary Goal:
-2. 2. Core Objectives
+1. Encode trading philosophy, structure, and decision-making logic into standardized layers.
+2. Enable Claude to reference this system when generating trading plans, checklists, or Pine/Python modules.
+3. Guarantee consistency across strategy documentation, execution scripts, and dashboards.
 
 ---
 
 ## 📋 Phases
+
+### Phase 1: Integrate Interactive Brokers API for trade and exposure data.
+**Duration:** 14 days  
+
+### Phase 2: Implement chart overlays, confluence scoring visuals, and alert system.
+**Duration:** 14 days  
+
+### Phase 3: Add external sentiment and positioning data for bias validation.
+**Duration:** 14 days  
+
+### Phase 4: Create unified dashboard for drawdown and exposure tracking.
+**Duration:** 14 days  
 
 ---
 
@@ -25,16 +38,14 @@
 
 ## 🏗️  System Modules
 
-### PlanningAgent
-**Purpose:** Converts strategy YAML to roadmap and milestones  
-**Dependencies:** ResearchAgent  
+### MethodologyEngine
+**Purpose:** Bias formation using multi-timeframe analysis (Monthly→Weekly→Daily→4H).  
 
-### ResearchAgent
-**Purpose:** Fetches external frameworks and references  
+### TechnicalFramework
+**Purpose:** Confluence scoring (0–10) combining timeframe alignment, momentum, and sentiment.  
 
-### Orchestrator
-**Purpose:** Controls sequencing and logging across agents  
-**Dependencies:** All active agents  
+### RiskManager
+**Purpose:** Drawdown monitoring (5%/10% thresholds) and damage control.  
 
 ---
 

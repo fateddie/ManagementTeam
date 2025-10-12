@@ -1,0 +1,165 @@
+{
+  "session": "20251011_192612",
+  "outputs": [
+    {
+      "name": "session_summary_20251011_181128.md",
+      "size": 5408,
+      "modified": "2025-10-11 19:11:40"
+    },
+    {
+      "name": "planning_summary.md",
+      "size": 1030,
+      "modified": "2025-10-11 18:25:55"
+    },
+    {
+      "name": "PHASE_6_SUMMARY.md",
+      "size": 7687,
+      "modified": "2025-10-11 19:48:29"
+    },
+    {
+      "name": "session_summary_20251011_183941.md",
+      "size": 7585,
+      "modified": "2025-10-11 19:39:44"
+    },
+    {
+      "name": "strategy_plan.yaml",
+      "size": 553,
+      "modified": "2025-10-11 20:26:12"
+    },
+    {
+      "name": "tech_spec.md",
+      "size": 1566,
+      "modified": "2025-10-11 20:26:33"
+    },
+    {
+      "name": "prd.md",
+      "size": 744,
+      "modified": "2025-10-11 20:26:33"
+    },
+    {
+      "name": "session_summary_20251011_191134.md",
+      "size": 311,
+      "modified": "2025-10-11 20:11:34"
+    },
+    {
+      "name": "session_summary_20251011_182036.md",
+      "size": 654,
+      "modified": "2025-10-11 19:20:36"
+    },
+    {
+      "name": "PHASE_3_SUMMARY.md",
+      "size": 6173,
+      "modified": "2025-10-11 19:33:20"
+    },
+    {
+      "name": "PHASE_1_COMPLETE.md",
+      "size": 5535,
+      "modified": "2025-10-11 19:13:11"
+    },
+    {
+      "name": "session_summary_20251011_184629.md",
+      "size": 16754,
+      "modified": "2025-10-11 19:46:52"
+    },
+    {
+      "name": "project_plan.yaml",
+      "size": 1877,
+      "modified": "2025-10-11 20:26:12"
+    },
+    {
+      "name": "PHASE_9_SUMMARY.md",
+      "size": 11298,
+      "modified": "2025-10-11 20:01:50"
+    },
+    {
+      "name": "PHASE_4_SUMMARY.md",
+      "size": 6854,
+      "modified": "2025-10-11 19:37:09"
+    },
+    {
+      "name": "session_summary_20251011_185012.md",
+      "size": 17507,
+      "modified": "2025-10-11 19:50:36"
+    },
+    {
+      "name": "session_summary_20251011_191348.md",
+      "size": 16447,
+      "modified": "2025-10-11 20:13:58"
+    },
+    {
+      "name": "PHASE_2_SUMMARY.md",
+      "size": 6325,
+      "modified": "2025-10-11 19:27:49"
+    },
+    {
+      "name": "session_summary_20251011_183120.md",
+      "size": 4500,
+      "modified": "2025-10-11 19:31:51"
+    },
+    {
+      "name": "technical_design.yaml",
+      "size": 1278,
+      "modified": "2025-10-11 20:26:12"
+    },
+    {
+      "name": "roadmap.md",
+      "size": 798,
+      "modified": "2025-10-11 20:26:12"
+    },
+    {
+      "name": "PHASE_11_SUMMARY.md",
+      "size": 8893,
+      "modified": "2025-10-11 20:13:21"
+    },
+    {
+      "name": "session_summary_20251011_182537.md",
+      "size": 2206,
+      "modified": "2025-10-11 19:26:07"
+    },
+    {
+      "name": "PHASE_7_SUMMARY.md",
+      "size": 8392,
+      "modified": "2025-10-11 19:52:17"
+    },
+    {
+      "name": "final_summary.md",
+      "size": 950,
+      "modified": "2025-10-11 20:26:33"
+    },
+    {
+      "name": "dependency_map.yaml",
+      "size": 609,
+      "modified": "2025-10-11 20:26:12"
+    },
+    {
+      "name": "session_summary_20251011_183537.md",
+      "size": 10029,
+      "modified": "2025-10-11 19:35:43"
+    },
+    {
+      "name": "PHASE_8_SUMMARY.md",
+      "size": 9482,
+      "modified": "2025-10-11 19:55:47"
+    },
+    {
+      "name": "session_summary_20251011_182253.md",
+      "size": 6462,
+      "modified": "2025-10-11 19:23:01"
+    },
+    {
+      "name": "PHASE_1.5_SUMMARY.md",
+      "size": 6759,
+      "modified": "2025-10-11 19:24:03"
+    },
+    {
+      "name": "PHASE_5_SUMMARY.md",
+      "size": 8135,
+      "modified": "2025-10-11 19:42:51"
+    }
+  ],
+  "logs": [
+    "planner_trace.log",
+    "orchestrator.log"
+  ],
+  "timestamp": "2025-10-11 19:26:33"
+}

@@ -1,35 +1,68 @@
 # Product Requirements Document
 
-**Project:** AI Management Layer System  
-**Generated:** 2025-10-11 19:50  
-**Summary:** Extracted from PRD using fallback method  
+**Project:** Trading Strategy Reference System  
+**Generated:** 2025-10-11 20:43  
+**Summary:** Defines the methodology, technical analysis framework, and risk-management logic for Rob Freyne’s discretionary swing-trading system.  Serves as a foundational document for Claude and management-layer AI agents.
+  
 
 ---
 
 ## 🎯 Strategic Goals
 
-1. Primary Goal:
-2. 2. Core Objectives
+1. Encode trading philosophy, structure, and decision-making logic into standardized layers.
+2. Enable Claude to reference this system when generating trading plans, checklists, or Pine/Python modules.
+3. Guarantee consistency across strategy documentation, execution scripts, and dashboards.
 
 ---
 
 ## ⚠️ Constraints
 
-*No constraints specified*
+- All AI outputs must align with methodology, technical, and risk rules
+- Each layer can be upgraded independently
+- All rule changes logged and version-controlled
+- Future integration with journaling, macro dashboards, broker APIs
+- Minimal latency for alerts (<2s for threshold triggers)
 
 ---
 
 ## 📋 Phases
 
+### Phase 1: Integrate Interactive Brokers API for trade and exposure data.
+**Duration:** 14 days  
+
+### Phase 2: Implement chart overlays, confluence scoring visuals, and alert system.
+**Duration:** 14 days  
+
+### Phase 3: Add external sentiment and positioning data for bias validation.
+**Duration:** 14 days  
+
+### Phase 4: Create unified dashboard for drawdown and exposure tracking.
+**Duration:** 14 days  
+
 ---
 
 ## 🔴 Risks
 
-*No risks identified*
+- **R1:** Performance degradation under real-time data load.  
+  *Mitigation:* Implement async processing and caching layers.  
+
+- **R2:** External API downtime or rate-limit failures (IBKR, TradingView).  
+  *Mitigation:* Add fallback data sources and circuit breakers.  
+
+- **R3:** Data desynchronization between sentiment and price feeds.  
+  *Mitigation:* Add time-window validation and feed prioritization rules.  
+
 
 ---
 
 ## 📊 Priorities (MoSCoW)
+
+### Must Have
+- Core methodology accurately reproduced in AI-generated plans
+- Technical layer produces scored, justifiable levels per asset
+- Risk system enforces drawdown thresholds automatically
+- Damage control triggers and logging validated via test trades
+- Documentation versioned and accessible to all management-layer agents
 
 ---
 

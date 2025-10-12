@@ -1,0 +1,96 @@
+# verticals.yaml
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Business Vertical Ideas for Evaluation
+#
+# RICE Scoring Framework:
+# - Reach: Number of potential customers (1-10 scale)
+# - Impact: How much value it creates (1-10 scale)
+# - Confidence: How certain we are of estimates (1-10 scale)
+# - Effort: Implementation complexity (1-10 scale, higher = harder)
+#
+# RICE Score = (Reach × Impact × Confidence) / Effort
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+verticals:
+  - name: "Golf Courses"
+    reach: 6
+    impact: 7
+    confidence: 8
+    effort: 4
+    description: "Course management, tee-time booking, and member management system for golf clubs"
+    
+  - name: "Car Garages"
+    reach: 7
+    impact: 8
+    confidence: 7
+    effort: 3
+    description: "Booking system, inventory management, and customer records for auto repair shops"
+    
+  - name: "Hair Salons"
+    reach: 5
+    impact: 6
+    confidence: 9
+    effort: 2
+    description: "Appointment scheduling, client history, and product sales tracking for salons"
+    
+  - name: "Restaurants"
+    reach: 8
+    impact: 7
+    confidence: 6
+    effort: 5
+    description: "Table booking, waitlist management, and online ordering system"
+    
+  - name: "Fitness Studios"
+    reach: 6
+    impact: 7
+    confidence: 8
+    effort: 3
+    description: "Class scheduling, membership management, and workout tracking"
+    
+  - name: "Dental Practices"
+    reach: 7
+    impact: 8
+    confidence: 8
+    effort: 4
+    description: "Patient scheduling, records management, and insurance billing"
+    
+  - name: "Real Estate Agencies"
+    reach: 6
+    impact: 9
+    confidence: 6
+    effort: 6
+    description: "Property listings, client matching, and transaction management"
+    
+  - name: "Pet Grooming"
+    reach: 4
+    impact: 6
+    confidence: 9
+    effort: 2
+    description: "Appointment booking and pet history tracking for grooming businesses"
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# SCORING GUIDANCE
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+#
+# Reach (Market Size):
+#   1-3: Niche market (< 10K potential customers)
+#   4-6: Medium market (10K-100K potential customers)
+#   7-10: Large market (> 100K potential customers)
+#
+# Impact (Value Creation):
+#   1-3: Minor improvement
+#   4-6: Moderate value
+#   7-10: Major transformation
+#
+# Confidence (Certainty):
+#   1-3: Low confidence / high uncertainty
+#   4-6: Moderate confidence
+#   7-10: High confidence / proven model
+#
+# Effort (Implementation):
+#   1-3: Simple / quick to build
+#   4-6: Moderate complexity
+#   7-10: Complex / resource intensive
+#
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+

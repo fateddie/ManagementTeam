@@ -109,3 +109,6 @@
 
 > Integrate `memory_manager.py` into the orchestrator and test persistence across agents.  
 > Once validated, move to Slack Phase 1 implementation as per Monitoring Plan.
+> 1
+
+--interactive

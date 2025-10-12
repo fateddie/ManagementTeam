@@ -1,0 +1,74 @@
+# ==========================================================
+# Claude Parsing Addendum
+# Project: Trading Strategy Reference System
+# Author: Rob Freyne
+# Date: 2025-10-11
+# Purpose: Extend PRD with machine-readable milestones, risks,
+#          architecture modules, and development phases.
+# ==========================================================
+
+milestones:
+  - id: M1
+    name: "Interactive Brokers Integration"
+    description: "Integrate Interactive Brokers API for trade and exposure data."
+    duration_days: 14
+
+  - id: M2
+    name: "TradingView Integration"
+    description: "Implement chart overlays, confluence scoring visuals, and alert system."
+    duration_days: 14
+
+  - id: M3
+    name: "COT & Sentiment Feed Integration"
+    description: "Add external sentiment and positioning data for bias validation."
+    duration_days: 14
+
+  - id: M4
+    name: "Drawdown Dashboard"
+    description: "Create unified dashboard for drawdown and exposure tracking."
+    duration_days: 14
+
+risks:
+  - id: R1
+    description: "Performance degradation under real-time data load."
+    mitigation: "Implement async processing and caching layers."
+
+  - id: R2
+    description: "External API downtime or rate-limit failures (IBKR, TradingView)."
+    mitigation: "Add fallback data sources and circuit breakers."
+
+  - id: R3
+    description: "Data desynchronization between sentiment and price feeds."
+    mitigation: "Add time-window validation and feed prioritization rules."
+
+modules:
+  - name: MethodologyEngine
+    purpose: "Bias formation using multi-timeframe analysis (Monthly→Weekly→Daily→4H)."
+    inputs: [price_data, cot_data, sentiment_feeds]
+    outputs: [directional_bias, market_narrative]
+
+  - name: TechnicalFramework
+    purpose: "Confluence scoring (0–10) combining timeframe alignment, momentum, and sentiment."
+    inputs: [price_data, structure_levels, indicators]
+    outputs: [scored_setups, trade_signals]
+
+  - name: RiskManager
+    purpose: "Drawdown monitoring (5%/10% thresholds) and damage control."
+    inputs: [positions, account_balance, market_volatility]
+    outputs: [exposure_alerts, hedge_recommendations]
+
+phases:
+  - id: P1
+    name: "Core Trading System"
+    duration_weeks: 6
+    deliverables: [MethodologyEngine, TechnicalFramework, RiskManager]
+
+  - id: P2
+    name: "Integration & Automation"
+    duration_weeks: 4
+    deliverables: [Broker API, TradingView Integration, Real-time Alerts]
+
+  - id: P3
+    name: "Advanced Features"
+    duration_weeks: 3
+    deliverables: [Automated Journaling, Macro Dashboard, Voice Interface]

@@ -1,39 +1,70 @@
 project:
-  name: AI Management Layer System
-  summary: Extracted from PRD using fallback method
-summary: Extracted from PRD using fallback method
+  name: Trading Strategy Reference System
+  summary: "Defines the methodology, technical analysis framework, and risk-management\
+    \ logic for Rob Freyne\u2019s discretionary swing-trading system.  Serves as a\
+    \ foundational document for Claude and management-layer AI agents.\n"
+summary: "Defines the methodology, technical analysis framework, and risk-management\
+  \ logic for Rob Freyne\u2019s discretionary swing-trading system.  Serves as a foundational\
+  \ document for Claude and management-layer AI agents.\n"
 goals:
-- 'Primary Goal:'
-- 2. Core Objectives
-constraints: []
-phases: []
+- Encode trading philosophy, structure, and decision-making logic into standardized
+  layers.
+- Enable Claude to reference this system when generating trading plans, checklists,
+  or Pine/Python modules.
+- Guarantee consistency across strategy documentation, execution scripts, and dashboards.
+constraints:
+- All AI outputs must align with methodology, technical, and risk rules
+- Each layer can be upgraded independently
+- All rule changes logged and version-controlled
+- Future integration with journaling, macro dashboards, broker APIs
+- Minimal latency for alerts (<2s for threshold triggers)
+phases:
+- id: M1
+  name: Interactive Brokers Integration
+  description: Integrate Interactive Brokers API for trade and exposure data.
+  duration_days: 14
+- id: M2
+  name: TradingView Integration
+  description: Implement chart overlays, confluence scoring visuals, and alert system.
+  duration_days: 14
+- id: M3
+  name: COT & Sentiment Feed Integration
+  description: Add external sentiment and positioning data for bias validation.
+  duration_days: 14
+- id: M4
+  name: Drawdown Dashboard
+  description: Create unified dashboard for drawdown and exposure tracking.
+  duration_days: 14
 modules:
-- name: PlanningAgent
-  purpose: Converts strategy YAML to roadmap and milestones
+- name: MethodologyEngine
+  purpose: "Bias formation using multi-timeframe analysis (Monthly\u2192Weekly\u2192\
+    Daily\u21924H)."
   inputs:
-  - strategy_plan.yaml
+  - price_data
+  - cot_data
+  - sentiment_feeds
   outputs:
-  - roadmap.md
-  - project_plan.yaml
-  dependencies:
-  - ResearchAgent
-- name: ResearchAgent
-  purpose: Fetches external frameworks and references
+  - directional_bias
+  - market_narrative
+- name: TechnicalFramework
+  purpose: "Confluence scoring (0\u201310) combining timeframe alignment, momentum,\
+    \ and sentiment."
   inputs:
-  - research_queries
+  - price_data
+  - structure_levels
+  - indicators
   outputs:
-  - research_summaries
-  interfaces:
-  - Perplexity API
-- name: Orchestrator
-  purpose: Controls sequencing and logging across agents
+  - scored_setups
+  - trade_signals
+- name: RiskManager
+  purpose: Drawdown monitoring (5%/10% thresholds) and damage control.
   inputs:
-  - agent_registry.yaml
+  - positions
+  - account_balance
+  - market_volatility
   outputs:
-  - session_summary.md
-  - logs
-  dependencies:
-  - All active agents
+  - exposure_alerts
+  - hedge_recommendations
 data_models:
 - name: ProjectPlan
   fields:
@@ -73,10 +104,24 @@ interfaces:
 - agent: StrategyAgent
   provides: strategy_extraction()
   consumes: PRD.md
-risks: []
+risks:
+- id: R1
+  description: Performance degradation under real-time data load.
+  mitigation: Implement async processing and caching layers.
+- id: R2
+  description: External API downtime or rate-limit failures (IBKR, TradingView).
+  mitigation: Add fallback data sources and circuit breakers.
+- id: R3
+  description: Data desynchronization between sentiment and price feeds.
+  mitigation: Add time-window validation and feed prioritization rules.
 priorities:
-  must_have: []
+  must_have:
+  - Core methodology accurately reproduced in AI-generated plans
+  - Technical layer produces scored, justifiable levels per asset
+  - Risk system enforces drawdown thresholds automatically
+  - Damage control triggers and logging validated via test trades
+  - Documentation versioned and accessible to all management-layer agents
   should_have: []
   could_have: []
   wont_have: []
-generated_at: '2025-10-11 19:50:12'
+generated_at: '2025-10-11 20:43:17'
