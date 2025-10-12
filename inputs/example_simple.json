@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Quick Idea #1",
+    "reach": 7,
+    "impact": 8,
+    "confidence": 7,
+    "effort": 3
+  },
+  {
+    "name": "Quick Idea #2",
+    "reach": 5,
+    "impact": 6,
+    "confidence": 9,
+    "effort": 2
+  },
+  {
+    "name": "Quick Idea #3",
+    "reach": 8,
+    "impact": 7,
+    "confidence": 6,
+    "effort": 5
+  }
+]
+
