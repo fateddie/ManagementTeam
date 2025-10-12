@@ -10,47 +10,54 @@
 ## 📦 Agents Implemented
 
 ### **Planner Agent** (Existing)
-* Scaffolds project structure
-* Generates roadmap, PRD, planning files
-* Creates complete project directories
+
+- Scaffolds project structure
+- Generates roadmap, PRD, planning files
+- Creates complete project directories
 
 ### **Vertical Agent** ✅ (Phase 12)
-* Evaluates business ideas using RICE/ICE scoring
-* Ranks opportunities
-* Provides proactive suggestions
-* Interactive dashboard with visualizations
+
+- Evaluates business ideas using RICE/ICE scoring
+- Ranks opportunities
+- Provides proactive suggestions
+- Interactive dashboard with visualizations
 
 ### **Strategic Planner Agent** ✅ (Phase 13 - NEW)
-* Reads vertical opportunity summaries
-* Proposes project execution plans
-* **Requests user approval before downstream planning**
-* Invokes Planning Agent automatically on approval
-* Logs all strategic decisions
+
+- Reads vertical opportunity summaries
+- Proposes project execution plans
+- **Requests user approval before downstream planning**
+- Invokes Planning Agent automatically on approval
+- Logs all strategic decisions
 
 ### **Summary Parser Utility** ✅ (Phase 13 - NEW)
-* Extracts score, plan, title from markdown/YAML summaries
-* **Multi-format support** (YAML, Jinja2, custom markdown)
-* **Fallback handling** if fields are missing
-* **Validation system** with errors and warnings
-* Reusable across multiple agents
+
+- Extracts score, plan, title from markdown/YAML summaries
+- **Multi-format support** (YAML, Jinja2, custom markdown)
+- **Fallback handling** if fields are missing
+- **Validation system** with errors and warnings
+- Reusable across multiple agents
 
 ---
 
 ## ⚠️ Error Handling
 
 ### **Malformed Summaries:**
-* ✅ Logged with descriptive warnings
-* ✅ Skipped summaries don't block workflow
-* ✅ Emoji-coded logging (⚠️ warnings, ❌ errors, ✅ success)
-* ✅ Graceful fallback to generic parsing
+
+- ✅ Logged with descriptive warnings
+- ✅ Skipped summaries don't block workflow
+- ✅ Emoji-coded logging (⚠️ warnings, ❌ errors, ✅ success)
+- ✅ Graceful fallback to generic parsing
 
 ### **Missing Fields:**
-* ✅ `score` missing → fallback to 0, validation error
-* ✅ `plan` missing → fallback to default, warning logged
-* ✅ `title` missing → fallback to "Unknown", error logged
-* ✅ Empty file → handled gracefully, validation fails
+
+- ✅ `score` missing → fallback to 0, validation error
+- ✅ `plan` missing → fallback to default, warning logged
+- ✅ `title` missing → fallback to "Unknown", error logged
+- ✅ Empty file → handled gracefully, validation fails
 
 ### **Test Results:**
+
 ```
 ✅ Well-formed summary: PASS
 ✅ Missing plan section: PASS (with warnings)
@@ -125,8 +132,8 @@ python scripts/run_strategic_planner.py
 python scripts/run_strategic_planner.py --non-interactive
 ```
 
-* Auto-approves without prompting
-* Perfect for automation/CI
+- Auto-approves without prompting
+- Perfect for automation/CI
 
 ---
 
@@ -134,21 +141,21 @@ python scripts/run_strategic_planner.py --non-interactive
 
 ### **Defensive Logic:**
 
-* ✅ If `plan` is missing → Uses fallback: `"Build: {project_name}"`
-* ✅ If `score` is missing → Uses 0, validation warning
-* ✅ If parsing fails → Fallback to generic extraction
-* ✅ Errors logged to console and decision logs
-* ✅ Dashboard remains stable
-* ✅ Workflow continues without crash
+- ✅ If `plan` is missing → Uses fallback: `"Build: {project_name}"`
+- ✅ If `score` is missing → Uses 0, validation warning
+- ✅ If parsing fails → Fallback to generic extraction
+- ✅ Errors logged to console and decision logs
+- ✅ Dashboard remains stable
+- ✅ Workflow continues without crash
 
 ### **Validation Results:**
 
-| Scenario | Parse | Validation | Action |
-|----------|-------|------------|--------|
-| **Well-formed** | ✅ Success | ✅ Valid | Proceed normally |
-| **Missing plan** | ✅ Fallback | ⚠️ Warning | Proceed with default |
-| **Missing score** | ✅ Fallback | ❌ Invalid | Skip or manual review |
-| **Completely broken** | ✅ Generic | ❌ Invalid | Skip with error log |
+| Scenario              | Parse       | Validation | Action                |
+| --------------------- | ----------- | ---------- | --------------------- |
+| **Well-formed**       | ✅ Success  | ✅ Valid   | Proceed normally      |
+| **Missing plan**      | ✅ Fallback | ⚠️ Warning | Proceed with default  |
+| **Missing score**     | ✅ Fallback | ❌ Invalid | Skip or manual review |
+| **Completely broken** | ✅ Generic  | ❌ Invalid | Skip with error log   |
 
 ---
 
@@ -156,28 +163,29 @@ python scripts/run_strategic_planner.py --non-interactive
 
 ### **Core Files:**
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `agents/strategic_planner/strategic_planner.py` | 400+ | Main agent logic |
-| `agents/strategic_planner/__init__.py` | 10 | Package init |
-| `agents/strategic_planner/README.md` | 300+ | Documentation |
-| `src/utils/summary_parser.py` | 500+ | Multi-format parser |
-| `scripts/run_strategic_planner.py` | 150+ | CLI wrapper |
-| `scripts/test_summary_parser.py` | 200+ | Test suite |
+| File                                            | Lines | Purpose             |
+| ----------------------------------------------- | ----- | ------------------- |
+| `agents/strategic_planner/strategic_planner.py` | 400+  | Main agent logic    |
+| `agents/strategic_planner/__init__.py`          | 10    | Package init        |
+| `agents/strategic_planner/README.md`            | 300+  | Documentation       |
+| `src/utils/summary_parser.py`                   | 500+  | Multi-format parser |
+| `scripts/run_strategic_planner.py`              | 150+  | CLI wrapper         |
+| `scripts/test_summary_parser.py`                | 200+  | Test suite          |
 
 ### **Output Files:**
 
-| File | Purpose |
-|------|---------|
-| `outputs/strategic_decision.yaml` | Strategic decision record |
-| `logs/strategic_decisions/*.txt` | Decision audit trail |
-| `projects/<project-name>/` | Auto-generated project structure |
+| File                              | Purpose                          |
+| --------------------------------- | -------------------------------- |
+| `outputs/strategic_decision.yaml` | Strategic decision record        |
+| `logs/strategic_decisions/*.txt`  | Decision audit trail             |
+| `projects/<project-name>/`        | Auto-generated project structure |
 
 ---
 
 ## 🔁 Workflow Improvements
 
 ### **Before (Phases 1-11):**
+
 ```
 Manual: Create project description
    ↓
@@ -187,6 +195,7 @@ Output: Project structure
 ```
 
 ### **After (Phases 12-13):**
+
 ```
 Input: List of business ideas (JSON)
    ↓
@@ -203,12 +212,12 @@ Output: Complete project in 3 minutes!
 
 ### **Key Improvements:**
 
-* ✅ **Defensive logic** for malformed input
-* ✅ **Summary parser** decoupled from planner (reusable!)
-* ✅ **Approval loop** prevents bad launches
-* ✅ **Human oversight** maintains control
-* ✅ **Automated flow** when approved
-* ✅ **Complete audit trail** for all decisions
+- ✅ **Defensive logic** for malformed input
+- ✅ **Summary parser** decoupled from planner (reusable!)
+- ✅ **Approval loop** prevents bad launches
+- ✅ **Human oversight** maintains control
+- ✅ **Automated flow** when approved
+- ✅ **Complete audit trail** for all decisions
 
 ---
 
@@ -216,25 +225,25 @@ Output: Complete project in 3 minutes!
 
 ### **Testing Results:**
 
-| Test | Status | Notes |
-|------|--------|-------|
-| Well-formed summary | ✅ PASS | All fields extracted correctly |
-| Missing plan section | ✅ PASS | Fallback to default, warning logged |
-| Missing score | ✅ PASS | Fallback to 0, validation error |
-| Broken file | ✅ PASS | Graceful failure, errors logged |
-| Strategic approval (Y) | ✅ PASS | Planning Agent invoked |
-| Strategic rejection (N) | ✅ PASS | Decision saved, no execution |
-| Non-interactive mode | ✅ PASS | Auto-proceeds without prompt |
+| Test                    | Status  | Notes                               |
+| ----------------------- | ------- | ----------------------------------- |
+| Well-formed summary     | ✅ PASS | All fields extracted correctly      |
+| Missing plan section    | ✅ PASS | Fallback to default, warning logged |
+| Missing score           | ✅ PASS | Fallback to 0, validation error     |
+| Broken file             | ✅ PASS | Graceful failure, errors logged     |
+| Strategic approval (Y)  | ✅ PASS | Planning Agent invoked              |
+| Strategic rejection (N) | ✅ PASS | Decision saved, no execution        |
+| Non-interactive mode    | ✅ PASS | Auto-proceeds without prompt        |
 
 **Success Rate: 100%** ✅
 
 ### **Manual Testing:**
 
-* ✅ All new modules pass manual testing
-* ✅ Works with dashboard
-* ✅ Graceful error handling in place
-* ✅ Integrates with existing agents
-* ✅ No regressions in prior phases
+- ✅ All new modules pass manual testing
+- ✅ Works with dashboard
+- ✅ Graceful error handling in place
+- ✅ Integrates with existing agents
+- ✅ No regressions in prior phases
 
 ---
 
@@ -247,21 +256,24 @@ Output: Complete project in 3 minutes!
 **Role:** Filters high-scoring verticals and manages project initiation
 
 **Features:**
-* ✅ Score & plan detection from multiple formats
-* ✅ **Human approval loop** with Y/N confirmation
-* ✅ Skips malformed input with logging
-* ✅ Invokes Planning Agent automatically
-* ✅ Complete decision audit trail
-* ✅ AgentOutput protocol compliance
+
+- ✅ Score & plan detection from multiple formats
+- ✅ **Human approval loop** with Y/N confirmation
+- ✅ Skips malformed input with logging
+- ✅ Invokes Planning Agent automatically
+- ✅ Complete decision audit trail
+- ✅ AgentOutput protocol compliance
 
 **Inputs:**
-* `outputs/recommendation.md` (from Vertical Agent)
-* `outputs/vertical_scores.yaml` (alternative format)
+
+- `outputs/recommendation.md` (from Vertical Agent)
+- `outputs/vertical_scores.yaml` (alternative format)
 
 **Outputs:**
-* `outputs/strategic_decision.yaml` (decision record)
-* `logs/strategic_decisions/*.txt` (audit logs)
-* Invokes Planning Agent (creates project structure)
+
+- `outputs/strategic_decision.yaml` (decision record)
+- `logs/strategic_decisions/*.txt` (audit logs)
+- Invokes Planning Agent (creates project structure)
 
 ---
 
@@ -272,36 +284,38 @@ Output: Complete project in 3 minutes!
 **Integration:** Called from Strategic Planner (and available to other agents)
 
 **Output:** Dict with:
-* `top` - Top vertical details
-* `title` - Project name
-* `score` - RICE/ICE score
-* `rationale` - Why it won
-* `plan` - What to build
-* `ranked` - Full ranking list
-* `framework` - Scoring method
+
+- `top` - Top vertical details
+- `title` - Project name
+- `score` - RICE/ICE score
+- `rationale` - Why it won
+- `plan` - What to build
+- `ranked` - Full ranking list
+- `framework` - Scoring method
 
 **Formats Supported:**
-* ✅ YAML (`vertical_scores.yaml`)
-* ✅ Jinja2 markdown (our template)
-* ✅ Custom markdown (user-defined)
-* ✅ Generic markdown (fallback)
+
+- ✅ YAML (`vertical_scores.yaml`)
+- ✅ Jinja2 markdown (our template)
+- ✅ Custom markdown (user-defined)
+- ✅ Generic markdown (fallback)
 
 ---
 
 ## 🎯 Complete Feature Matrix
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| **Business Evaluation** | ✅ | RICE/ICE scoring of ideas |
-| **Interactive Dashboard** | ✅ | Streamlit visualization |
-| **Strategic Decision** | ✅ | Score-based recommendation |
-| **Human Approval** | ✅ | Y/N confirmation loop |
-| **Auto Project Creation** | ✅ | One-click scaffolding |
-| **Multi-Format Parsing** | ✅ | YAML, markdown, custom |
-| **Error Handling** | ✅ | Graceful fallbacks |
-| **Validation System** | ✅ | Errors & warnings |
-| **Audit Trail** | ✅ | Complete decision logs |
-| **CLI Tools** | ✅ | User-friendly commands |
+| Feature                   | Status | Description                |
+| ------------------------- | ------ | -------------------------- |
+| **Business Evaluation**   | ✅     | RICE/ICE scoring of ideas  |
+| **Interactive Dashboard** | ✅     | Streamlit visualization    |
+| **Strategic Decision**    | ✅     | Score-based recommendation |
+| **Human Approval**        | ✅     | Y/N confirmation loop      |
+| **Auto Project Creation** | ✅     | One-click scaffolding      |
+| **Multi-Format Parsing**  | ✅     | YAML, markdown, custom     |
+| **Error Handling**        | ✅     | Graceful fallbacks         |
+| **Validation System**     | ✅     | Errors & warnings          |
+| **Audit Trail**           | ✅     | Complete decision logs     |
+| **CLI Tools**             | ✅     | User-friendly commands     |
 
 ---
 
@@ -376,7 +390,6 @@ Strategic Planner:
 
 ---
 
-*Management Team AI System*  
-*Phases 12-13 Complete*  
-*All Documentation Aligned* ✅
-
+_Management Team AI System_  
+_Phases 12-13 Complete_  
+_All Documentation Aligned_ ✅
