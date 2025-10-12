@@ -22,7 +22,26 @@ source activate.sh
 
 ---
 
-## 🎯 Vertical Agent - Evaluate Business Ideas (NEW!)
+## 🎯 Complete Workflow - Idea to Project (NEW!)
+
+### **Full Pipeline (5 Minutes):**
+
+```bash
+# 1. Evaluate business ideas
+python scripts/run_vertical_agent.py inputs/ideas.json
+# → Scores and ranks your ideas
+
+# 2. Strategic decision
+python scripts/run_strategic_planner.py
+# → Shows proposal, asks for approval
+
+# 3. Auto-creates project (if approved)
+# → Complete project structure ready!
+```
+
+---
+
+## 🎯 Vertical Agent - Evaluate Business Ideas
 
 ### Quick Evaluation (2 Minutes)
 
@@ -72,6 +91,45 @@ python scripts/run_vertical.py
 
 # Launch interactive dashboard 🆕
 streamlit run dashboards/vertical_dashboard.py
+```
+
+---
+
+## 🧠 Strategic Planner - Make Project Decision (NEW!)
+
+### **Decide What to Build Next:**
+
+```bash
+# After running Vertical Agent, make strategic decision
+python scripts/run_strategic_planner.py
+```
+
+**What it does:**
+1. Reads your Vertical Agent recommendation
+2. Shows you the proposal (project name, score, reasoning)
+3. **Asks for your approval**: "Proceed? (Y/N)"
+4. If Y → Auto-creates complete project structure
+5. If N → Saves decision but doesn't execute
+
+**Example:**
+```
+🧠 Strategic Planner Decision:
+📂 Vertical: AI Receptionist for Hair Salons
+📈 RICE Score: 84.0
+
+Suggested action:
+- Project Title: ai-receptionist-for-hair-salons
+
+💡 Would you like to send this to the Planning Department?
+👉 Approve? (Y/N): Y
+
+✅ Approved! Creating project...
+```
+
+**Options:**
+```bash
+# Auto-approve (no prompt)
+python scripts/run_strategic_planner.py --non-interactive
 ```
 
 ---
