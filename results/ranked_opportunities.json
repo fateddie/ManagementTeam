@@ -20,7 +20,7 @@
       "resource_need": 14
     },
     "risk_flags": [],
-    "scored_at": "2025-10-12T17:11:48.299356"
+    "scored_at": "2025-10-12T17:16:18.899660"
   },
   {
     "name": "Fleet Booking for Golf Clubs",
@@ -43,7 +43,7 @@
       "resource_need": 12
     },
     "risk_flags": [],
-    "scored_at": "2025-10-12T17:11:48.299373"
+    "scored_at": "2025-10-12T17:16:18.899677"
   },
   {
     "name": "BI Dashboards for Construction",
@@ -66,6 +66,6 @@
       "resource_need": 8
     },
     "risk_flags": [],
-    "scored_at": "2025-10-12T17:11:48.299377"
+    "scored_at": "2025-10-12T17:16:18.899682"
   }
 ]

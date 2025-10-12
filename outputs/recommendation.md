@@ -11,15 +11,19 @@
 - **Effort**: 4/10
 
 
+**Description:** AI phone answering for salon bookings
+
 
 ---
 
 ## 📊 Complete Rankings
 
 | Rank | Idea | Score | Reach | Impact | Confidence | Effort |
-|------|------|-------|-------|--------|------------|--------|
+| ---- | ---- | ----- | ----- | ------ | ---------- | ------ |
+
 | 🥇 1 | AI Receptionist for Hair Salons | 84.0 | 7 | 8 | 6 | 4 |
 | 🥈 2 | Tyre Fitters Booking Bot | 56.0 | 5 | 7 | 8 | 5 |
+| 🥉 3 | Golf Course Management | 49.0 | 6 | 7 | 7 | 6 |
 
 
 ---
@@ -35,11 +39,11 @@
 
 **Framework Used:** RICE
 
-**Total Ideas Evaluated:** 2
+**Total Ideas Evaluated:** 3
 
-**Score Range:** 56.0 - 84.0
+**Score Range:** 49.0 - 84.0
 
-**Evaluation Date:** 2025-10-12 16:46:27
+**Evaluation Date:** 2025-10-12 17:16:18
 
 ---
 
