@@ -11,6 +11,7 @@ perplexity
 
 # Dashboard & Visualization
 streamlit
+plotly
 
 # Optional future tools
 slack_sdk

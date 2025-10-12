@@ -67,6 +67,9 @@ python scripts/run_vertical_agent.py inputs/ideas.json --verbose
 
 # Run with examples
 python scripts/run_vertical.py
+
+# Launch interactive dashboard 🆕
+streamlit run dashboards/vertical_dashboard.py
 ```
 
 ---
