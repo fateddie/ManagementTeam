@@ -1,10 +1,10 @@
 # AI Management Team – Claude Code Project
 
-**Version:** 3.0 - With Vertical & Strategic Planning  
+**Version:** 4.0 - With AI Refinement & Advanced Scoring  
 **Date:** 2025-10-12  
 **Owner:** Rob Freyne  
 **Repository:** https://github.com/fateddie/ManagementTeam  
-**Status:** 🟢 Production Ready - All 13 Phases Complete
+**Status:** 🟢 Production Ready - All 15 Phases Complete
 
 ---
 
@@ -16,11 +16,11 @@
 # Install dependencies
 pip install -r requirements.txt
 
-# Run full 8-agent pipeline
+# Run full 10-agent pipeline
 python cli/manage.py run
 
-# Or run new workflow: Idea → Decision → Project
-python scripts/run_vertical_agent.py inputs/ideas.json
+# Or run new workflow: Vague Idea → Refined → Scored → Project
+python scripts/run_refine_and_score.py "AI Call Catcher"
 python scripts/run_strategic_planner.py
 
 # Run validation tests
@@ -77,17 +77,21 @@ ManagementTeam/
 
 ## 🤖 AI Management Team Agents
 
-### **New: Business Vertical System** (Phases 12-13)
-1. **VerticalAgent** - Evaluates & scores business ideas (RICE/ICE)
-2. **StrategicPlannerAgent** - Decides what to build next (with human approval)
+### **New: Idea-to-Project System** (Phases 12-15)
+1. **RefinementAgent** - Turns vague ideas into clear concepts (AI-powered)
+2. **VerticalAgent** - Evaluates & scores ideas (RICE/ICE)
+3. **OpportunityRankingAgent** - Advanced 7-criteria weighted scoring
+4. **StrategicPlannerAgent** - Decides what to build (with human approval)
 
 ### **Core Planning System** (Phases 1-11)
 3. **StrategyAgent** - Strategic planning & goal extraction
 4. **TechnicalArchitectAgent** - System architecture & design
-5. **PlanningAgent** - Unified planning & roadmapping
-6. **ResearchAgent** - AI-powered validation (Perplexity)
-7. **DocumentationAgent** - Professional documentation generation
-8. **ReportingAgent** - Quality control & validation
+5. **StrategyAgent** - Strategic planning & goal extraction
+6. **TechnicalArchitectAgent** - System architecture & design
+7. **PlanningAgent** - Unified planning & roadmapping
+8. **ResearchAgent** - AI-powered validation (Perplexity)
+9. **DocumentationAgent** - Professional documentation generation
+10. **ReportingAgent** - Quality control & validation
 
 ### 🔗 Agent Protocol (Phase 9)
 
@@ -110,8 +114,9 @@ All agents now use standardized `AgentOutput` protocol:
 
 ## 📊 System Features
 
-- ✅ **8 AI Agents** - Complete workflow automation
-- ✅ **Idea-to-Project Pipeline** - Evaluate, decide, build in minutes
+- ✅ **10 AI Agents** - Complete workflow automation
+- ✅ **Vague-Idea-to-Project Pipeline** - Refine, evaluate, decide, build in minutes
+- ✅ **AI-Powered Refinement** - Turn vague ideas into clear concepts
 - ✅ **Human-in-the-Loop** - Approval gates for strategic decisions
 - ✅ **RICE/ICE Scoring** - Business vertical evaluation
 - ✅ **Interactive Dashboard** - Streamlit visualization
@@ -126,20 +131,23 @@ All agents now use standardized `AgentOutput` protocol:
 ## 📚 Key Documentation
 
 - **QUICK_START.md** - ⭐ Start here! Complete workflow guide
+- **COMPLETE_SYSTEM_FLOW.md** - Full pipeline explanation
 - **PROJECT_INDEX.md** - Navigation hub for all documentation
 - **FINAL_SYSTEM_STATUS.md** - Complete system overview
-- **DOCUMENTATION_STATUS.md** - Documentation audit
-- **outputs/PHASE_*_SUMMARY.md** - All 13 phase summaries
+- **outputs/PHASE_*_SUMMARY.md** - All 15 phase summaries
 - **docs/system/PRD.md** - Product requirements
 - **docs/system/CI_CD_SETUP.md** - GitHub Actions setup
 
 ### **New Agent Documentation:**
-- **agents/vertical_agent/README.md** - Business idea evaluator
+- **agents/refinement_agent/** - AI-powered idea refinement
+- **agents/vertical_agent/README.md** - Business idea evaluator (RICE/ICE)
+- **agents/opportunity_ranking/** - Advanced 7-criteria scoring
 - **agents/strategic_planner/README.md** - Strategic decision maker
-- **dashboards/VERTICAL_DASHBOARD_README.md** - Interactive dashboard
+- **dashboards/VERTICAL_DASHBOARD_README.md** - Vertical scoring dashboard
+- **streamlit_app/app.py** - Refinement & scoring dashboard
 
 ---
 
 **Maintained by:** AI Management Team  
 **Last Updated:** 2025-10-12  
-**All 13 Phases:** ✅ Complete (11 core + 2 enhancements)
+**All 15 Phases:** ✅ Complete (11 core + 4 enhancements)
