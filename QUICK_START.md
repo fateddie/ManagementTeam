@@ -1,4 +1,4 @@
-# ⚡ Quick Start Guide - Planner Agent
+# ⚡ Quick Start Guide - Management Team AI System
 
 **1-Page Reference** | Always keep this handy!
 
@@ -22,7 +22,56 @@ source activate.sh
 
 ---
 
-## 🚀 Common Commands
+## 🎯 Vertical Agent - Evaluate Business Ideas (NEW!)
+
+### Quick Evaluation (2 Minutes)
+
+```bash
+# 1. Create inputs/ideas.json with your business ideas
+[
+  {
+    "name": "AI Receptionist for Hair Salons",
+    "reach": 7,
+    "impact": 8,
+    "confidence": 6,
+    "effort": 4
+  },
+  {
+    "name": "Tyre Fitters Booking Bot",
+    "reach": 5,
+    "impact": 7,
+    "confidence": 8,
+    "effort": 5
+  }
+]
+
+# 2. Run evaluation
+python scripts/run_vertical_agent.py inputs/ideas.json
+
+# 3. Check outputs/recommendation.md for results
+```
+
+**What the scores mean (1-10):**
+- **Reach:** How many customers? (Higher = more customers)
+- **Impact:** How much value? (Higher = bigger improvement)
+- **Confidence:** How sure are you? (Higher = more certain)
+- **Effort:** How hard to build? (Lower = easier, better!)
+
+**Options:**
+```bash
+# Use ICE framework instead
+python scripts/run_vertical_agent.py inputs/ideas.json --framework ICE
+
+# Show full ranking
+python scripts/run_vertical_agent.py inputs/ideas.json --verbose
+
+# Run with examples
+python scripts/run_vertical.py
+```
+
+---
+
+## 🚀 Planner Agent - Common Commands
 
 ### Create a New Project
 
@@ -52,13 +101,15 @@ python src/agents/planner_agent.py
 
 ## 📁 Important Paths
 
-| What           | Path                               |
-| -------------- | ---------------------------------- |
-| **Projects**   | `/projects/<project-name>/`        |
-| **Templates**  | `/config/templates/`               |
-| **Logs**       | `/logs/planner_trace.log`          |
-| **Dashboard**  | `/dashboards/planner_dashboard.py` |
-| **CLI Script** | `/scripts/run_planner.py`          |
+| What                | Path                               |
+| ------------------- | ---------------------------------- |
+| **Projects**        | `/projects/<project-name>/`        |
+| **Vertical Inputs** | `/inputs/ideas.json`               |
+| **Vertical Output** | `/outputs/recommendation.md`       |
+| **Templates**       | `/config/templates/`               |
+| **Logs**            | `/logs/planner_trace.log`          |
+| **Dashboard**       | `/dashboards/planner_dashboard.py` |
+| **CLI Scripts**     | `/scripts/run_*.py`                |
 
 ---
 

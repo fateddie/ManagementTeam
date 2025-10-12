@@ -1,0 +1,17 @@
+[
+  {
+    "name": "AI Receptionist for Hair Salons",
+    "reach": 7,
+    "impact": 8,
+    "confidence": 6,
+    "effort": 4
+  },
+  {
+    "name": "Tyre Fitters Booking Bot",
+    "reach": 5,
+    "impact": 7,
+    "confidence": 8,
+    "effort": 5
+  }
+]
+

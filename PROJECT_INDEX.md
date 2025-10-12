@@ -9,9 +9,10 @@
 
 | Document                   | Location                         | Description                                         |
 | -------------------------- | -------------------------------- | --------------------------------------------------- |
-| **📊 FINAL SYSTEM STATUS** | `FINAL_SYSTEM_STATUS.md`         | Complete system overview, all phases, final metrics |
-| **🚀 QUICK START**         | `README.md`                      | How to run the system, installation guide           |
-| **📋 PROJECT PLAN**        | `outputs/project_plan.yaml`      | Technical project plan (YAML format)                |
+| **📊 FINAL SYSTEM STATUS** | `FINAL_SYSTEM_STATUS.md`    | Complete system overview, all phases, final metrics       |
+| **🚀 QUICK START**         | `QUICK_START.md`            | **How to run everything** - Vertical Agent & Planner      |
+| **📖 README**              | `README.md`                 | Installation guide and project overview                   |
+| **📋 PROJECT PLAN**        | `outputs/project_plan.yaml` | Technical project plan (YAML format)                      |
 | **📖 PRD**                 | `docs/system/PRD.md`             | Original Product Requirements Document              |
 | **📊 PROJECT SUMMARY**     | `docs/system/PROJECT_SUMMARY.md` | High-level project summary                          |
 
