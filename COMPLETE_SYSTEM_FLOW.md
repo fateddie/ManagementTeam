@@ -7,6 +7,7 @@
 ## 🎯 Overview
 
 Your Management Team AI System takes a **list of business ideas** and automatically:
+
 1. Scores and ranks them
 2. Makes a strategic decision
 3. Requests your approval
@@ -174,12 +175,14 @@ python scripts/run_vertical_agent.py inputs/my_ideas.json
 ```
 
 **What Happens:**
+
 - ✅ Scores each idea using RICE formula
 - ✅ Ranks them from best to worst
 - ✅ Generates proactive suggestions
 - ✅ Creates `outputs/recommendation.md`
 
 **Output Example:**
+
 ```
 🏆 Recommend pursuing: AI Receptionist for Hair Salons (score: 84.0)
 
@@ -199,12 +202,14 @@ python scripts/run_strategic_planner.py
 ```
 
 **What Happens:**
+
 - ✅ Reads your recommendation
 - ✅ Makes strategic decision
 - ✅ Shows you the proposal
-- ⏸️  **ASKS FOR YOUR APPROVAL**
+- ⏸️ **ASKS FOR YOUR APPROVAL**
 
 **Approval Prompt:**
+
 ```
 🧠 STRATEGIC PLANNER DECISION
 ══════════════════════════════════════════════════════
@@ -216,14 +221,14 @@ Suggested action:
 - Project Title: ai-receptionist-for-hair-salons
 - Description: Build: AI Receptionist for Hair Salons
 
-💡 Reasoning: Moderate opportunity (score: 84.0). 
+💡 Reasoning: Moderate opportunity (score: 84.0).
               Proceed with MVP approach.
 
 ══════════════════════════════════════════════════════
 💡 Would you like to send this to the Planning Department?
 ══════════════════════════════════════════════════════
 
-👉 Approve? (Y/N): 
+👉 Approve? (Y/N):
 ```
 
 ### **✅ Step 4: You Approve**
@@ -231,6 +236,7 @@ Suggested action:
 Type: **Y**
 
 **What Happens:**
+
 - ✅ Planning Agent auto-invokes
 - ✅ Creates complete project structure
 - ✅ Generates all planning files
@@ -245,6 +251,7 @@ cat planning/roadmap.md
 ```
 
 **You now have:**
+
 - ✅ Complete project structure
 - ✅ Project plan (YAML)
 - ✅ Roadmap with timeline
@@ -258,6 +265,7 @@ cat planning/roadmap.md
 ## 📊 Alternative Flows
 
 ### **Flow A: Quick & Simple (RICE)**
+
 ```bash
 # Use RICE scoring (4 factors)
 python scripts/run_vertical_agent.py inputs/ideas.json
@@ -265,6 +273,7 @@ python scripts/run_strategic_planner.py
 ```
 
 ### **Flow B: Advanced & Detailed (7 Criteria)**
+
 ```bash
 # Use advanced weighted scoring (7 factors)
 python scripts/run_opportunity_ranking.py --input data/opportunity/idea_blocks.json
@@ -272,6 +281,7 @@ python scripts/run_opportunity_ranking.py --input data/opportunity/idea_blocks.j
 ```
 
 ### **Flow C: Interactive Dashboard**
+
 ```bash
 # Visual interface
 streamlit run dashboards/vertical_dashboard.py
@@ -279,6 +289,7 @@ streamlit run dashboards/vertical_dashboard.py
 ```
 
 ### **Flow D: Fully Automated (CI/CD)**
+
 ```bash
 # Skip approval prompts
 python scripts/run_vertical_agent.py inputs/ideas.json
@@ -293,16 +304,19 @@ python scripts/run_strategic_planner.py --non-interactive
 ### **1. Vertical Agent (RICE/ICE Scoring)**
 
 **Input:** JSON/YAML with business ideas
+
 ```json
-{"name": "Idea", "reach": 7, "impact": 8, "confidence": 6, "effort": 4}
+{ "name": "Idea", "reach": 7, "impact": 8, "confidence": 6, "effort": 4 }
 ```
 
 **Process:**
+
 - Calculates: `(Reach × Impact × Confidence) / Effort`
 - Ranks all ideas
 - Generates suggestions
 
 **Output:**
+
 - `recommendation.md` (beautiful report)
 - `vertical_scores.yaml` (data file)
 
@@ -313,16 +327,19 @@ python scripts/run_strategic_planner.py --non-interactive
 ### **2. Opportunity Ranking (Advanced Weighted)**
 
 **Input:** JSON with 7-criteria ideas
+
 ```json
 {"name": "Idea", "market_size": 7, "entry_ease": 8, ...}
 ```
 
 **Process:**
+
 - Weighted scoring: `Σ(criterion × weight)`
 - Risk flag detection
 - Bonus multipliers
 
 **Output:**
+
 - `opportunity_report.md` (detailed breakdown)
 - `ranked_opportunities.json` (full data)
 
@@ -335,12 +352,14 @@ python scripts/run_strategic_planner.py --non-interactive
 **Input:** `recommendation.md` or `vertical_scores.yaml`
 
 **Process:**
+
 - Parses recommendation (using `summary_parser`)
 - Makes strategic decision based on score
 - Shows proposal
 - **Asks for your approval (Y/N)**
 
 **Output:**
+
 - `strategic_decision.yaml` (decision record)
 - `logs/strategic_decisions/*.txt` (audit log)
 - Invokes Planning Agent (if approved)
@@ -354,6 +373,7 @@ python scripts/run_strategic_planner.py --non-interactive
 **Input:** Project name + description (from Strategic Planner)
 
 **Process:**
+
 - Creates 13 directories
 - Generates 20+ files
 - Planning documents
@@ -361,6 +381,7 @@ python scripts/run_strategic_planner.py --non-interactive
 - Configuration files
 
 **Output:**
+
 - Complete `projects/<name>/` structure
 - Ready to start coding
 
@@ -370,12 +391,12 @@ python scripts/run_strategic_planner.py --non-interactive
 
 ## ⏱️ **Total Time Breakdown**
 
-| Step | Agent | Time | Human Input |
-|------|-------|------|-------------|
-| 1 | Vertical Agent | 30 sec | None |
-| 2 | Strategic Planner | 10 sec | Y/N approval |
-| 3 | Planning Agent | 2 min | None |
-| **TOTAL** | **3 agents** | **~3 min** | **1 keystroke** |
+| Step      | Agent             | Time       | Human Input     |
+| --------- | ----------------- | ---------- | --------------- |
+| 1         | Vertical Agent    | 30 sec     | None            |
+| 2         | Strategic Planner | 10 sec     | Y/N approval    |
+| 3         | Planning Agent    | 2 min      | None            |
+| **TOTAL** | **3 agents**      | **~3 min** | **1 keystroke** |
 
 ---
 
@@ -454,6 +475,7 @@ streamlit run dashboards/vertical_dashboard.py
 ## 🔄 **Complete CLI Commands Reference**
 
 ### **Vertical Agent:**
+
 ```bash
 # Basic
 python scripts/run_vertical_agent.py inputs/ideas.json
@@ -469,6 +491,7 @@ python scripts/run_vertical.py
 ```
 
 ### **Opportunity Ranking:**
+
 ```bash
 # Default
 python scripts/run_opportunity_ranking.py
@@ -481,6 +504,7 @@ python scripts/run_opportunity_ranking.py --input data/my_ideas.json
 ```
 
 ### **Strategic Planner:**
+
 ```bash
 # Interactive (asks for approval)
 python scripts/run_strategic_planner.py
@@ -493,6 +517,7 @@ python scripts/run_strategic_planner.py --recommendation outputs/my_rec.md
 ```
 
 ### **Dashboard:**
+
 ```bash
 # Interactive visualization
 streamlit run dashboards/vertical_dashboard.py
@@ -539,6 +564,7 @@ Status: SUCCESS ✅
 ### **Scenario:** You're deciding which SaaS to build
 
 **Your Ideas:**
+
 1. AI Receptionist for Hair Salons
 2. Tyre Fitters Booking Bot
 3. Golf Course Management
@@ -556,6 +582,7 @@ python scripts/run_strategic_planner.py
 ### **What the System Does:**
 
 1. **Scores:**
+
    - Hair Salons: 84.0 (RICE)
    - Tyre Fitters: 56.0
    - Golf: 49.0
@@ -577,23 +604,27 @@ python scripts/run_strategic_planner.py
 ## 🌟 **Key Benefits**
 
 ### **Speed:**
+
 - ⚡ 3-5 minutes from idea to project
 - ⚡ Automated scoring and ranking
 - ⚡ Auto-generated project structure
 
 ### **Intelligence:**
+
 - 🧠 AI-powered scoring (RICE, ICE, or Advanced)
 - 🧠 Proactive suggestions
 - 🧠 Risk detection
 - 🧠 Strategic reasoning
 
 ### **Control:**
+
 - 👤 Human approval required
 - 👤 See the reasoning
 - 👤 Review alternatives
 - 👤 Can reject proposals
 
 ### **Quality:**
+
 - ✅ Complete audit trail
 - ✅ Detailed breakdowns
 - ✅ Professional reports
@@ -625,14 +656,14 @@ python scripts/run_strategic_planner.py
 
 ## 📚 Quick Reference
 
-| What You Want | Command |
-|---------------|---------|
-| **Evaluate ideas (simple)** | `python scripts/run_vertical_agent.py inputs/ideas.json` |
-| **Evaluate ideas (advanced)** | `python scripts/run_opportunity_ranking.py` |
-| **Make decision** | `python scripts/run_strategic_planner.py` |
-| **Visual dashboard** | `streamlit run dashboards/vertical_dashboard.py` |
-| **Test complete flow** | `python scripts/test_complete_flow.py` |
-| **Full pipeline** | Run Vertical → Strategic → Done! |
+| What You Want                 | Command                                                  |
+| ----------------------------- | -------------------------------------------------------- |
+| **Evaluate ideas (simple)**   | `python scripts/run_vertical_agent.py inputs/ideas.json` |
+| **Evaluate ideas (advanced)** | `python scripts/run_opportunity_ranking.py`              |
+| **Make decision**             | `python scripts/run_strategic_planner.py`                |
+| **Visual dashboard**          | `streamlit run dashboards/vertical_dashboard.py`         |
+| **Test complete flow**        | `python scripts/test_complete_flow.py`                   |
+| **Full pipeline**             | Run Vertical → Strategic → Done!                         |
 
 ---
 
@@ -650,7 +681,6 @@ This runs the entire pipeline automatically and shows you exactly what happens a
 
 **Your system turns business ideas into production-ready projects in minutes!** 🎉⚡
 
-*Management Team AI System*  
-*Complete Flow Documentation v1.0*  
-*All 14 Phases Operational* 🚀
-
+_Management Team AI System_  
+_Complete Flow Documentation v1.0_  
+_All 14 Phases Operational_ 🚀
