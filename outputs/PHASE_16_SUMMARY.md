@@ -9,6 +9,7 @@
 ## 🎯 Purpose
 
 Add **transparent, auditable persistence** for all business ideas and scores with:
+
 - Complete justification for every score
 - Source attribution
 - Confidence ratings
@@ -22,18 +23,21 @@ Add **transparent, auditable persistence** for all business ideas and scores wit
 ### **Core Components:**
 
 **1. Trend Agent** (`src/agents/trend_agent.py`)
+
 - Estimates market size from industry data
 - Calculates urgency from pain points
 - Assesses competition level
 - Returns metadata with justification + sources
 
 **2. Metadata Writer** (`src/utils/metadata_writer.py`)
+
 - SQLite database management
 - 3 tables: ideas, scores, score_metadata
 - Insert/retrieve operations
 - Audit trail
 
 **3. Database Viewer** (`scripts/view_idea_database.py`)
+
 - CLI tool to view database
 - List all ideas
 - View metadata for specific ideas
@@ -44,6 +48,7 @@ Add **transparent, auditable persistence** for all business ideas and scores wit
 ## 🗃️ Database Structure
 
 ### **Table: ideas**
+
 ```sql
 CREATE TABLE ideas (
     id TEXT PRIMARY KEY,
@@ -56,6 +61,7 @@ CREATE TABLE ideas (
 ```
 
 ### **Table: scores**
+
 ```sql
 CREATE TABLE scores (
     idea_id TEXT,
@@ -74,6 +80,7 @@ CREATE TABLE scores (
 ```
 
 ### **Table: score_metadata** ⭐ KEY FEATURE
+
 ```sql
 CREATE TABLE score_metadata (
     id INTEGER PRIMARY KEY,
@@ -93,6 +100,7 @@ CREATE TABLE score_metadata (
 ## ✅ Test Results
 
 ### **Trend Agent Test:**
+
 ```
 ✅ Market Size Estimation:
    Salons: 5/10 (2,200 businesses, Source: IrishHairFed + Yelp)
@@ -108,6 +116,7 @@ CREATE TABLE score_metadata (
 ```
 
 ### **Database Test:**
+
 ```
 ✅ Created SQLite database (data/test_ideas.db)
 ✅ Inserted idea: idea-001
@@ -131,6 +140,7 @@ CREATE TABLE score_metadata (
 ```
 
 **This makes every score:**
+
 - ✅ **Auditable** - See exactly why
 - ✅ **Transparent** - Source attribution
 - ✅ **Confident** - Know reliability
@@ -186,6 +196,7 @@ sqlite3 data/ideas.db "SELECT * FROM score_metadata WHERE idea_id='idea-001';"
 ### **Future Integrations:**
 
 **Scoring Pipeline:**
+
 ```python
 # In score_idea.py or opportunity_ranking_agent.py
 from src.agents.trend_agent import TrendAgent
@@ -200,6 +211,7 @@ insert_score_metadata("data/ideas.db", idea_id, metadata)
 ```
 
 **Dashboard Enhancement:**
+
 - Display justification on hover
 - Show source attribution
 - Confidence indicators
@@ -210,21 +222,25 @@ insert_score_metadata("data/ideas.db", idea_id, metadata)
 ## 🌟 Key Benefits
 
 ### **Transparency:**
+
 - Every score has a "why"
 - Every score has a source
 - Every score has confidence level
 
 ### **Auditability:**
+
 - Complete history in database
 - Queryable with SQL
 - Export capabilities
 
 ### **Intelligence:**
+
 - Data-driven scoring
 - Market intelligence
 - Trend analysis
 
 ### **Flexibility:**
+
 - SQLite for dev/prototype
 - Portable to Postgres for production
 - Compatible with future graph DB
@@ -233,13 +249,14 @@ insert_score_metadata("data/ideas.db", idea_id, metadata)
 
 ## 📁 Files Created
 
-| File | Lines | Purpose |
-|------|-------|---------|
-| `src/agents/trend_agent.py` | 200+ | Market intelligence |
-| `src/utils/metadata_writer.py` | 250+ | SQLite persistence |
-| `scripts/view_idea_database.py` | 150+ | Database viewer |
+| File                            | Lines | Purpose             |
+| ------------------------------- | ----- | ------------------- |
+| `src/agents/trend_agent.py`     | 200+  | Market intelligence |
+| `src/utils/metadata_writer.py`  | 250+  | SQLite persistence  |
+| `scripts/view_idea_database.py` | 150+  | Database viewer     |
 
 **Database:**
+
 - `data/ideas.db` - Production database
 - `data/test_ideas.db` - Test database
 
@@ -264,6 +281,7 @@ insert_score_metadata("data/ideas.db", idea_id, metadata)
 ## 🚀 Next Enhancements (Future)
 
 ### **TrendAgent Improvements:**
+
 - Real web scraping (BeautifulSoup)
 - API integration (Statista, industry data)
 - Perplexity integration for trends
@@ -271,6 +289,7 @@ insert_score_metadata("data/ideas.db", idea_id, metadata)
 - Market momentum tracking
 
 ### **Dashboard Features:**
+
 - Justification tooltips
 - Source links
 - Confidence indicators
@@ -278,6 +297,7 @@ insert_score_metadata("data/ideas.db", idea_id, metadata)
 - Historical comparison
 
 ### **Additional Agents:**
+
 - `DataFetchAgent` - Real market data
 - `ValidationAgent` - Verify justifications
 - `NLPAgent` - Detect vague ideas early
@@ -317,4 +337,3 @@ insert_score_metadata("data/ideas.db", idea_id, metadata)
 _Management Team AI System_  
 _Phase 16: Persistence & Metadata_  
 _Transparent, Auditable, Production Ready_ ✅
-
