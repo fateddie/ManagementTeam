@@ -385,33 +385,87 @@ def extract_all_ranked(summary_path: str) -> List[Dict]:
 # Testing & Validation
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-def validate_summary(summary_path: str) -> bool:
+def validate_summary(summary_path: str, strict: bool = False) -> Dict[str, Any]:
     """
     Validate that a summary file can be parsed successfully.
     
     Args:
         summary_path: Path to summary file
+        strict: If True, require all optional fields
         
     Returns:
-        True if valid, False otherwise
+        Dict with:
+        - valid: bool
+        - warnings: List[str]
+        - errors: List[str]
+        - summary: Dict (if parseable)
+        
+    Example:
+        result = validate_summary("outputs/recommendation.md")
+        if not result['valid']:
+            print("Errors:", result['errors'])
+        if result['warnings']:
+            print("Warnings:", result['warnings'])
     """
+    result = {
+        'valid': False,
+        'warnings': [],
+        'errors': [],
+        'summary': None
+    }
+    
+    # Check file exists
+    if not Path(summary_path).exists():
+        result['errors'].append(f"File not found: {summary_path}")
+        return result
+    
+    # Try to parse
     try:
         summary = parse_vertical_summary(summary_path)
+        result['summary'] = summary
         
         # Check required fields
         required = ['top', 'title', 'score']
         for field in required:
             if field not in summary or not summary[field]:
-                return False
+                result['errors'].append(f"Missing required field: {field}")
         
         # Check top has name
-        if 'name' not in summary['top']:
-            return False
+        if 'top' in summary:
+            if 'name' not in summary['top']:
+                result['errors'].append("Top vertical missing 'name' field")
+            if not summary['top'].get('name'):
+                result['errors'].append("Top vertical name is empty")
         
-        return True
+        # Check score is valid
+        if 'score' in summary:
+            score = summary['score']
+            if not isinstance(score, (int, float)):
+                result['warnings'].append(f"Score is not numeric: {score}")
+            elif score <= 0:
+                result['warnings'].append(f"Score is zero or negative: {score}")
         
-    except Exception:
-        return False
+        # Optional field warnings (if strict)
+        if strict:
+            optional = ['rationale', 'plan', 'ranked', 'framework']
+            for field in optional:
+                if field not in summary or not summary[field]:
+                    result['warnings'].append(f"Missing optional field: {field}")
+        
+        # Check ranked list
+        if 'ranked' in summary and summary['ranked']:
+            if len(summary['ranked']) < 2:
+                result['warnings'].append("Only one item in ranking - no alternatives")
+        else:
+            result['warnings'].append("No ranking list found")
+        
+        # Valid if no errors
+        result['valid'] = len(result['errors']) == 0
+        
+    except Exception as e:
+        result['errors'].append(f"Parse error: {str(e)}")
+    
+    return result
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
