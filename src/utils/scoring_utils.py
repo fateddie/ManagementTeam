@@ -122,3 +122,100 @@ def get_recommendation(ranked: List[Dict]) -> Dict:
         "all_ranked": ranked,
         "summary": f"🏆 Recommend pursuing: {top['name']} (score: {top['score']})"
     }
+
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Advanced Weighted Scoring
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+def score_with_weights(idea: Dict, weights: Dict[str, float]) -> tuple:
+    """
+    Score an idea using custom weights.
+    
+    Args:
+        idea: Dict with scoring criteria values (0-10)
+        weights: Dict mapping criterion -> weight
+        
+    Returns:
+        Tuple of (total_score, breakdown_dict)
+        
+    Example:
+        idea = {
+            "name": "Hair Salons",
+            "market_size": 7,
+            "competitive_edge": 8,
+            ...
+        }
+        weights = {
+            "market_size": 0.3,
+            "competitive_edge": 0.2,
+            ...
+        }
+        score, breakdown = score_with_weights(idea, weights)
+    """
+    total_score = 0
+    breakdown = {}
+    
+    for criterion, weight in weights.items():
+        value = idea.get(criterion, 5)  # Default to midpoint if missing
+        weighted_value = value * weight * 10  # Scale to 0-100
+        total_score += weighted_value
+        breakdown[criterion] = {
+            'raw_value': value,
+            'weight': weight,
+            'weighted_score': round(weighted_value, 2)
+        }
+    
+    return round(total_score, 2), breakdown
+
+
+def load_weight_config(config_path: str) -> Dict:
+    """
+    Load weight configuration from YAML.
+    
+    Args:
+        config_path: Path to weight_config.yaml
+        
+    Returns:
+        Dict with weights and configuration
+    """
+    import yaml
+    from pathlib import Path
+    
+    if not Path(config_path).exists():
+        # Return default weights
+        return {
+            'weights': {
+                'market_size': 0.20,
+                'niche_attractiveness': 0.15,
+                'competitive_edge': 0.15,
+                'personal_fit': 0.15,
+                'resource_requirement': 0.10,
+                'speed_to_mvp': 0.15,
+                'scalability_potential': 0.10
+            }
+        }
+    
+    with open(config_path, 'r') as f:
+        return yaml.safe_load(f)
+
+
+def score_opportunity(idea: Dict, weights: Dict[str, float] = None) -> tuple:
+    """
+    Score a business opportunity using weighted criteria.
+    
+    If no weights provided, uses default Advanced Weighted scoring.
+    
+    Args:
+        idea: Business idea with scoring criteria
+        weights: Optional custom weights
+        
+    Returns:
+        Tuple of (score, breakdown)
+    """
+    if weights is None:
+        # Load default weights
+        config = load_weight_config("config/weights/weight_config.yaml")
+        weights = config.get('weights', {})
+    
+    return score_with_weights(idea, weights)

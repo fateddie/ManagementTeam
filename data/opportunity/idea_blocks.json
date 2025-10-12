@@ -1,0 +1,36 @@
+[
+  {
+    "name": "AI Receptionist for Hair Salons",
+    "market_size": 7,
+    "entry_ease": 8,
+    "personal_fit": 7,
+    "scalability": 7,
+    "speed": 8,
+    "competition": 6,
+    "resource_need": 7,
+    "summary": "AI phone answering for salon bookings and customer queries"
+  },
+  {
+    "name": "Fleet Booking for Golf Clubs",
+    "market_size": 6,
+    "entry_ease": 6,
+    "personal_fit": 6,
+    "scalability": 6,
+    "speed": 6,
+    "competition": 7,
+    "resource_need": 6,
+    "summary": "Tee time management and member communication system"
+  },
+  {
+    "name": "BI Dashboards for Construction",
+    "market_size": 8,
+    "entry_ease": 5,
+    "personal_fit": 5,
+    "scalability": 7,
+    "speed": 5,
+    "competition": 5,
+    "resource_need": 4,
+    "summary": "Project tracking and financial dashboards for builders"
+  }
+]
+

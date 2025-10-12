@@ -14,10 +14,12 @@
 **Total Agents:** 8 (was 6, now 8)
 
 #### **New: Business Vertical System** (Phases 12-13)
+
 1. ✅ **Vertical Agent** - RICE/ICE business idea evaluation
 2. ✅ **Strategic Planner Agent** - Strategic decision with human approval
 
 #### **Existing: Core Planning System** (Phases 1-11)
+
 3. ✅ **Strategy Agent**
 4. ✅ **Technical Architect Agent**
 5. ✅ **Planning Agent**
@@ -30,6 +32,7 @@
 ## 📦 Modules Implemented
 
 ### **Phase 12: Vertical Agent**
+
 - ✅ `agents/vertical_agent/vertical_agent.py` (500+ lines)
 - ✅ `src/utils/scoring_utils.py` (RICE/ICE frameworks)
 - ✅ `dashboards/vertical_dashboard.py` (Interactive Streamlit)
@@ -38,12 +41,14 @@
 - ✅ `agents/vertical_agent/templates/vertical_summary.md` (Jinja2)
 
 ### **Phase 13: Strategic Planner**
+
 - ✅ `agents/strategic_planner/strategic_planner.py` (400+ lines)
 - ✅ `src/utils/summary_parser.py` (Multi-format parser)
 - ✅ `scripts/run_strategic_planner.py` (CLI wrapper)
 - ✅ `scripts/test_summary_parser.py` (Test suite)
 
 ### **Supporting Files:**
+
 - ✅ `inputs/ideas.json` (User examples)
 - ✅ `inputs/verticals.json` (8 business ideas)
 - ✅ `inputs/verticals.yaml` (YAML format)
@@ -56,12 +61,14 @@
 ## ⚠️ Error Handling
 
 ### **Malformed Summaries:**
+
 - ✅ Logged with descriptive warnings
 - ✅ Skipped summaries don't block workflow
 - ✅ Emoji-coded logging (⚠️ warnings, ❌ errors, ✅ success)
 - ✅ Graceful fallback to generic parsing
 
 ### **Defensive Logic:**
+
 - ✅ If `plan` missing → Fallback: `"Build: {project_name}"`
 - ✅ If `score` missing → Fallback: 0, validation error
 - ✅ If `title` missing → Fallback: "Unknown", error logged
@@ -70,6 +77,7 @@
 - ✅ Dashboard remains stable
 
 ### **Test Coverage:**
+
 ```
 ✅ Well-formed summary: PASS
 ✅ Missing plan section: PASS (fallback)
@@ -156,6 +164,7 @@ python scripts/run_strategic_planner.py
 ### **Compared to Phases 1-11:**
 
 **Before:**
+
 - Manual project description
 - Manual Planning Agent invocation
 - No business idea evaluation
@@ -163,6 +172,7 @@ python scripts/run_strategic_planner.py
 - No strategic decision layer
 
 **After:**
+
 - ✅ **Automated idea evaluation** (RICE/ICE)
 - ✅ **Intelligent ranking** with proactive suggestions
 - ✅ **Strategic decision layer** with human approval
@@ -177,12 +187,12 @@ python scripts/run_strategic_planner.py
 
 ### **All New Modules Pass Testing:**
 
-| Module | Manual Tests | Automated Tests | Edge Cases |
-|--------|-------------|-----------------|------------|
-| Vertical Agent | ✅ PASS | ✅ 4 tests | ✅ Covered |
-| Strategic Planner | ✅ PASS | ✅ 7 tests | ✅ Covered |
-| Summary Parser | ✅ PASS | ✅ 4 tests | ✅ Covered |
-| Dashboard | ✅ PASS | ✅ Manual | ✅ Covered |
+| Module            | Manual Tests | Automated Tests | Edge Cases |
+| ----------------- | ------------ | --------------- | ---------- |
+| Vertical Agent    | ✅ PASS      | ✅ 4 tests      | ✅ Covered |
+| Strategic Planner | ✅ PASS      | ✅ 7 tests      | ✅ Covered |
+| Summary Parser    | ✅ PASS      | ✅ 4 tests      | ✅ Covered |
+| Dashboard         | ✅ PASS      | ✅ Manual       | ✅ Covered |
 
 **Overall:** ✅ **Production Ready**
 
@@ -206,6 +216,7 @@ python scripts/run_strategic_planner.py
 **Role:** Filters high-scoring verticals and manages project initiation
 
 **Features:**
+
 - ✅ Score & plan detection from multiple formats
 - ✅ **Human approval loop** with Y/N confirmation
 - ✅ Skips malformed input with logging
@@ -214,6 +225,7 @@ python scripts/run_strategic_planner.py
 - ✅ AgentOutput protocol compliance
 
 **Decision Thresholds:**
+
 - Score ≥100: Strong opportunity (confidence: 0.8)
 - Score 50-99: Moderate opportunity (confidence: 0.6)
 - Score <50: Hold for validation (confidence: 0.3)
@@ -227,6 +239,7 @@ python scripts/run_strategic_planner.py
 **Integration:** Called from Strategic Planner (reusable by other agents)
 
 **Output:** Dict with structured data:
+
 - `top` - Top vertical details (name, score, reach, impact, confidence, effort)
 - `title` - Project name (alias for convenience)
 - `score` - RICE/ICE score (float)
@@ -236,12 +249,14 @@ python scripts/run_strategic_planner.py
 - `framework` - Scoring method ("RICE" or "ICE")
 
 **Formats Supported:**
+
 - ✅ YAML (`vertical_scores.yaml`)
 - ✅ Jinja2 markdown (our template format)
 - ✅ Custom markdown (user-defined format)
 - ✅ Generic markdown (fallback extraction)
 
 **Validation:**
+
 - ✅ Required fields check
 - ✅ Optional fields check (strict mode)
 - ✅ Error reporting
@@ -338,13 +353,15 @@ Integration:
 
 **Ready for:** Risk Agent Implementation (Phase 14)
 
-**Purpose:** 
+**Purpose:**
+
 - Challenge strategic decisions before approval
 - Identify risks early in the process
 - Provide counter-arguments and concerns
 - Act as "devil's advocate" for better decisions
 
-**Integration Point:** 
+**Integration Point:**
+
 - Between Strategic Planner proposal and human approval
 - Analyzes the recommendation and flags concerns
 - Human sees both the proposal AND the risk assessment
@@ -367,7 +384,6 @@ Next Step: Risk Agent Implementation 🎯
 
 **All systems operational and ready for next enhancement!** 🚀
 
-*Management Team AI System*  
-*Phases 12-13: Vertical Planning System*  
-*Status: 🟢 Complete & Production Ready*
-
+_Management Team AI System_  
+_Phases 12-13: Vertical Planning System_  
+_Status: 🟢 Complete & Production Ready_

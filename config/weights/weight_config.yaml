@@ -1,0 +1,11 @@
+# weight_config.yaml
+# Simple weight configuration for Opportunity Ranking Agent
+# Each criterion is scored 0-10, then multiplied by its weight
+
+market_size: 5
+entry_ease: 4
+personal_fit: 4
+scalability: 3
+speed: 3
+competition: 2
+resource_need: 2

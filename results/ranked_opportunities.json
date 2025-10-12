@@ -1,0 +1,71 @@
+[
+  {
+    "name": "AI Receptionist for Hair Salons",
+    "market_size": 7,
+    "entry_ease": 8,
+    "personal_fit": 7,
+    "scalability": 7,
+    "speed": 8,
+    "competition": 6,
+    "resource_need": 7,
+    "summary": "AI phone answering for salon bookings and customer queries",
+    "score": 166,
+    "score_breakdown": {
+      "market_size": 35,
+      "entry_ease": 32,
+      "personal_fit": 28,
+      "scalability": 21,
+      "speed": 24,
+      "competition": 12,
+      "resource_need": 14
+    },
+    "risk_flags": [],
+    "scored_at": "2025-10-12T17:11:48.299356"
+  },
+  {
+    "name": "Fleet Booking for Golf Clubs",
+    "market_size": 6,
+    "entry_ease": 6,
+    "personal_fit": 6,
+    "scalability": 6,
+    "speed": 6,
+    "competition": 7,
+    "resource_need": 6,
+    "summary": "Tee time management and member communication system",
+    "score": 140,
+    "score_breakdown": {
+      "market_size": 30,
+      "entry_ease": 24,
+      "personal_fit": 24,
+      "scalability": 18,
+      "speed": 18,
+      "competition": 14,
+      "resource_need": 12
+    },
+    "risk_flags": [],
+    "scored_at": "2025-10-12T17:11:48.299373"
+  },
+  {
+    "name": "BI Dashboards for Construction",
+    "market_size": 8,
+    "entry_ease": 5,
+    "personal_fit": 5,
+    "scalability": 7,
+    "speed": 5,
+    "competition": 5,
+    "resource_need": 4,
+    "summary": "Project tracking and financial dashboards for builders",
+    "score": 134,
+    "score_breakdown": {
+      "market_size": 40,
+      "entry_ease": 20,
+      "personal_fit": 20,
+      "scalability": 21,
+      "speed": 15,
+      "competition": 10,
+      "resource_need": 8
+    },
+    "risk_flags": [],
+    "scored_at": "2025-10-12T17:11:48.299377"
+  }
+]
