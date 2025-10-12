@@ -107,14 +107,30 @@ def main():
         medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else "  "
         print(f"   {medal} {i}. {idea['name']:<20} Score: {idea['score']:>8.2f}")
     
+    # Display proactive suggestions
+    if 'proactive_notes' in result and result['proactive_notes']:
+        print("\n" + "─"*70)
+        print("\n🤖 PROACTIVE INSIGHTS:\n")
+        for i, note in enumerate(result['proactive_notes'], start=1):
+            # Wrap long lines
+            lines = note.split('. ')
+            if len(lines) > 1:
+                print(f"   {i}. {lines[0]}.")
+                for line in lines[1:]:
+                    if line.strip():
+                        print(f"      {line.strip()}{'.' if not line.endswith('.') else ''}")
+            else:
+                print(f"   {i}. {note}")
+    
     print("\n" + "="*70)
     print("✅ Evaluation Complete!")
     print("="*70 + "\n")
     
     print("💡 Next Steps:")
     print("   1. Review the top recommendation")
-    print("   2. Feed this to Strategy Agent for detailed planning")
-    print("   3. Or run with different verticals via YAML input\n")
+    print("   2. Address any proactive insights above")
+    print("   3. Feed this to Strategy Agent for detailed planning")
+    print("   4. Or run with different verticals via YAML input\n")
 
 
 if __name__ == "__main__":

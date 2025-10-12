@@ -39,31 +39,35 @@ print(result['summary'])
 
 **RICE = (Reach × Impact × Confidence) / Effort**
 
-| Factor | Range | Description |
-|--------|-------|-------------|
-| **Reach** | 1-10 | Market size / number of potential customers |
-| **Impact** | 1-10 | Value created / improvement magnitude |
-| **Confidence** | 1-10 | Certainty in estimates / proven model |
-| **Effort** | 1-10 | Implementation complexity (higher = harder) |
+| Factor         | Range | Description                                 |
+| -------------- | ----- | ------------------------------------------- |
+| **Reach**      | 1-10  | Market size / number of potential customers |
+| **Impact**     | 1-10  | Value created / improvement magnitude       |
+| **Confidence** | 1-10  | Certainty in estimates / proven model       |
+| **Effort**     | 1-10  | Implementation complexity (higher = harder) |
 
 ### Scoring Guidance
 
 **Reach (Market Size):**
+
 - 1-3: Niche market (< 10K potential customers)
 - 4-6: Medium market (10K-100K customers)
 - 7-10: Large market (> 100K customers)
 
 **Impact (Value Creation):**
+
 - 1-3: Minor improvement
 - 4-6: Moderate value
 - 7-10: Major transformation
 
 **Confidence (Certainty):**
+
 - 1-3: Low confidence / high uncertainty
 - 4-6: Moderate confidence
 - 7-10: High confidence / proven model
 
 **Effort (Implementation):**
+
 - 1-3: Simple / quick to build
 - 4-6: Moderate complexity
 - 7-10: Complex / resource intensive
@@ -141,7 +145,7 @@ verticals:
     confidence: 6
     effort: 4
     description: "What it does..."
-    
+
   - name: "Another Idea"
     reach: 5
     impact: 9
@@ -167,10 +171,11 @@ agents:
   - name: VerticalAgent
     path: "agents.vertical_agent.vertical_agent:VerticalAgent"
     active: true
-    stage: 0.5  # Runs before Strategy Agent
+    stage: 0.5 # Runs before Strategy Agent
 ```
 
 The agent will:
+
 1. Load verticals from `inputs/verticals.yaml`
 2. Score using RICE framework
 3. Output recommendation via `AgentOutput` protocol
@@ -209,7 +214,7 @@ top_choice:
   confidence: 9
   effort: 2
   score: 135.0
-  
+
 all_ranked:
   - name: Hair Salons
     score: 135.0
@@ -275,11 +280,10 @@ python cli/manage.py run
 ✅ AgentOutput protocol compatible  
 ✅ Caching support  
 ✅ Beautiful CLI output  
-✅ Saves results to YAML  
+✅ Saves results to YAML
 
 ---
 
 **Created:** Phase 12 - Vertical Agent Enhancement  
 **Author:** Management Team AI System  
 **Status:** ✅ Complete & Tested
-
