@@ -35,3 +35,8 @@ agents:
     path: "agents.reporting_agent.reporting_agent:ReportingAgent"
     active: true # ✅ Phase 6 - NOW ACTIVE
     stage: 6
+
+  - name: IterativeWorkshopAgent
+    path: "agents.workshop_agent.workshop_agent:IterativeWorkshopAgent"
+    active: true # ✅ Phase 1.5 - Workshop Integration
+    stage: 1.5  # Between refinement and vertical
