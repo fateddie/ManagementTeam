@@ -70,51 +70,17 @@ OUTPUT FORMAT: JSON
       "name": "...",
       "description": "...",
       "revenue_impact": "% or $value",
-      "revenue_justification": {{
-        "question_1_market_size": "What's the TAM for this opportunity? (cite Perplexity data)",
-        "question_2_current_arpu": "What's current expected ARPU without this strategy?",
-        "question_3_new_arpu": "What's new ARPU with this strategy? Based on what comparable?",
-        "question_4_customer_increase": "Will this increase customer count? By how many? Why?",
-        "question_5_calculation": "Show: (new ARPU - old ARPU) × customers + (new customers × ARPU) = revenue impact",
-        "question_6_timeframe": "Over what period? Year 1? Lifetime? Why?"
-      }},
+      "revenue_justification": "Show calculation: Market size ($X) × Capture rate (Y%) × ARPU ($Z/mo) × 12 months = $ABC Year 1 revenue. Compare to competitor benchmarks from Perplexity data.",
       "cost": $value,
-      "cost_justification": {{
-        "question_1_development": "Development costs: hours × rate = $X. Show breakdown.",
-        "question_2_marketing": "Marketing costs to launch: What channels? How much each?",
-        "question_3_operations": "Ongoing operational costs: What and why?",
-        "question_4_hidden_costs": "What hidden costs might emerge? Buffer amount?",
-        "question_5_total": "Show: dev + marketing + ops + buffer = total cost"
-      }},
+      "cost_justification": "Solo founder costs: Development (X hours × $0 your time = $0-500 tools/APIs) + Marketing ($Y) = Total $Z. Show breakdown.",
       "time_weeks": number,
-      "time_justification": {{
-        "question_1_phases": "What are the implementation phases? How long for each?",
-        "question_2_dependencies": "What must happen first? What could block progress?",
-        "question_3_team_size": "How many people? What skills needed?",
-        "question_4_comparable": "How long did competitors take to implement similar? Cite examples."
-      }},
+      "time_justification": "Build time: X weeks for core feature. Based on: similar complexity took Y weeks for solo founders. Can leverage: [APIs/tools].",
       "roi": calculated,
-      "roi_calculation": {{
-        "question_1_revenue": "Total revenue expected: $X (from revenue_justification)",
-        "question_2_cost": "Total cost: $Y (from cost_justification)",
-        "question_3_formula": "ROI = revenue / cost = $X / $Y = Z:1",
-        "question_4_payback": "Payback period: cost / (monthly revenue) = X months. Is this acceptable?",
-        "question_5_risk_adjusted": "Risk-adjusted ROI: ROI × probability of success = X:1. Show calculation."
-      }},
+      "roi_calculation": "Revenue ($X/year) / Cost ($Y) = Z:1 ROI. Payback: X months. For solo founder: Time investment (A weeks) worth it if revenue >$B/year.",
       "score": calculated,
       "score_formula": "Show exact formula: (revenue_impact × probability) / (cost + time) = score. Explain weighting.",
-      "competitive_advantage": {{
-        "what_moat": "What specific moat does this create?",
-        "how_defensible": "How hard to copy? What % of competitors could replicate? Timeline?",
-        "network_effects": "Are there network effects? If yes, quantify the value increase.",
-        "switching_costs": "What switching costs for customers? Quantify if possible."
-      }},
-      "sustainability": {{
-        "question_1_duration": "How long will this advantage last? 1 year? 5 years? Why?",
-        "question_2_erosion": "What could erode this advantage? How likely? When?",
-        "question_3_defense": "How do you defend against erosion? What cost?",
-        "question_4_exit_strategy": "If advantage erodes, what's Plan B?"
-      }}
+      "competitive_advantage": "What moat does this create? How defensible? (For solo founder: Speed and niche focus are advantages)",
+      "sustainability": "How long will advantage last? What could erode it? (For solo: Can pivot quickly if needed)"
     }},
     ...5+ strategies
   ],

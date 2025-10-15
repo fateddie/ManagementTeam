@@ -309,28 +309,32 @@ class IterativeWorkshopAgent(BaseAgent):
         title = idea_data.get("title", "")
         value_prop = idea_data.get("value_proposition", "")
         
-        # Comprehensive competitive intelligence queries
-        # Why: LLM needs deep market understanding to provide informed analysis
+        # Optimized queries for SOLO FOUNDER context
+        # Why: Focus on pain validation, quick build feasibility, and realistic solo success
         queries = {
-            "market_overview": f"What's the current market size for {industry} software in 2025? Include total TAM, growth rate (CAGR), key segments, and market drivers. Where is this market coming from (what trends are driving growth)?",
+            # Essential 1: Pain point validation - Do people PAY for solutions?
+            "pain_validation": 
+                f"Are people currently paying for {industry} solutions? List top 5 competitors with their pricing ($X/month), number of paying customers, and what pain points they solve. Include Google Calendar (free), Motion.ai, Superhuman, Reclaim.ai. What features do people actually pay for?",
             
-            "competitor_landscape": f"Who are the top 5-10 competitors for {title or industry} products? For each competitor, provide: company name, market share %, annual revenue, user count, founding year, total funding raised, and current valuation if available.",
+            # Essential 2: Competitive analysis with specifics
+            "competitor_analysis":
+                f"For {title or industry} products: Compare Google Calendar (free, 1B users) vs Motion.ai vs Superhuman vs Reclaim.ai. What's each one's key differentiator? Why do people choose paid options over free Google? What features justify $20-40/month pricing?",
             
-            "competitor_offerings": f"What exactly do Google Calendar, Gmail, Motion.ai, Superhuman, Reclaim.ai, Clockwise, and SaneBox offer? Detail their key features, USP (unique selling proposition), target customer, and what makes each different from the others.",
+            # Essential 3: Failure lessons - Critical for solo founders
+            "failure_lessons":
+                f"What {industry} startups failed? Include Sunrise Calendar (Microsoft acquisition then shutdown), Mailbox (Dropbox shutdown), Astro. Why did each fail specifically? What mistakes should solo founders avoid?",
             
-            "pricing_strategies": f"What are the pricing models for {industry} products? Include specific prices: Google (free), Motion.ai ($X/month), Superhuman ($X/month), Reclaim.ai ($X/month). What pricing tiers exist? What's the average ARPU?",
+            # Essential 4: Solo founder success stories
+            "solo_success_benchmarks":
+                f"What {industry} products were built by solo founders or small teams? Examples: early Superhuman, early Motion. How long to build MVP? Revenue in Year 1? How did they validate demand before building? What was their growth strategy?",
             
-            "marketing_strategies": f"How do successful {industry} products acquire customers? What marketing channels do Motion.ai, Superhuman, and Reclaim.ai use? What's their customer acquisition strategy? How do they differentiate in their messaging?",
+            # Essential 5: Unmet needs and niches
+            "market_gaps":
+                f"What customer needs are UNMET in {industry}? What do users complain about with Google Calendar, Motion, Superhuman? What specific niches or user types are underserved? Where are the gaps?",
             
-            "failed_startups": f"What calendar and email management startups have failed in the last 5 years? Specifically: Sunrise Calendar, Mailbox, Inbox by Gmail, Astro, and any others. Why did each fail? What lessons can be learned?",
-            
-            "market_trends": f"What are the top 3-5 trends in {industry} space right now? Examples: AI integration, voice interfaces, privacy focus. Which trends are growing vs declining? What's the evidence?",
-            
-            "market_direction": f"Where is the {industry} market headed in the next 2-3 years? What new technologies or approaches are emerging? What customer needs are still unmet? What are analysts predicting?",
-            
-            "unit_economics": f"What's the average ARPU, CAC, LTV:CAC ratio, churn rate, and gross margin for successful {industry} SaaS products? Provide benchmarks from industry reports.",
-            
-            "entry_barriers": f"What are the main barriers to entry in the {industry} market? Examples: Google's distribution advantage, network effects, data moats, regulatory requirements, required integrations. How high is each barrier?"
+            # Essential 6: Quick launch and validation
+            "build_and_launch":
+                f"For a solo technical founder building a {industry} product: What's realistic build time for MVP? What's the minimum feature set people would pay for? How did successful founders validate demand BEFORE building (landing pages, manual service, etc.)? What tools/APIs can be leveraged?"
         }
         
         market_data = {}
