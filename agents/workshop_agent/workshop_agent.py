@@ -341,24 +341,86 @@ class IterativeWorkshopAgent(BaseAgent):
         Returns:
             Dictionary with risks, opportunities, market context, and initial viability score
         """
-        # This will be implemented with actual LLM calls in the next iteration
-        # For now, return structured placeholder data
+        if not self.openai_client:
+            self.logger.warning("OpenAI not available, using placeholder data")
+            return self._get_round_1_placeholder(idea_data, market_data)
         
+        # Load prompt template
+        prompt_template = self._load_prompt_template("round_1_prompt.md")
+        
+        # Prepare market data summary
+        market_summary = self._summarize_market_data(market_data)
+        
+        # Build prompt
+        prompt = prompt_template.format(
+            title=idea_data.get("title", "Unknown"),
+            description=idea_data.get("description", "No description"),
+            target_customer=idea_data.get("target_customer", "Unknown"),
+            value_proposition=idea_data.get("value_proposition", "Unknown"),
+            niche=idea_data.get("niche", "Unknown"),
+            market_data_summary=market_summary
+        )
+        
+        # Call LLM
+        try:
+            response = self.openai_client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are an expert startup advisor. Return valid JSON only."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                response_format={"type": "json_object"}
+            )
+            
+            result = json.loads(response.choices[0].message.content)
+            result["current_idea"] = idea_data
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"Round 1 LLM call failed: {e}")
+            return self._get_round_1_placeholder(idea_data, market_data)
+    
+    def _get_round_1_placeholder(self, idea_data: dict, market_data: dict) -> dict:
+        """Fallback placeholder data if LLM unavailable."""
         return {
             "risks": [
-                {"risk": "Market too small", "probability": 30, "impact": 40, "score": 12},
-                {"risk": "High competition", "probability": 70, "impact": 50, "score": 35},
-                {"risk": "Technical complexity", "probability": 60, "impact": 30, "score": 18}
+                {"risk": "Market too small", "probability": 30, "impact": 40000, "score": 12, "reasoning": "Limited addressable market"},
+                {"risk": "High competition", "probability": 70, "impact": 50000, "score": 35, "reasoning": "Many established players"},
+                {"risk": "Technical complexity", "probability": 60, "impact": 30000, "score": 18, "reasoning": "Difficult to build"}
             ],
             "opportunities": [
-                {"opportunity": "Growing market", "potential_value": 1000000, "probability": 60},
-                {"opportunity": "Underserved niche", "potential_value": 500000, "probability": 40},
-                {"opportunity": "Technology advantage", "potential_value": 750000, "probability": 50}
+                {"opportunity": "Growing market", "potential_value": 1000000, "probability": 60, "reasoning": "Market expanding rapidly"},
+                {"opportunity": "Underserved niche", "potential_value": 500000, "probability": 40, "reasoning": "Specific segment needs solution"},
+                {"opportunity": "Technology advantage", "potential_value": 750000, "probability": 50, "reasoning": "Novel approach possible"}
             ],
-            "market_context": market_data,
+            "market_context": {"summary": "Market data from Perplexity", "data": market_data},
+            "viability_breakdown": {"market_attractiveness": 5, "competitive_position": 4, "differentiation": 5, "unit_economics": 6, "technical_feasibility": 5},
             "initial_viability_score": 25,
+            "key_insight": "Placeholder assessment - configure OpenAI for real analysis",
             "current_idea": idea_data
         }
+    
+    def _summarize_market_data(self, market_data: dict) -> str:
+        """Create concise summary of Perplexity market data."""
+        if not market_data or "error" in market_data:
+            return "Market data not available"
+        
+        summary_parts = []
+        for query, data in market_data.items():
+            if isinstance(data, dict) and "summary" in data:
+                summary_parts.append(f"{query[:60]}...: {data['summary'][:200]}...")
+        
+        return "\n\n".join(summary_parts) if summary_parts else "Market data retrieved"
+    
+    def _load_prompt_template(self, filename: str) -> str:
+        """Load prompt template from prompts directory."""
+        prompt_path = Path(__file__).parent / "prompts" / filename
+        try:
+            return prompt_path.read_text()
+        except Exception as e:
+            self.logger.error(f"Failed to load prompt template {filename}: {e}")
+            return "Provide analysis for this business idea."
     
     def _execute_round_2_risk_mitigation(self, idea_data: dict, risks: list) -> dict:
         """
@@ -375,23 +437,54 @@ class IterativeWorkshopAgent(BaseAgent):
         Returns:
             Dictionary with risk mitigation results and evolved idea
         """
-        # This will be implemented with actual LLM calls in the next iteration
-        # For now, return structured placeholder data
+        if not self.openai_client or not risks:
+            return self._get_round_2_placeholder(idea_data, risks)
         
+        biggest_risk = risks[0]
+        prompt_template = self._load_prompt_template("round_2_prompt.md")
+        
+        prompt = prompt_template.format(
+            risk_description=biggest_risk.get("risk", "Unknown risk"),
+            probability=biggest_risk.get("probability", 50),
+            impact=biggest_risk.get("impact", 10000),
+            score=biggest_risk.get("score", 0),
+            current_idea_json=json.dumps(idea_data, indent=2)
+        )
+        
+        try:
+            response = self.openai_client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are an expert startup advisor. Return valid JSON only."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                response_format={"type": "json_object"}
+            )
+            
+            result = json.loads(response.choices[0].message.content)
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"Round 2 LLM call failed: {e}")
+            return self._get_round_2_placeholder(idea_data, risks)
+    
+    def _get_round_2_placeholder(self, idea_data: dict, risks: list) -> dict:
+        """Fallback placeholder data if LLM unavailable."""
         biggest_risk = risks[0] if risks else {"risk": "Unknown", "score": 0}
         
         return {
-            "risk_addressed": biggest_risk,
-            "solutions_generated": [
-                {"solution": "Narrow target market", "risk_reduction": 70, "cost": 0, "time": 0},
-                {"solution": "Partner with existing player", "risk_reduction": 80, "cost": 10000, "time": 4},
-                {"solution": "Focus on unique advantage", "risk_reduction": 60, "cost": 5000, "time": 2}
+            "risk_being_addressed": biggest_risk,
+            "solutions": [
+                {"name": "Narrow target market", "description": "Focus on specific niche", "risk_reduction": 70, "cost": 0, "time_weeks": 0, "feasibility": 10, "score": 700},
+                {"name": "Partner with existing player", "description": "Strategic partnership", "risk_reduction": 80, "cost": 10000, "time_weeks": 4, "feasibility": 7, "score": 56},
+                {"name": "Focus on unique advantage", "description": "Build differentiator", "risk_reduction": 60, "cost": 5000, "time_weeks": 2, "feasibility": 8, "score": 96}
             ],
-            "solution_selected": {"solution": "Narrow target market", "risk_reduction": 70, "cost": 0, "time": 0},
+            "recommended_solution": {"name": "Narrow target market", "reasoning": "Highest score with zero cost", "expected_outcome": "Reduced market risk"},
             "evolved_idea": {
                 **idea_data,
                 "target_customer": f"Narrowed: {idea_data.get('target_customer', 'Unknown')}",
-                "risk_mitigation_applied": "Market focus narrowed"
+                "changes_made": "Market focus narrowed to reduce risk"
             },
             "risk_mitigation": "Market focus strategy applied"
         }
@@ -411,25 +504,57 @@ class IterativeWorkshopAgent(BaseAgent):
         Returns:
             Dictionary with opportunity capture results and final idea
         """
-        # This will be implemented with actual LLM calls in the next iteration
-        # For now, return structured placeholder data
+        if not self.openai_client or not opportunities:
+            return self._get_round_3_placeholder(idea_data, opportunities)
         
+        biggest_opportunity = opportunities[0]
+        prompt_template = self._load_prompt_template("round_3_prompt.md")
+        
+        prompt = prompt_template.format(
+            opportunity_description=biggest_opportunity.get("opportunity", "Unknown opportunity"),
+            potential_value=biggest_opportunity.get("potential_value", 100000),
+            probability=biggest_opportunity.get("probability", 50),
+            current_idea_json=json.dumps(idea_data, indent=2)
+        )
+        
+        try:
+            response = self.openai_client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": "You are an expert startup advisor. Return valid JSON only."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                response_format={"type": "json_object"}
+            )
+            
+            result = json.loads(response.choices[0].message.content)
+            return result
+            
+        except Exception as e:
+            self.logger.error(f"Round 3 LLM call failed: {e}")
+            return self._get_round_3_placeholder(idea_data, opportunities)
+    
+    def _get_round_3_placeholder(self, idea_data: dict, opportunities: list) -> dict:
+        """Fallback placeholder data if LLM unavailable."""
         biggest_opportunity = opportunities[0] if opportunities else {"opportunity": "Unknown", "potential_value": 0}
         
         return {
-            "opportunity_captured": biggest_opportunity,
-            "strategies_generated": [
-                {"strategy": "Premium positioning", "revenue_impact": 25, "cost": 5000, "roi": 5.0},
-                {"strategy": "Feature differentiation", "revenue_impact": 30, "cost": 10000, "roi": 3.0},
-                {"strategy": "Market timing", "revenue_impact": 20, "cost": 0, "roi": 10.0}
+            "opportunity_being_captured": biggest_opportunity,
+            "strategies": [
+                {"name": "Premium positioning", "description": "Position as premium solution", "revenue_impact": "25%", "cost": 5000, "time_weeks": 4, "roi": 5.0, "score": 125},
+                {"name": "Feature differentiation", "description": "Unique feature set", "revenue_impact": "30%", "cost": 10000, "time_weeks": 8, "roi": 3.0, "score": 90},
+                {"name": "Market timing", "description": "Launch at optimal time", "revenue_impact": "20%", "cost": 0, "time_weeks": 0, "roi": 999, "score": 200}
             ],
-            "strategy_selected": {"strategy": "Market timing", "revenue_impact": 20, "cost": 0, "roi": 10.0},
+            "recommended_strategy": {"name": "Market timing", "reasoning": "Highest ROI with minimal cost", "expected_outcome": "Capture emerging market opportunity"},
             "final_idea": {
                 **idea_data,
                 "value_proposition": f"Enhanced: {idea_data.get('value_proposition', 'Unknown')}",
-                "opportunity_capture_applied": "Market timing strategy"
+                "evolution_summary": "Idea evolved through 3-round workshop"
             },
-            "final_viability_score": 42,  # Improved from initial 25
+            "final_viability_score": 42,
+            "viability_improvement": "+17 points",
+            "recommendation": "CONDITIONAL GO - validate remaining assumptions",
             "opportunity_capture": "Market timing optimization applied"
         }
     
