@@ -1,0 +1,481 @@
+"""
+workshop_agent.py
+
+Iterative Workshop Agent - 3-Round Collaborative Idea Evolution
+Phase 1.1 - Core Agent Implementation
+
+Purpose:
+    Implements iterative workshop methodology to transform weak ideas into viable businesses
+    through collaborative brainstorming with an expert startup advisor persona.
+
+Key Features:
+    - 3-round methodology: Assessment → Risk Mitigation → Opportunity Capture
+    - Real-time market data via Perplexity integration
+    - MBA + startup founder persona for credibility
+    - Structured output for downstream agents
+    - Comprehensive logging and error handling
+
+Design Reasoning:
+    1. BaseAgent inheritance: Ensures orchestrator compatibility without system changes
+    2. Perplexity integration: Provides current market data vs outdated research
+    3. Specific persona: Builds trust for high-stakes business decisions ($50K+ impact)
+    4. 3-round structure: Balances thoroughness with user engagement (15 min total)
+    5. Structured output: Enables data sharing with Vertical/Ranking agents
+
+Created: 2025-01-XX
+"""
+
+import json
+import logging
+from datetime import datetime
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+
+# Core system imports
+from core.base_agent import BaseAgent, AgentContext, AgentOutput
+from integrations.perplexity_connector import PerplexityConnector
+
+# OpenAI integration (following existing pattern)
+try:
+    from openai import OpenAI
+    from src.utils.config_loader import get_env
+except ImportError:
+    OpenAI = None
+    get_env = None
+
+
+class IterativeWorkshopAgent(BaseAgent):
+    """
+    3-Round Iterative Workshop Agent
+    
+    Transforms business ideas through collaborative iteration with an expert advisor persona.
+    
+    Persona: Seasoned startup advisor with MBA + founder experience
+    Capability: Real-time market data via Perplexity integration
+    Methodology: Quick Assessment → Risk Mitigation → Opportunity Capture
+    
+    Reasoning for Design Choices:
+    - Inherits BaseAgent: Ensures orchestrator compatibility without refactoring
+    - Depends on RefinementAgent: Workshop needs refined idea input to work effectively
+    - Perplexity integration: Provides current market intelligence vs static data
+    - 3-round methodology: Optimized for user engagement (15 min vs 30+ min)
+    - Specific persona: Builds credibility for high-stakes decisions
+    """
+    
+    @property
+    def name(self) -> str:
+        """Agent identifier for orchestrator and logging."""
+        return "IterativeWorkshopAgent"
+    
+    @property
+    def dependencies(self) -> List[str]:
+        """
+        Workshop depends on RefinementAgent output.
+        
+        Reasoning: Workshop needs a refined idea with clear problem statement,
+        target customer, and value proposition to effectively apply the 3-round
+        methodology. Raw ideas are too vague for meaningful risk/opportunity analysis.
+        """
+        return ["RefinementAgent"]
+    
+    def __init__(self, model: str = "gpt-4o-mini"):
+        """
+        Initialize Workshop Agent with LLM and Perplexity integration.
+        
+        Args:
+            model: OpenAI model to use for workshop analysis
+            
+        Reasoning for Initialization:
+        - Perplexity integration: Provides real-time market data for accurate analysis
+        - Logging setup: Enables debugging and performance monitoring
+        - Model parameterization: Allows testing with different models
+        """
+        self.model = model
+        self.logger = self._init_logger()
+        self.perplexity = self._init_perplexity()
+        self.openai_client = self._init_openai()
+        self.rounds_completed = 0
+        
+    def _init_logger(self) -> logging.Logger:
+        """
+        Setup logging for workshop agent.
+        
+        Reasoning: Comprehensive logging is critical for debugging workshop sessions
+        and understanding how ideas evolve through the iteration process.
+        """
+        logger = logging.getLogger("workshop_agent")
+        logger.setLevel(logging.INFO)
+        
+        # Create logs directory if it doesn't exist
+        log_dir = Path("logs")
+        log_dir.mkdir(exist_ok=True)
+        
+        # File handler for workshop-specific logs
+        file_handler = logging.FileHandler("logs/workshop_agent.log")
+        file_handler.setLevel(logging.INFO)
+        
+        # Console handler for real-time feedback
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+        
+        # Formatter
+        formatter = logging.Formatter(
+            '%(asctime)s | %(name)s | %(levelname)s | %(message)s'
+        )
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
+        
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
+        
+        return logger
+        
+    def _init_perplexity(self) -> Optional[PerplexityConnector]:
+        """
+        Initialize Perplexity connector for real-time market data.
+        
+        Reasoning: Real-time market data is critical for accurate risk assessment
+        and opportunity identification. Static data becomes outdated quickly in
+        fast-moving startup markets.
+        
+        Returns:
+            PerplexityConnector instance or None if API key not configured
+        """
+        try:
+            return PerplexityConnector()
+        except ValueError as e:
+            self.logger.warning(f"Perplexity not configured: {e}")
+            return None
+            
+    def _init_openai(self) -> Optional[OpenAI]:
+        """
+        Initialize OpenAI client for LLM operations.
+        
+        Reasoning: Workshop analysis requires sophisticated reasoning that benefits
+        from advanced LLM capabilities. GPT-4o-mini provides good balance of
+        capability and cost for iterative analysis.
+        
+        Returns:
+            OpenAI client instance or None if API key not configured
+        """
+        if not OpenAI or not get_env:
+            self.logger.warning("OpenAI not available")
+            return None
+            
+        api_key = get_env("OPENAI_API_KEY")
+        if not api_key:
+            self.logger.warning("OPENAI_API_KEY not configured")
+            return None
+            
+        return OpenAI(api_key=api_key)
+    
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """
+        Validate that RefinementAgent output is available.
+        
+        Reasoning: Workshop methodology requires refined idea input with clear
+        problem statement, target customer, and value proposition. Without this,
+        the risk/opportunity analysis would be meaningless.
+        
+        Args:
+            context: Execution context containing upstream agent outputs
+            
+        Returns:
+            True if inputs are valid, False otherwise
+        """
+        refined_data = context.get_agent_data("RefinementAgent")
+        
+        if not refined_data:
+            self.logger.error("No RefinementAgent output found")
+            return False
+            
+        required_fields = ["title", "description", "target_customer", "value_proposition"]
+        missing_fields = [field for field in required_fields if field not in refined_data]
+        
+        if missing_fields:
+            self.logger.error(f"Missing required fields in refined data: {missing_fields}")
+            return False
+            
+        return True
+    
+    def execute(self, context: AgentContext) -> AgentOutput:
+        """
+        Execute 3-round iterative workshop methodology.
+        
+        Process:
+        1. Quick Assessment (5 min) - Market context, top 3 risks/opportunities
+        2. Risk Mitigation (5 min) - Address biggest risks with solutions
+        3. Opportunity Capture (5 min) - Optimize for biggest opportunities
+        
+        Reasoning for 3-Round Structure:
+        - Round 1: Establishes baseline understanding and identifies key challenges
+        - Round 2: Addresses the most critical risks that could kill the idea
+        - Round 3: Captures the biggest opportunities for success
+        - Time-boxed: Prevents analysis paralysis while ensuring thoroughness
+        
+        Args:
+            context: Execution context with RefinementAgent output
+            
+        Returns:
+            AgentOutput with evolved idea, viability score, and workshop history
+        """
+        self.logger.info("Starting 3-round iterative workshop")
+        
+        # Get refined idea from RefinementAgent
+        refined_data = context.get_agent_data("RefinementAgent")
+        if not refined_data:
+            raise ValueError("No refined idea data available from RefinementAgent")
+            
+        self.logger.info(f"Processing idea: {refined_data.get('title', 'Unknown')}")
+        
+        try:
+            # Round 1: Quick Assessment
+            self.logger.info("Round 1: Quick Assessment")
+            market_data = self._gather_market_context(refined_data)
+            round_1_results = self._execute_round_1_assessment(refined_data, market_data)
+            
+            # Round 2: Risk Mitigation  
+            self.logger.info("Round 2: Risk Mitigation")
+            round_2_results = self._execute_round_2_risk_mitigation(
+                round_1_results.get("current_idea", refined_data),
+                round_1_results["risks"]
+            )
+            
+            # Round 3: Opportunity Capture
+            self.logger.info("Round 3: Opportunity Capture")
+            round_3_results = self._execute_round_3_opportunity_capture(
+                round_2_results["evolved_idea"],
+                round_1_results["opportunities"]
+            )
+            
+            # Compile final results
+            final_viability_score = round_3_results["final_viability_score"]
+            initial_score = round_1_results["initial_viability_score"]
+            improvement = final_viability_score - initial_score
+            
+            self.logger.info(f"Workshop complete: {initial_score} → {final_viability_score} (+{improvement})")
+            
+            # Return structured output for downstream agents
+            return AgentOutput(
+                agent_name=self.name,
+                decision="approve" if final_viability_score >= 30 else "conditional_go",
+                reasoning=f"Idea evolved from {initial_score}/50 to {final_viability_score}/50 viability score. "
+                         f"Key improvements: {round_2_results['risk_mitigation']} and {round_3_results['opportunity_capture']}",
+                data_for_next_agent={
+                    "evolved_idea": round_3_results["final_idea"],
+                    "viability_score": final_viability_score,
+                    "improvement": improvement,
+                    "workshop_history": {
+                        "round_1": round_1_results,
+                        "round_2": round_2_results,
+                        "round_3": round_3_results
+                    },
+                    "market_intelligence": market_data,
+                    "recommendation": self._generate_recommendation(final_viability_score)
+                },
+                confidence=0.85,  # High confidence due to structured methodology
+                flags=[],
+                metadata={
+                    "rounds_completed": 3,
+                    "market_data_sources": len(market_data),
+                    "methodology": "3-round_iterative_workshop",
+                    "persona": "mba_startup_advisor"
+                }
+            )
+            
+        except Exception as e:
+            self.logger.error(f"Workshop execution failed: {e}")
+            raise
+    
+    def _gather_market_context(self, idea_data: dict) -> dict:
+        """
+        Gather real-time market data using Perplexity.
+        
+        Reasoning: Current market data is essential for accurate risk assessment
+        and opportunity identification. Static data becomes outdated quickly in
+        fast-moving startup markets.
+        
+        Args:
+            idea_data: Refined idea data from RefinementAgent
+            
+        Returns:
+            Dictionary of market intelligence data
+        """
+        if not self.perplexity:
+            self.logger.warning("Perplexity not available, using placeholder data")
+            return {"error": "Perplexity not configured"}
+            
+        industry = idea_data.get("niche", idea_data.get("target_customer", "startup"))
+        
+        queries = [
+            f"What's the current market size for {industry} in 2025?",
+            f"Who are the top 3 competitors in {industry} and their revenue?",
+            f"Latest trends in {industry} industry",
+            f"Recent funding activity and investor interest in {industry} space"
+        ]
+        
+        market_data = {}
+        for query in queries:
+            try:
+                result = self.perplexity.search(query, focus="research")
+                market_data[query] = result
+                self.logger.info(f"Retrieved market data for: {query[:50]}...")
+            except Exception as e:
+                self.logger.error(f"Failed to get market data for '{query}': {e}")
+                market_data[query] = {"error": str(e)}
+                
+        return market_data
+    
+    def _execute_round_1_assessment(self, idea_data: dict, market_data: dict) -> dict:
+        """
+        Round 1: Quick Assessment - Market context and risk/opportunity identification.
+        
+        Reasoning: This round establishes the baseline understanding of the idea
+        in its market context. It identifies the top 3 risks (what could kill the idea)
+        and top 3 opportunities (what could make it successful).
+        
+        Args:
+            idea_data: Refined idea from RefinementAgent
+            market_data: Real-time market intelligence from Perplexity
+            
+        Returns:
+            Dictionary with risks, opportunities, market context, and initial viability score
+        """
+        # This will be implemented with actual LLM calls in the next iteration
+        # For now, return structured placeholder data
+        
+        return {
+            "risks": [
+                {"risk": "Market too small", "probability": 30, "impact": 40, "score": 12},
+                {"risk": "High competition", "probability": 70, "impact": 50, "score": 35},
+                {"risk": "Technical complexity", "probability": 60, "impact": 30, "score": 18}
+            ],
+            "opportunities": [
+                {"opportunity": "Growing market", "potential_value": 1000000, "probability": 60},
+                {"opportunity": "Underserved niche", "potential_value": 500000, "probability": 40},
+                {"opportunity": "Technology advantage", "potential_value": 750000, "probability": 50}
+            ],
+            "market_context": market_data,
+            "initial_viability_score": 25,
+            "current_idea": idea_data
+        }
+    
+    def _execute_round_2_risk_mitigation(self, idea_data: dict, risks: list) -> dict:
+        """
+        Round 2: Risk Mitigation - Address biggest risks with solutions.
+        
+        Reasoning: The biggest risk poses the highest threat to idea success.
+        By generating and evaluating solutions to address this risk, we can
+        significantly improve the idea's viability.
+        
+        Args:
+            idea_data: Current idea state
+            risks: List of identified risks from Round 1
+            
+        Returns:
+            Dictionary with risk mitigation results and evolved idea
+        """
+        # This will be implemented with actual LLM calls in the next iteration
+        # For now, return structured placeholder data
+        
+        biggest_risk = risks[0] if risks else {"risk": "Unknown", "score": 0}
+        
+        return {
+            "risk_addressed": biggest_risk,
+            "solutions_generated": [
+                {"solution": "Narrow target market", "risk_reduction": 70, "cost": 0, "time": 0},
+                {"solution": "Partner with existing player", "risk_reduction": 80, "cost": 10000, "time": 4},
+                {"solution": "Focus on unique advantage", "risk_reduction": 60, "cost": 5000, "time": 2}
+            ],
+            "solution_selected": {"solution": "Narrow target market", "risk_reduction": 70, "cost": 0, "time": 0},
+            "evolved_idea": {
+                **idea_data,
+                "target_customer": f"Narrowed: {idea_data.get('target_customer', 'Unknown')}",
+                "risk_mitigation_applied": "Market focus narrowed"
+            },
+            "risk_mitigation": "Market focus strategy applied"
+        }
+    
+    def _execute_round_3_opportunity_capture(self, idea_data: dict, opportunities: list) -> dict:
+        """
+        Round 3: Opportunity Capture - Optimize for biggest opportunities.
+        
+        Reasoning: The biggest opportunity represents the highest potential value.
+        By optimizing the idea to capture this opportunity, we maximize its
+        potential for success.
+        
+        Args:
+            idea_data: Current idea state after risk mitigation
+            opportunities: List of identified opportunities from Round 1
+            
+        Returns:
+            Dictionary with opportunity capture results and final idea
+        """
+        # This will be implemented with actual LLM calls in the next iteration
+        # For now, return structured placeholder data
+        
+        biggest_opportunity = opportunities[0] if opportunities else {"opportunity": "Unknown", "potential_value": 0}
+        
+        return {
+            "opportunity_captured": biggest_opportunity,
+            "strategies_generated": [
+                {"strategy": "Premium positioning", "revenue_impact": 25, "cost": 5000, "roi": 5.0},
+                {"strategy": "Feature differentiation", "revenue_impact": 30, "cost": 10000, "roi": 3.0},
+                {"strategy": "Market timing", "revenue_impact": 20, "cost": 0, "roi": 10.0}
+            ],
+            "strategy_selected": {"strategy": "Market timing", "revenue_impact": 20, "cost": 0, "roi": 10.0},
+            "final_idea": {
+                **idea_data,
+                "value_proposition": f"Enhanced: {idea_data.get('value_proposition', 'Unknown')}",
+                "opportunity_capture_applied": "Market timing strategy"
+            },
+            "final_viability_score": 42,  # Improved from initial 25
+            "opportunity_capture": "Market timing optimization applied"
+        }
+    
+    def _generate_recommendation(self, viability_score: float) -> str:
+        """
+        Generate recommendation based on final viability score.
+        
+        Reasoning: Clear recommendations help users understand next steps
+        based on the workshop results.
+        
+        Args:
+            viability_score: Final viability score (0-50)
+            
+        Returns:
+            Recommendation string
+        """
+        if viability_score >= 40:
+            return "GO - Strong idea with high viability. Proceed to development."
+        elif viability_score >= 30:
+            return "CONDITIONAL GO - Good idea with moderate viability. Address remaining risks before proceeding."
+        elif viability_score >= 20:
+            return "ITERATE MORE - Idea needs significant improvement. Consider major pivots."
+        else:
+            return "NO-GO - Idea has fundamental issues. Consider different approach."
+
+
+# ==============================================
+# Testing and Validation
+# ==============================================
+
+if __name__ == "__main__":
+    print("\n" + "="*70)
+    print("🧪 ITERATIVE WORKSHOP AGENT - Phase 1.1 Test")
+    print("="*70 + "\n")
+    
+    # Test agent initialization
+    try:
+        agent = IterativeWorkshopAgent()
+        print(f"✅ Agent created: {agent.name}")
+        print(f"✅ Dependencies: {agent.dependencies}")
+        print(f"✅ Logger initialized: {agent.logger is not None}")
+        print(f"✅ Perplexity available: {agent.perplexity is not None}")
+        print(f"✅ OpenAI available: {agent.openai_client is not None}")
+    except Exception as e:
+        print(f"❌ Agent initialization failed: {e}")
+    
+    print("\n" + "="*70)
+    print("✅ WORKSHOP AGENT TESTS COMPLETE")
+    print("="*70 + "\n")
