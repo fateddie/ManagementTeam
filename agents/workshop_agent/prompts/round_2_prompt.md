@@ -18,15 +18,20 @@ CURRENT IDEA STATE:
 
 YOUR TASK: Generate 5+ solutions to address this risk, evaluate them, and recommend the best one.
 
-REASONING APPROACH (Chain-of-Thought):
-Think step-by-step:
-1. First, deeply understand WHY this risk is critical
-2. Then, brainstorm diverse solutions (conventional + creative)
-3. Next, evaluate each solution objectively across multiple criteria
-4. Consider tradeoffs: risk reduction vs cost vs time vs feasibility
-5. Finally, recommend the best solution with clear reasoning
+REASONING APPROACH (Two-Step Process):
 
-For each solution, explain WHY it works and what tradeoffs exist.
+STEP 1 - WRITE YOUR BRAINSTORMING IN PLAIN ENGLISH:
+
+Talk through your thinking naturally:
+- "This risk is critical because [specific example from real company]..."
+- "Looking at how Startup X solved this, they did Y and it cost $Z..."
+- "Solution 1 could work because [specific mechanism]... but it would cost $X because we'd need to [specific breakdown]..."
+- "I'm comparing Solution A (high cost, high certainty) vs Solution B (low cost, uncertain)..."
+- "The tradeoff here is: we save $10K but risk taking 3 months longer because..."
+
+Example: "Okay, the biggest risk is competing with Google Calendar. They have 1B users and it's free. Looking at how Motion.ai survived, they charge $30/month and focus on AI scheduling - not trying to beat Google at calendar, but adding AI on top. Superhuman did similar with email - they don't compete with Gmail, they enhance it. So one solution is 'Don't compete with Google - enhance their product'. This would cost maybe $20K for integration development (2 months × $10K/month). Risk reduction would be high (80%) because we're not fighting Google, we're riding with them..."
+
+Write 2-3 paragraphs of natural reasoning for each solution.
 
 SOLUTION REQUIREMENTS:
 
@@ -48,6 +53,8 @@ EVALUATION CRITERIA:
 
 OUTPUT FORMAT: JSON (SHOW YOUR THINKING AT EACH STEP)
 {{
+  "raw_analysis": "YOUR PLAIN-ENGLISH BRAINSTORMING (2-3 paragraphs). Include specific examples like: 'Looking at how Motion.ai solved competing with Google, they...' or 'Superhuman charges $30/month for email enhancement because...' Name real companies and show your actual thinking process.",
+  
   "thinking_process": {{
     "understanding_risk": "Step-by-step: Why is this risk critical? What makes it the biggest threat?",
     "solution_brainstorming": "Step-by-step: How did I generate these solutions? What approaches did I consider?",
@@ -66,14 +73,43 @@ OUTPUT FORMAT: JSON (SHOW YOUR THINKING AT EACH STEP)
       "name": "...",
       "description": "...",
       "risk_reduction": 0-100,
+      "risk_reduction_justification": {{
+        "question_1_mechanism": "HOW does this solution reduce the risk? Be specific about the mechanism.",
+        "question_2_evidence": "What evidence/data supports this % reduction? Cite comparable examples.",
+        "question_3_assumptions": "What must be true for this reduction to work? List all assumptions.",
+        "question_4_validation": "How would you test/validate this reduction estimate?"
+      }},
       "cost": $value,
+      "cost_justification": {{
+        "question_1_labor": "Labor costs: How many hours × $hourly rate = $X?",
+        "question_2_tools": "Tools/software needed: What costs? Why?",
+        "question_3_external": "External costs (consulting, services): What and why?",
+        "question_4_contingency": "Contingency buffer: What % added? Why?",
+        "question_5_total": "Show: labor + tools + external + contingency = total cost"
+      }},
       "time_weeks": number,
+      "time_justification": {{
+        "question_1_tasks": "What are the major tasks? How long for each?",
+        "question_2_dependencies": "What dependencies could delay this? How likely?",
+        "question_3_resources": "How many people working on this? Full-time or part-time?",
+        "question_4_comparable": "How long did similar solutions take for other startups? Cite examples."
+      }},
       "feasibility": 0-10,
+      "feasibility_justification": {{
+        "question_1_resources": "Do we have the resources/skills? What's missing?",
+        "question_2_complexity": "How complex is this technically? What makes it easy/hard?",
+        "question_3_risks": "What could prevent successful implementation?",
+        "question_4_precedent": "Has anyone done this before? What happened?"
+      }},
       "score": calculated,
+      "score_formula": "Show exact formula: risk_reduction(X) × feasibility(Y) / (cost($Z) + 1) = score",
       "pros": ["...", "..."],
       "cons": ["...", "..."],
-      "why_this_score": "Explain step-by-step: How did I calculate this score? What factors did I weigh?",
-      "tradeoff_analysis": "What are the tradeoffs? What do you gain vs what do you sacrifice?"
+      "tradeoff_analysis": {{
+        "what_you_gain": "Specific benefits with quantified impact",
+        "what_you_sacrifice": "Specific costs/downsides with quantified impact",
+        "net_value": "Gains ($X) - Sacrifices ($Y) = Net Value ($Z)"
+      }}
     }},
     ...5+ solutions
   ],

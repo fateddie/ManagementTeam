@@ -17,15 +17,20 @@ CURRENT IDEA STATE (after risk mitigation):
 
 YOUR TASK: Generate 5+ strategies to capture this opportunity, evaluate them, and finalize the evolved idea.
 
-REASONING APPROACH (Chain-of-Thought):
-Think step-by-step:
-1. First, understand WHY this opportunity has high potential
-2. Then, brainstorm strategies to maximize value capture
-3. Next, evaluate each strategy for ROI and sustainability
-4. Consider competitive advantages: what creates a lasting moat?
-5. Finally, select the strategy with best risk-adjusted return
+REASONING APPROACH (Two-Step Process):
 
-For each strategy, explain HOW it captures value and WHY it's sustainable.
+STEP 1 - WRITE YOUR STRATEGY ANALYSIS IN PLAIN ENGLISH:
+
+Talk through your thinking:
+- "This opportunity is valuable because [cite specific market data]..."
+- "Looking at how Superhuman captured the premium email market, they did X and achieved $20M ARR..."
+- "Strategy 1 would generate revenue of $X because: market size ($Y) × our capture rate (Z%) × pricing ($A) = $X..."
+- "This would cost $B because: we need developers ($C), marketing ($D), and operations ($E)..."
+- "ROI calculation: $X revenue / $B cost = Y:1 ROI. Payback in Z months..."
+
+Example: "The AI integration opportunity is worth $20M because the AI productivity market is $4.2B growing at 18% CAGR (from Perplexity data). We could capture 0.5% = $21M potential. To capture this, Strategy 1 is 'AI-powered email prioritization'. This would increase ARPU from $25 to $40 (+$15) because users pay premium for AI features (see Superhuman at $30/month vs Gmail at $0). With 1000 users, that's +$15K/month = $180K/year revenue. Cost would be $50K (AI development 500 hours × $100/hr). ROI = $180K / $50K = 3.6:1..."
+
+Write 2-3 paragraphs explaining your reasoning with specific numbers and examples.
 
 STRATEGY REQUIREMENTS:
 
@@ -47,6 +52,8 @@ EVALUATION CRITERIA:
 
 OUTPUT FORMAT: JSON
 {{
+  "raw_analysis": "YOUR PLAIN-ENGLISH STRATEGY ANALYSIS (2-3 paragraphs). Show your actual thinking with specific examples, calculations, and comparisons to real companies. Example from above.",
+  
   "opportunity_being_captured": {{
     "opportunity": "...",
     "potential_value": $value,
@@ -63,17 +70,51 @@ OUTPUT FORMAT: JSON
       "name": "...",
       "description": "...",
       "revenue_impact": "% or $value",
-      "revenue_justification": "WHY this revenue amount? Show calculation: market size × capture rate × pricing = revenue. Justify each assumption.",
+      "revenue_justification": {{
+        "question_1_market_size": "What's the TAM for this opportunity? (cite Perplexity data)",
+        "question_2_current_arpu": "What's current expected ARPU without this strategy?",
+        "question_3_new_arpu": "What's new ARPU with this strategy? Based on what comparable?",
+        "question_4_customer_increase": "Will this increase customer count? By how many? Why?",
+        "question_5_calculation": "Show: (new ARPU - old ARPU) × customers + (new customers × ARPU) = revenue impact",
+        "question_6_timeframe": "Over what period? Year 1? Lifetime? Why?"
+      }},
       "cost": $value,
-      "cost_justification": "WHY this cost? Break down: development($X) + marketing($Y) + ops($Z) = total. Justify each.",
+      "cost_justification": {{
+        "question_1_development": "Development costs: hours × rate = $X. Show breakdown.",
+        "question_2_marketing": "Marketing costs to launch: What channels? How much each?",
+        "question_3_operations": "Ongoing operational costs: What and why?",
+        "question_4_hidden_costs": "What hidden costs might emerge? Buffer amount?",
+        "question_5_total": "Show: dev + marketing + ops + buffer = total cost"
+      }},
       "time_weeks": number,
-      "time_justification": "WHY this timeline? What factors determine this duration? What could delay it?",
+      "time_justification": {{
+        "question_1_phases": "What are the implementation phases? How long for each?",
+        "question_2_dependencies": "What must happen first? What could block progress?",
+        "question_3_team_size": "How many people? What skills needed?",
+        "question_4_comparable": "How long did competitors take to implement similar? Cite examples."
+      }},
       "roi": calculated,
-      "roi_calculation": "Show math: revenue($X) / cost($Y) = ROI(Z:1). Explain assumptions.",
+      "roi_calculation": {{
+        "question_1_revenue": "Total revenue expected: $X (from revenue_justification)",
+        "question_2_cost": "Total cost: $Y (from cost_justification)",
+        "question_3_formula": "ROI = revenue / cost = $X / $Y = Z:1",
+        "question_4_payback": "Payback period: cost / (monthly revenue) = X months. Is this acceptable?",
+        "question_5_risk_adjusted": "Risk-adjusted ROI: ROI × probability of success = X:1. Show calculation."
+      }},
       "score": calculated,
-      "score_calculation": "Show formula used and how you weighted factors. Justify the result.",
-      "competitive_advantage": "How this creates moat",
-      "sustainability": "Will this advantage last? For how long? Why or why not?"
+      "score_formula": "Show exact formula: (revenue_impact × probability) / (cost + time) = score. Explain weighting.",
+      "competitive_advantage": {{
+        "what_moat": "What specific moat does this create?",
+        "how_defensible": "How hard to copy? What % of competitors could replicate? Timeline?",
+        "network_effects": "Are there network effects? If yes, quantify the value increase.",
+        "switching_costs": "What switching costs for customers? Quantify if possible."
+      }},
+      "sustainability": {{
+        "question_1_duration": "How long will this advantage last? 1 year? 5 years? Why?",
+        "question_2_erosion": "What could erode this advantage? How likely? When?",
+        "question_3_defense": "How do you defend against erosion? What cost?",
+        "question_4_exit_strategy": "If advantage erodes, what's Plan B?"
+      }}
     }},
     ...5+ strategies
   ],

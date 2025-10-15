@@ -306,12 +306,17 @@ class IterativeWorkshopAgent(BaseAgent):
             return {"error": "Perplexity not configured"}
             
         industry = idea_data.get("niche", idea_data.get("target_customer", "startup"))
+        title = idea_data.get("title", "")
         
+        # Enhanced queries for detailed competitive analysis
+        # Why: User needs specific competitor names, market shares, and failure examples
         queries = [
-            f"What's the current market size for {industry} in 2025?",
-            f"Who are the top 3 competitors in {industry} and their revenue?",
-            f"Latest trends in {industry} industry",
-            f"Recent funding activity and investor interest in {industry} space"
+            f"What's the current market size for {industry} software in 2025? Include growth rate and key segments.",
+            f"Who are the top 5 competitors for {title or industry} products? Include their market share, revenue, user count, and pricing models.",
+            f"What calendar and email management startups have failed in the last 5 years? Why did they fail? Include Sunrise Calendar, Mailbox, and others.",
+            f"What advantages do Google Calendar, Gmail, Motion.ai, Superhuman, and Reclaim.ai have? What are their key differentiators?",
+            f"Recent funding activity in {industry} space: which startups raised money, how much, and what's their traction?",
+            f"What's the average ARPU, CAC, and LTV:CAC ratio for successful {industry} SaaS products?"
         ]
         
         market_data = {}

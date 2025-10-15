@@ -139,6 +139,14 @@ def main():
     
     round_1 = history.get("round_1", {})
     
+    # Show raw analysis FIRST (the actual LLM thinking)
+    if 'raw_analysis' in round_1:
+        print("\n" + "🧠"*35)
+        print("AI's ACTUAL REASONING (Plain English):")
+        print("🧠"*35)
+        print(f"\n{round_1['raw_analysis']}\n")
+        print("🧠"*35)
+    
     # Show thinking process
     if 'thinking_process' in round_1:
         display_thinking_process(round_1['thinking_process'])
@@ -189,6 +197,14 @@ def main():
     print_section("ROUND 2: RISK MITIGATION")
     
     round_2 = history.get("round_2", {})
+    
+    # Show raw analysis FIRST
+    if 'raw_analysis' in round_2:
+        print("\n" + "💡"*35)
+        print("AI's ACTUAL SOLUTION BRAINSTORMING (Plain English):")
+        print("💡"*35)
+        print(f"\n{round_2['raw_analysis']}\n")
+        print("💡"*35)
     
     # Show thinking process
     if 'thinking_process' in round_2:
