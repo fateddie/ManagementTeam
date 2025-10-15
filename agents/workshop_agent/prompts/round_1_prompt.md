@@ -45,8 +45,41 @@ Target Customer: {target_customer}
 Value Proposition: {value_proposition}
 Niche: {niche}
 
-CURRENT MARKET CONTEXT (from Perplexity):
+CURRENT MARKET CONTEXT (from Perplexity - READ CAREFULLY):
 {market_data_summary}
+
+HOW TO USE THIS DATA IN YOUR ANALYSIS:
+
+1. **When assessing risks**, cite specific competitors:
+   - Don't say "high competition" - say "Google Calendar has 80% market share with 1B users"
+   - Reference failed startups: "Sunrise Calendar raised $30M and still failed because..."
+   - Use pricing data: "Superhuman charges $30/month but Motion is $34/month, so pricing is..."
+
+2. **When calculating probabilities**, use real data:
+   - "X% of similar startups failed according to..." 
+   - "Market research shows Y% success rate for..."
+   - "Comparing to Mailbox/Astro/Sunrise, probability is Z%..."
+
+3. **When estimating impact**, show your math:
+   - Development cost: "Similar apps cost $X to build (source: competitor funding)"
+   - Opportunity cost: "6 months × market growth rate = $Y potential loss"
+   - Total impact = development + opportunity cost
+
+4. **When identifying opportunities**, cite market direction:
+   - "Market growing at X% CAGR driven by [specific trends from data]"
+   - "Unmet needs identified: [from market direction section]"
+   - "Emerging tech: [from trends section] creates opportunity for..."
+
+5. **When scoring**, use benchmarks:
+   - Unit economics: Compare your estimates to "average ARPU $X, CAC $Y" from data
+   - Competitive position: Use competitor market shares to justify score
+   - Differentiation: Compare features to what competitors offer
+
+6. **CITE YOUR SOURCES**:
+   - When you reference a fact, cite which source: "[Source: Market Overview, #1]"
+   - When you mention a number, reference where it came from
+   - When you cite a competitor example, note which source provided that data
+   - Example: "Google Calendar has 80% market share [Source: Competitor Landscape, #2]"
 
 ASSESSMENT REQUIREMENTS:
 

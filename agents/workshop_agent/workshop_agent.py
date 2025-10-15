@@ -307,27 +307,49 @@ class IterativeWorkshopAgent(BaseAgent):
             
         industry = idea_data.get("niche", idea_data.get("target_customer", "startup"))
         title = idea_data.get("title", "")
+        value_prop = idea_data.get("value_proposition", "")
         
-        # Enhanced queries for detailed competitive analysis
-        # Why: User needs specific competitor names, market shares, and failure examples
-        queries = [
-            f"What's the current market size for {industry} software in 2025? Include growth rate and key segments.",
-            f"Who are the top 5 competitors for {title or industry} products? Include their market share, revenue, user count, and pricing models.",
-            f"What calendar and email management startups have failed in the last 5 years? Why did they fail? Include Sunrise Calendar, Mailbox, and others.",
-            f"What advantages do Google Calendar, Gmail, Motion.ai, Superhuman, and Reclaim.ai have? What are their key differentiators?",
-            f"Recent funding activity in {industry} space: which startups raised money, how much, and what's their traction?",
-            f"What's the average ARPU, CAC, and LTV:CAC ratio for successful {industry} SaaS products?"
-        ]
+        # Comprehensive competitive intelligence queries
+        # Why: LLM needs deep market understanding to provide informed analysis
+        queries = {
+            "market_overview": f"What's the current market size for {industry} software in 2025? Include total TAM, growth rate (CAGR), key segments, and market drivers. Where is this market coming from (what trends are driving growth)?",
+            
+            "competitor_landscape": f"Who are the top 5-10 competitors for {title or industry} products? For each competitor, provide: company name, market share %, annual revenue, user count, founding year, total funding raised, and current valuation if available.",
+            
+            "competitor_offerings": f"What exactly do Google Calendar, Gmail, Motion.ai, Superhuman, Reclaim.ai, Clockwise, and SaneBox offer? Detail their key features, USP (unique selling proposition), target customer, and what makes each different from the others.",
+            
+            "pricing_strategies": f"What are the pricing models for {industry} products? Include specific prices: Google (free), Motion.ai ($X/month), Superhuman ($X/month), Reclaim.ai ($X/month). What pricing tiers exist? What's the average ARPU?",
+            
+            "marketing_strategies": f"How do successful {industry} products acquire customers? What marketing channels do Motion.ai, Superhuman, and Reclaim.ai use? What's their customer acquisition strategy? How do they differentiate in their messaging?",
+            
+            "failed_startups": f"What calendar and email management startups have failed in the last 5 years? Specifically: Sunrise Calendar, Mailbox, Inbox by Gmail, Astro, and any others. Why did each fail? What lessons can be learned?",
+            
+            "market_trends": f"What are the top 3-5 trends in {industry} space right now? Examples: AI integration, voice interfaces, privacy focus. Which trends are growing vs declining? What's the evidence?",
+            
+            "market_direction": f"Where is the {industry} market headed in the next 2-3 years? What new technologies or approaches are emerging? What customer needs are still unmet? What are analysts predicting?",
+            
+            "unit_economics": f"What's the average ARPU, CAC, LTV:CAC ratio, churn rate, and gross margin for successful {industry} SaaS products? Provide benchmarks from industry reports.",
+            
+            "entry_barriers": f"What are the main barriers to entry in the {industry} market? Examples: Google's distribution advantage, network effects, data moats, regulatory requirements, required integrations. How high is each barrier?"
+        }
         
         market_data = {}
-        for query in queries:
+        for category, query in queries.items():
             try:
                 result = self.perplexity.search(query, focus="research")
-                market_data[query] = result
-                self.logger.info(f"Retrieved market data for: {query[:50]}...")
+                # Ensure sources are captured for verification
+                # Why: Users need to verify data by checking original sources
+                market_data[category] = {
+                    "query": query,
+                    "summary": result.get("summary", ""),
+                    "sources": result.get("sources", []),  # URLs for verification
+                    "citations": result.get("citations", []),  # Inline citations
+                    "timestamp": result.get("timestamp", ""),
+                }
+                self.logger.info(f"Retrieved {category}: {len(result.get('sources', []))} sources")
             except Exception as e:
-                self.logger.error(f"Failed to get market data for '{query}': {e}")
-                market_data[query] = {"error": str(e)}
+                self.logger.error(f"Failed to get {category}: {e}")
+                market_data[category] = {"error": str(e), "query": query}
                 
         return market_data
     
@@ -407,16 +429,46 @@ class IterativeWorkshopAgent(BaseAgent):
         }
     
     def _summarize_market_data(self, market_data: dict) -> str:
-        """Create concise summary of Perplexity market data."""
+        """
+        Create comprehensive summary of Perplexity market intelligence.
+        
+        Why: LLM needs well-organized competitive intelligence to provide
+        informed analysis with specific examples and data points.
+        """
         if not market_data or "error" in market_data:
             return "Market data not available"
         
         summary_parts = []
-        for query, data in market_data.items():
-            if isinstance(data, dict) and "summary" in data:
-                summary_parts.append(f"{query[:60]}...: {data['summary'][:200]}...")
         
-        return "\n\n".join(summary_parts) if summary_parts else "Market data retrieved"
+        # Organize data by category for clarity
+        categories = {
+            "market_overview": "MARKET OVERVIEW",
+            "competitor_landscape": "COMPETITOR LANDSCAPE",
+            "competitor_offerings": "COMPETITOR PRODUCTS & USPs",
+            "pricing_strategies": "PRICING MODELS",
+            "marketing_strategies": "MARKETING & CUSTOMER ACQUISITION",
+            "failed_startups": "FAILED STARTUPS (Lessons)",
+            "market_trends": "CURRENT TRENDS",
+            "market_direction": "MARKET DIRECTION (Future)",
+            "unit_economics": "UNIT ECONOMICS BENCHMARKS",
+            "entry_barriers": "BARRIERS TO ENTRY"
+        }
+        
+        for category_key, category_title in categories.items():
+            if category_key in market_data:
+                data = market_data[category_key]
+                if isinstance(data, dict) and "summary" in data:
+                    summary_parts.append(f"\n{category_title}:\n{data['summary']}")
+                    
+                    # Add sources with URLs for verification
+                    # Why: Users need to verify claims by checking original sources
+                    if "sources" in data and data["sources"]:
+                        sources = data.get("sources", [])[:3]  # Top 3 sources
+                        summary_parts.append(f"\n  📚 Sources for verification:")
+                        for i, source in enumerate(sources, 1):
+                            summary_parts.append(f"  [{i}] {source}")
+        
+        return "\n".join(summary_parts) if summary_parts else "Market data retrieved"
     
     def _load_prompt_template(self, filename: str) -> str:
         """Load prompt template from prompts directory."""
