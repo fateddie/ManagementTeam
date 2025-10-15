@@ -18,6 +18,16 @@ CURRENT IDEA STATE:
 
 YOUR TASK: Generate 5+ solutions to address this risk, evaluate them, and recommend the best one.
 
+REASONING APPROACH (Chain-of-Thought):
+Think step-by-step:
+1. First, deeply understand WHY this risk is critical
+2. Then, brainstorm diverse solutions (conventional + creative)
+3. Next, evaluate each solution objectively across multiple criteria
+4. Consider tradeoffs: risk reduction vs cost vs time vs feasibility
+5. Finally, recommend the best solution with clear reasoning
+
+For each solution, explain WHY it works and what tradeoffs exist.
+
 SOLUTION REQUIREMENTS:
 
 For each solution, provide:

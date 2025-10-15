@@ -17,6 +17,16 @@ CURRENT IDEA STATE (after risk mitigation):
 
 YOUR TASK: Generate 5+ strategies to capture this opportunity, evaluate them, and finalize the evolved idea.
 
+REASONING APPROACH (Chain-of-Thought):
+Think step-by-step:
+1. First, understand WHY this opportunity has high potential
+2. Then, brainstorm strategies to maximize value capture
+3. Next, evaluate each strategy for ROI and sustainability
+4. Consider competitive advantages: what creates a lasting moat?
+5. Finally, select the strategy with best risk-adjusted return
+
+For each strategy, explain HOW it captures value and WHY it's sustainable.
+
 STRATEGY REQUIREMENTS:
 
 For each strategy, provide:

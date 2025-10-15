@@ -366,10 +366,10 @@ class IterativeWorkshopAgent(BaseAgent):
             response = self.openai_client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are an expert startup advisor. Return valid JSON only."},
+                    {"role": "system", "content": "You are an expert startup advisor with MBA + founder experience. Think step-by-step through your analysis and return valid JSON only."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.7,
+                temperature=0.4,  # Lower for consistent analytical reasoning with CoT
                 response_format={"type": "json_object"}
             )
             
@@ -455,10 +455,10 @@ class IterativeWorkshopAgent(BaseAgent):
             response = self.openai_client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are an expert startup advisor. Return valid JSON only."},
+                    {"role": "system", "content": "You are an expert startup advisor with MBA + founder experience. Think step-by-step through your analysis and return valid JSON only."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.7,
+                temperature=0.4,  # Lower for consistent analytical reasoning with CoT
                 response_format={"type": "json_object"}
             )
             
@@ -521,10 +521,10 @@ class IterativeWorkshopAgent(BaseAgent):
             response = self.openai_client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are an expert startup advisor. Return valid JSON only."},
+                    {"role": "system", "content": "You are an expert startup advisor with MBA + founder experience. Think step-by-step through your analysis and return valid JSON only."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.7,
+                temperature=0.4,  # Lower for consistent analytical reasoning with CoT
                 response_format={"type": "json_object"}
             )
             
