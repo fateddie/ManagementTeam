@@ -260,7 +260,7 @@ class IterativeWorkshopAgent(BaseAgent):
                 agent_name=self.name,
                 decision="approve" if final_viability_score >= 30 else "conditional_go",
                 reasoning=f"Idea evolved from {initial_score}/50 to {final_viability_score}/50 viability score. "
-                         f"Key improvements: {round_2_results['risk_mitigation']} and {round_3_results['opportunity_capture']}",
+                         f"Improvement: +{improvement} points through 3-round methodology.",
                 data_for_next_agent={
                     "evolved_idea": round_3_results["final_idea"],
                     "viability_score": final_viability_score,
