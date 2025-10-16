@@ -1,0 +1,82 @@
+{
+  "idea": "productivity app for developers",
+  "keywords": [
+    "productivity app for developers",
+    "task management"
+  ],
+  "collected_at": "2025-10-16T16:04:23.818055Z",
+  "sources": {
+    "reddit": {
+      "total_posts": 0,
+      "pain_points": [],
+      "sentiment": {
+        "avg_polarity": 0,
+        "distribution": {}
+      },
+      "top_posts": []
+    },
+    "google_trends": {
+      "primary_keyword": "productivity app for developers",
+      "interest_summary": {
+        "avg": 0,
+        "max": 0,
+        "min": 0,
+        "current": 0,
+        "trend": "stable"
+      },
+      "insights": {},
+      "related_queries": {
+        "top": [],
+        "rising": []
+      },
+      "comparison": {
+        "keywords": [
+          "productivity app for developers",
+          "task management"
+        ],
+        "timeframe": "today 12-m",
+        "geo": "worldwide",
+        "collected_at": "2025-10-16T16:04:24.710185Z",
+        "comparison": {},
+        "ranked": [],
+        "winner": null,
+        "note": "Mock data - Google Trends not configured"
+      }
+    },
+    "x": {
+      "total_tweets": 0,
+      "sentiment": {},
+      "insights": {},
+      "top_tweets": []
+    }
+  },
+  "unified_insights": {
+    "overall_sentiment": {
+      "score": 0.0,
+      "label": "neutral",
+      "sources": 2
+    },
+    "market_validation": {
+      "signals": [
+        [
+          "reddit",
+          "weak"
+        ],
+        [
+          "google_trends",
+          "low"
+        ],
+        [
+          "x",
+          "weak"
+        ]
+      ],
+      "strength": "weak"
+    },
+    "pain_points_discovered": 0,
+    "data_sources": 3,
+    "recommendation": "\u26a0\ufe0f CAUTION - Weak market signals, significant validation needed"
+  },
+  "evidence_score": 5,
+  "collection_time_seconds": 0.9
+}
