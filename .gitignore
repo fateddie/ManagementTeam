@@ -93,3 +93,4 @@ coverage.xml
 # Keep important files even in ignored directories
 !config/templates/
 !docs/system/
+.env
