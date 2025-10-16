@@ -1,5 +1,6 @@
 """
 refinement_agent.py
+Phase 1.1 Update — Now inherits from BaseAgent
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Idea Refinement Agent
 
@@ -9,13 +10,19 @@ niche-ready concepts ready for scoring.
 Location: agents/refinement_agent/refinement_agent.py
 
 Phase: 15 - Idea Refinement Layer
+
+Changes in Phase 1.1:
+    - Inherits from BaseAgent
+    - No dependencies (idea refinement is independent)
+    - Renamed run() → execute(context)
+    - Returns AgentOutput
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
 import json
 import sys
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List
 from datetime import datetime
 
 # Add project root to path
@@ -24,6 +31,10 @@ sys.path.insert(0, str(project_root))
 
 # Import utilities
 from cli.utils.prompts import load_refinement_prompt
+
+# Phase 1.1: Import BaseAgent
+from core.base_agent import BaseAgent, AgentContext
+from core.agent_protocol import AgentOutput
 
 # Import OpenAI (use existing API key from config)
 try:
@@ -34,17 +45,35 @@ except ImportError:
     get_env = None
 
 
-class RefinementAgent:
+class RefinementAgent(BaseAgent):
     """
     Refines vague business ideas into clear, scoreable concepts.
-    
+
     Flow:
     1. User provides raw idea ("AI Call Catcher")
     2. Agent critiques and asks questions
     3. Agent suggests refinements
     4. Outputs clear concept ("AI Receptionist for Hair Salons")
+
+    Phase 1.1: Now implements BaseAgent interface for standardized orchestration.
     """
-    
+
+    # Phase 1.1: Implement required BaseAgent properties
+    @property
+    def name(self) -> str:
+        """Agent name for identification and logging."""
+        return "RefinementAgent"
+
+    @property
+    def dependencies(self) -> List[str]:
+        """
+        No dependencies - refinement is independent.
+
+        RefinementAgent refines raw ideas and doesn't need
+        outputs from other agents.
+        """
+        return []
+
     def __init__(
         self,
         model: str = "gpt-4o-mini",
@@ -184,28 +213,78 @@ class RefinementAgent:
         
         with open(file_path, 'w') as f:
             json.dump(existing, f, indent=2)
-        
+
         return str(file_path)
-    
-    def run(self, raw_idea: str) -> Dict:
+
+    # Phase 1.1: Implement input validation
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """
+        Validate that raw idea is provided in context.
+
+        Args:
+            context: Execution context
+
+        Returns:
+            True if raw idea is available, False otherwise
+        """
+        raw_idea = context.inputs.get("raw_idea")
+        if not raw_idea:
+            print("❌ No raw idea provided in context")
+            return False
+        return True
+
+    # Phase 1.1: Renamed run() → execute(), now returns AgentOutput
+    def execute(self, context: AgentContext) -> AgentOutput:
         """
         Main execution method.
-        
+
+        Phase 1.1 Changes:
+            - Renamed from run() to execute() for BaseAgent compliance
+            - Takes AgentContext parameter
+            - Returns AgentOutput instead of Dict
+            - Gets raw idea from context.inputs
+            - Includes confidence score and decision reasoning
+
         Args:
-            raw_idea: Raw business idea string
-            
+            context: Shared execution context with raw_idea in inputs
+
         Returns:
-            Refined idea dict
+            AgentOutput with refined idea data
         """
+        # Get raw idea from context
+        raw_idea = context.inputs.get("raw_idea")
+        if not raw_idea:
+            raise ValueError("No raw idea provided in context")
+
         # Refine the idea
         refined = self.refine_idea(raw_idea)
-        
+
         # Save it
         saved_path = self.save_refined_idea(refined)
-        
+
         print(f"💾 Refined idea saved to {saved_path}")
-        
-        return refined
+
+        # Phase 1.1: Return AgentOutput instead of Dict
+        return AgentOutput(
+            agent_name=self.name,
+            decision="approve",
+            reasoning=f"Refined '{raw_idea}' into '{refined.get('refined_idea', {}).get('name', 'N/A')}'",
+            data_for_next_agent={
+                "refined_idea": refined.get("refined_idea", {}),
+                "critique": refined.get("critique", ""),
+                "clarifying_questions": refined.get("clarifying_questions", []),
+                "suggested_refinements": refined.get("suggested_refinements", []),
+                "next_steps": refined.get("next_steps", [])
+            },
+            confidence=0.80,  # Moderate confidence - subjective refinement
+            flags=[],
+            metadata={
+                "original_idea": raw_idea,
+                "output_path": saved_path,
+                "model": self.model,
+                "llm_enabled": self.client is not None
+            }
+        )
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -215,39 +294,71 @@ class RefinementAgent:
 def main():
     """Run from command line."""
     print("\n" + "="*70)
-    print("🔄 IDEA REFINEMENT AGENT")
+    print("🔄 IDEA REFINEMENT AGENT + Phase 1.1 Update")
     print("="*70 + "\n")
-    
+
     # Get user input
     raw_idea = input("💡 Enter your raw startup idea: ").strip()
-    
+
     if not raw_idea:
         print("❌ No idea provided")
         return
-    
+
     # Run refinement
     agent = RefinementAgent()
-    refined = agent.run(raw_idea)
-    
-    # Display results
-    print("\n" + "="*70)
-    print("✅ REFINEMENT COMPLETE")
-    print("="*70 + "\n")
-    
-    print("📋 Refined Idea:\n")
-    print(json.dumps(refined.get('refined_idea', {}), indent=2))
-    
-    if 'clarifying_questions' in refined:
-        print("\n❓ Clarifying Questions:")
-        for i, q in enumerate(refined['clarifying_questions'], 1):
-            print(f"   {i}. {q}")
-    
-    if 'suggested_refinements' in refined:
-        print("\n💡 Alternative Refinements:")
-        for i, r in enumerate(refined['suggested_refinements'], 1):
-            print(f"   {i}. {r}")
-    
-    print("\n" + "="*70)
+
+    print(f"\nAgent Name: {agent.name}")
+    print(f"Dependencies: {agent.dependencies}\n")
+
+    try:
+        # Phase 1.1: Create AgentContext
+        from core.cache import Cache
+        context = AgentContext(
+            session_id="test_session",
+            inputs={"raw_idea": raw_idea},
+            cache=Cache(),
+            shared_data={}
+        )
+
+        # Phase 1.1: Validate inputs
+        if not agent.validate_inputs(context):
+            print("❌ Input validation failed")
+            return
+
+        # Phase 1.1: Execute with context (replaces run())
+        result = agent.execute(context)
+
+        # Display results
+        print("\n" + "="*70)
+        print("✅ REFINEMENT COMPLETE (Phase 1.1)")
+        print("="*70 + "\n")
+
+        print(f"📊 AgentOutput:")
+        print(f"   - Agent: {result.agent_name}")
+        print(f"   - Decision: {result.decision}")
+        print(f"   - Confidence: {result.confidence}")
+        print(f"   - Reasoning: {result.reasoning}\n")
+
+        refined_data = result.data_for_next_agent
+        print("📋 Refined Idea:\n")
+        print(json.dumps(refined_data.get('refined_idea', {}), indent=2))
+
+        if refined_data.get('clarifying_questions'):
+            print("\n❓ Clarifying Questions:")
+            for i, q in enumerate(refined_data['clarifying_questions'], 1):
+                print(f"   {i}. {q}")
+
+        if refined_data.get('suggested_refinements'):
+            print("\n💡 Alternative Refinements:")
+            for i, r in enumerate(refined_data['suggested_refinements'], 1):
+                print(f"   {i}. {r}")
+
+        print("\n" + "="*70)
+
+    except Exception as e:
+        print(f"\n❌ Error: {e}\n")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":

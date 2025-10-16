@@ -1,0 +1,26 @@
+{
+  "project_name": "Personal Productivity Assistant",
+  "description": "An AI-powered personal assistant application that manages emails, calendars, and daily routines while providing motivational support as a virtual life coach, fitness guide, and mental wellness companion. Features voice/speech interaction for hands-free use during morning routines and workouts.",
+  "goals": [
+    "Email management: Read, categorize, and highlight important emails",
+    "Calendar management: Track events, set reminders, find actionable items",
+    "Life coaching: Provide motivation, psychological support, fitness and diet coaching",
+    "Daily routine management: Morning workout motivation, end-of-day journaling",
+    "Voice interaction: Hands-free control through headphones"
+  ],
+  "target_users": "Busy professionals aged 25-45 who struggle with time management and seek comprehensive productivity and personal growth tools",
+  "key_features": [
+    "AI-driven email categorization and priority highlighting",
+    "Smart calendar with actionable item extraction",
+    "Motivational coaching and empowerment messaging",
+    "Fitness and diet tracking with AI coaching",
+    "Voice-controlled interaction for hands-free use",
+    "Morning routine management and workout motivation",
+    "End-of-day journaling and next-day preparation"
+  ],
+  "constraints": {
+    "technical": "Must support voice interaction, integrate with email/calendar APIs",
+    "privacy": "Sensitive personal data requires strong encryption and privacy controls"
+  }
+}
+

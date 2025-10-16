@@ -8,6 +8,32 @@
 
 ---
 
+## 🆕 Dashboard - Real-Time Agent Monitoring
+
+**NEW:** Visual dashboard for monitoring agent execution in real-time!
+
+```bash
+# One-command startup (starts API + dashboard)
+./dashboard/start_dashboard.sh
+```
+
+**Features:**
+
+- 🟢 Start/stop agents with button clicks
+- 📊 Real-time status updates (2-second polling)
+- 📝 Live log streaming (stdout/stderr)
+- 📁 File browser & editor (view/edit outputs)
+- 🔗 Dependency graph visualization
+- ✅ Confidence score tracking
+
+**Documentation:**
+
+- [docs/setup/DASHBOARD_SETUP.md](docs/setup/DASHBOARD_SETUP.md) - Quick reference
+- [dashboard/QUICKSTART.md](dashboard/QUICKSTART.md) - Step-by-step guide
+- [dashboard/README.md](dashboard/README.md) - Complete explanation
+
+---
+
 ## 🎯 Quick Start
 
 ### Using CLI (Recommended)
@@ -78,12 +104,14 @@ ManagementTeam/
 ## 🤖 AI Management Team Agents
 
 ### **New: Idea-to-Project System** (Phases 12-15)
+
 1. **RefinementAgent** - Turns vague ideas into clear concepts (AI-powered)
 2. **VerticalAgent** - Evaluates & scores ideas (RICE/ICE)
 3. **OpportunityRankingAgent** - Advanced 7-criteria weighted scoring
 4. **StrategicPlannerAgent** - Decides what to build (with human approval)
 
 ### **Core Planning System** (Phases 1-11)
+
 3. **StrategyAgent** - Strategic planning & goal extraction
 4. **TechnicalArchitectAgent** - System architecture & design
 5. **StrategyAgent** - Strategic planning & goal extraction
@@ -96,6 +124,7 @@ ManagementTeam/
 ### 🔗 Agent Protocol (Phase 9)
 
 All agents now use standardized `AgentOutput` protocol:
+
 - **Structured communication** between agents
 - **Weighted voting** for conflict resolution
 - **Human escalation** for complex decisions
@@ -130,15 +159,16 @@ All agents now use standardized `AgentOutput` protocol:
 
 ## 📚 Key Documentation
 
-- **QUICK_START.md** - ⭐ Start here! Complete workflow guide
-- **COMPLETE_SYSTEM_FLOW.md** - Full pipeline explanation
-- **PROJECT_INDEX.md** - Navigation hub for all documentation
-- **FINAL_SYSTEM_STATUS.md** - Complete system overview
-- **outputs/PHASE_*_SUMMARY.md** - All 15 phase summaries
+- **docs/setup/QUICK_START.md** - ⭐ Start here! Complete workflow guide
+- **docs/implementation/COMPLETE_SYSTEM_FLOW.md** - Full pipeline explanation
+- **docs/planning/PROJECT_INDEX.md** - Navigation hub for all documentation
+- **docs/status/FINAL_SYSTEM_STATUS.md** - Complete system overview
+- **outputs/PHASE\_\*\_SUMMARY.md** - All 15 phase summaries
 - **docs/system/PRD.md** - Product requirements
 - **docs/system/CI_CD_SETUP.md** - GitHub Actions setup
 
 ### **New Agent Documentation:**
+
 - **agents/refinement_agent/** - AI-powered idea refinement
 - **agents/vertical_agent/README.md** - Business idea evaluator (RICE/ICE)
 - **agents/opportunity_ranking/** - Advanced 7-criteria scoring

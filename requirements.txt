@@ -1,3 +1,10 @@
+# Dashboard dependencies (for real-time monitoring UI)
+# Install separately with: pip install -r dashboard/requirements.txt
+# Or uncomment below to include in main install:
+# fastapi==0.104.1
+# uvicorn==0.24.0
+# streamlit==1.28.1
+
 # Core dependencies
 requests
 pandas
@@ -8,7 +15,7 @@ jinja2
 
 # AI & Research
 openai
-perplexity
+# Note: Perplexity API is accessed via REST API (requests library), not a separate package
 
 # Dashboard & Visualization
 streamlit

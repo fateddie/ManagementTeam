@@ -7,14 +7,14 @@
 
 ## 🎯 **START HERE - Main Documents**
 
-| Document                   | Location                         | Description                                         |
-| -------------------------- | -------------------------------- | --------------------------------------------------- |
-| **📊 FINAL SYSTEM STATUS** | `FINAL_SYSTEM_STATUS.md`    | Complete system overview, all phases, final metrics       |
-| **🚀 QUICK START**         | `QUICK_START.md`            | **How to run everything** - Vertical Agent & Planner      |
-| **📖 README**              | `README.md`                 | Installation guide and project overview                   |
-| **📋 PROJECT PLAN**        | `outputs/project_plan.yaml` | Technical project plan (YAML format)                      |
-| **📖 PRD**                 | `docs/system/PRD.md`             | Original Product Requirements Document              |
-| **📊 PROJECT SUMMARY**     | `docs/system/PROJECT_SUMMARY.md` | High-level project summary                          |
+| Document                   | Location                             | Description                                          |
+| -------------------------- | ------------------------------------ | ---------------------------------------------------- |
+| **📊 FINAL SYSTEM STATUS** | `docs/status/FINAL_SYSTEM_STATUS.md` | Complete system overview, all phases, final metrics  |
+| **🚀 QUICK START**         | `docs/setup/QUICK_START.md`          | **How to run everything** - Vertical Agent & Planner |
+| **📖 README**              | `README.md`                          | Installation guide and project overview              |
+| **📋 PROJECT PLAN**        | `outputs/project_plan.yaml`          | Technical project plan (YAML format)                 |
+| **📖 PRD**                 | `docs/system/PRD.md`                 | Original Product Requirements Document               |
+| **📊 PROJECT SUMMARY**     | `docs/system/PROJECT_SUMMARY.md`     | High-level project summary                           |
 
 ---
 
@@ -299,7 +299,7 @@ cat outputs/roadmap.md               # Timeline
 ```bash
 cat docs/system/PRD.md               # Requirements
 cat docs/system/PROJECT_SUMMARY.md   # Overview
-cat FINAL_SYSTEM_STATUS.md           # Complete status
+cat docs/status/FINAL_SYSTEM_STATUS.md           # Complete status
 ```
 
 ### Run System
@@ -317,7 +317,7 @@ python cli/manage.py validate        # Run tests
 **For New Users:**
 
 1. `README.md` - Start here
-2. `FINAL_SYSTEM_STATUS.md` - System overview
+2. `docs/status/FINAL_SYSTEM_STATUS.md` - System overview
 3. `docs/system/PRD.md` - Requirements
 4. Phase summaries in order (1 → 11)
 
@@ -391,7 +391,7 @@ Development Time: ~6 hours
 
 ### Want to understand the overall system?
 
-→ `FINAL_SYSTEM_STATUS.md`
+→ `docs/status/FINAL_SYSTEM_STATUS.md`
 
 ### Want to see what was built in each phase?
 
@@ -432,7 +432,7 @@ Development Time: ~6 hours
 | I Want To...               | Go To...                             |
 | -------------------------- | ------------------------------------ |
 | **See all 11 phases**      | `outputs/PHASE_*_SUMMARY.md`         |
-| **Understand the project** | `FINAL_SYSTEM_STATUS.md`             |
+| **Understand the project** | `docs/status/FINAL_SYSTEM_STATUS.md` |
 | **Read requirements**      | `docs/system/PRD.md`                 |
 | **View the plan**          | `outputs/project_plan.yaml`          |
 | **Run the system**         | `python cli/manage.py run`           |

@@ -1,116 +1,20 @@
 # Technical Specification
 
-**Generated:** 2025-10-11 20:43  
+**Generated:** 2025-10-15 18:52  
 
 ---
 
 ## 🏗️  System Modules
 
-### MethodologyEngine
-
-**Purpose:** Bias formation using multi-timeframe analysis (Monthly→Weekly→Daily→4H).  
-
-**Inputs:**  
-- price_data  
-- cot_data  
-- sentiment_feeds  
-
-**Outputs:**  
-- directional_bias  
-- market_narrative  
-
----
-
-### TechnicalFramework
-
-**Purpose:** Confluence scoring (0–10) combining timeframe alignment, momentum, and sentiment.  
-
-**Inputs:**  
-- price_data  
-- structure_levels  
-- indicators  
-
-**Outputs:**  
-- scored_setups  
-- trade_signals  
-
----
-
-### RiskManager
-
-**Purpose:** Drawdown monitoring (5%/10% thresholds) and damage control.  
-
-**Inputs:**  
-- positions  
-- account_balance  
-- market_volatility  
-
-**Outputs:**  
-- exposure_alerts  
-- hedge_recommendations  
-
----
-
 ## 💾 Data Models
-
-### ProjectPlan
-
-**Fields:**  
-- `goal`  
-- `constraint`  
-- `milestone_id`  
-- `risk_id`  
-
-### RiskRegister
-
-**Fields:**  
-- `risk_id`  
-- `description`  
-- `mitigation`  
-
-### StrategyPlan
-
-**Fields:**  
-- `goals`  
-- `constraints`  
-- `milestones`  
-- `priorities`  
 
 ---
 
 ## 🔧 Technology Stack
 
-**Backend:**  
-- Python 3.11  
-- YAML  
-- OpenAI API  
-
-**Storage:**  
-- Local JSON/YAML files  
-
-**Orchestration:**  
-- Logging  
-- Pathlib  
-- Importlib  
-
 ---
 
 ## 🔌 Interfaces
-
-### PlanningAgent
-
-**Provides:** `plan_generation()`  
-**Consumes:** `strategy_plan.yaml`  
-
-### ResearchAgent
-
-**Provides:** `search(query, focus)`  
-**Consumes:** `research_queries`  
-
-### StrategyAgent
-
-**Provides:** `strategy_extraction()`  
-**Consumes:** `PRD.md`  
 
 ---
 

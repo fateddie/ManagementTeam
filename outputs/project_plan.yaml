@@ -1,23 +1,21 @@
-project:
-  name: Trading Strategy Reference System
-  summary: "Defines the methodology, technical analysis framework, and risk-management\
-    \ logic for Rob Freyne\u2019s discretionary swing-trading system.  Serves as a\
-    \ foundational document for Claude and management-layer AI agents.\n"
-summary: "Defines the methodology, technical analysis framework, and risk-management\
-  \ logic for Rob Freyne\u2019s discretionary swing-trading system.  Serves as a foundational\
-  \ document for Claude and management-layer AI agents.\n"
+project: Unnamed
+summary: ''
 goals:
 - Encode trading philosophy, structure, and decision-making logic into standardized
   layers.
 - Enable Claude to reference this system when generating trading plans, checklists,
   or Pine/Python modules.
 - Guarantee consistency across strategy documentation, execution scripts, and dashboards.
+- Facilitate future integration of journaling, macro dashboards, and real-time automation.
+- Establish a clear risk management framework to protect capital and monitor exposure.
 constraints:
-- All AI outputs must align with methodology, technical, and risk rules
-- Each layer can be upgraded independently
-- All rule changes logged and version-controlled
-- Future integration with journaling, macro dashboards, broker APIs
-- Minimal latency for alerts (<2s for threshold triggers)
+  technical:
+  - Dependence on Interactive Brokers API for trading execution.
+  - Integration with TradingView API and Pine Script for charting.
+  business:
+  - Alignment with Rob Freyne's trading philosophy and strategies.
+  timeline:
+  - Completion of the project by the end of Q4 2025.
 phases:
 - id: M1
   name: Interactive Brokers Integration
@@ -35,75 +33,10 @@ phases:
   name: Drawdown Dashboard
   description: Create unified dashboard for drawdown and exposure tracking.
   duration_days: 14
-modules:
-- name: MethodologyEngine
-  purpose: "Bias formation using multi-timeframe analysis (Monthly\u2192Weekly\u2192\
-    Daily\u21924H)."
-  inputs:
-  - price_data
-  - cot_data
-  - sentiment_feeds
-  outputs:
-  - directional_bias
-  - market_narrative
-- name: TechnicalFramework
-  purpose: "Confluence scoring (0\u201310) combining timeframe alignment, momentum,\
-    \ and sentiment."
-  inputs:
-  - price_data
-  - structure_levels
-  - indicators
-  outputs:
-  - scored_setups
-  - trade_signals
-- name: RiskManager
-  purpose: Drawdown monitoring (5%/10% thresholds) and damage control.
-  inputs:
-  - positions
-  - account_balance
-  - market_volatility
-  outputs:
-  - exposure_alerts
-  - hedge_recommendations
-data_models:
-- name: ProjectPlan
-  fields:
-  - goal
-  - constraint
-  - milestone_id
-  - risk_id
-- name: RiskRegister
-  fields:
-  - risk_id
-  - description
-  - mitigation
-- name: StrategyPlan
-  fields:
-  - goals
-  - constraints
-  - milestones
-  - priorities
-tech_stack:
-  backend:
-  - Python 3.11
-  - YAML
-  - OpenAI API
-  storage:
-  - Local JSON/YAML files
-  orchestration:
-  - Logging
-  - Pathlib
-  - Importlib
-interfaces:
-- agent: PlanningAgent
-  provides: plan_generation()
-  consumes: strategy_plan.yaml
-- agent: ResearchAgent
-  provides: search(query, focus)
-  consumes: research_queries
-- agent: StrategyAgent
-  provides: strategy_extraction()
-  consumes: PRD.md
+modules: []
+data_models: []
+tech_stack: {}
+interfaces: []
 risks:
 - id: R1
   description: Performance degradation under real-time data load.
@@ -115,13 +48,14 @@ risks:
   description: Data desynchronization between sentiment and price feeds.
   mitigation: Add time-window validation and feed prioritization rules.
 priorities:
-  must_have:
-  - Core methodology accurately reproduced in AI-generated plans
-  - Technical layer produces scored, justifiable levels per asset
-  - Risk system enforces drawdown thresholds automatically
-  - Damage control triggers and logging validated via test trades
-  - Documentation versioned and accessible to all management-layer agents
-  should_have: []
-  could_have: []
-  wont_have: []
-generated_at: '2025-10-11 20:43:17'
+  Must-have:
+  - Encode trading philosophy and decision-making logic.
+  - Develop risk management framework.
+  Should-have:
+  - Enable Claude to generate trading plans and checklists.
+  - Integrate external data feeds.
+  Could-have:
+  - Future integration of journaling and macro dashboards.
+  Won't-have:
+  - Real-time automation features in the initial release.
+generated_at: '2025-10-15 18:52:24'

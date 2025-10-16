@@ -1,6 +1,7 @@
 """
 planning_agent.py
 Phase 4 – Integration Upgrade
+Phase 1.1 Update — Now inherits from BaseAgent
 ---------------------------------------------------------
 Reads strategy_plan.yaml + technical_design.yaml and generates
 a unified project plan and roadmap.
@@ -16,20 +17,40 @@ Outputs:
     - project_plan.yaml - Unified project plan
     - roadmap.md - Human-readable roadmap
     - dependency_map.yaml - Module dependencies
+
+Changes in Phase 1.1:
+    - Inherits from BaseAgent
+    - Depends on StrategyAgent + TechnicalArchitectAgent
+    - Renamed run() → execute(context)
+    - Returns AgentOutput
+    - Accesses upstream data from shared context
 """
 
 import yaml
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, List
+
+# Phase 1.1: Import BaseAgent and AgentOutput
+from core.base_agent import BaseAgent, AgentContext
+from core.agent_protocol import AgentOutput
 
 
-class PlanningAgent:
+class PlanningAgent(BaseAgent):
     """
     Integration-upgraded Planning Agent that merges strategy and technical design
     into unified project plans.
     """
-    
+
+    @property
+    def name(self) -> str:
+        return "PlanningAgent"
+
+    @property
+    def dependencies(self) -> List[str]:
+        """Waits for both strategy and architecture to complete."""
+        return ["StrategyAgent", "TechnicalArchitectAgent"]
+
     def __init__(
         self,
         strategy_path: str = "./outputs/strategy_plan.yaml",
@@ -49,25 +70,35 @@ class PlanningAgent:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(exist_ok=True, parents=True)
 
-    def run(self) -> Dict[str, Any]:
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """Check if upstream agents have provided data."""
+        return (context.get_agent_output("StrategyAgent") is not None and
+                context.get_agent_output("TechnicalArchitectAgent") is not None)
+
+    def execute(self, context: AgentContext) -> AgentOutput:
         """
         Main execution - merge inputs and generate unified plan.
-        
+
         Returns:
-            Merged project plan dictionary
+            AgentOutput with merged project plan
         """
         print("🧭 Planning Agent – Integration Upgrade")
-        
-        # Check inputs
-        if not self.strategy_path.exists() or not self.design_path.exists():
-            print("⚠️  Missing inputs – skipping full integration.")
-            print(f"   Strategy: {'✅' if self.strategy_path.exists() else '❌'} {self.strategy_path}")
-            print(f"   Design: {'✅' if self.design_path.exists() else '❌'} {self.design_path}")
-            return {"status": "skipped", "reason": "Missing input files"}
 
-        # Load inputs
-        strategy = yaml.safe_load(self.strategy_path.read_text(encoding='utf-8'))
-        design = yaml.safe_load(self.design_path.read_text(encoding='utf-8'))
+        # Phase 1.1: Get data from shared context
+        strategy_output = context.get_agent_output("StrategyAgent")
+        design_output = context.get_agent_output("TechnicalArchitectAgent")
+
+        if strategy_output and design_output:
+            strategy = strategy_output.data_for_next_agent
+            design = design_output.data_for_next_agent
+            print(f"✅ Using shared context data")
+        elif self.strategy_path.exists() and self.design_path.exists():
+            # Fallback to file reading
+            strategy = yaml.safe_load(self.strategy_path.read_text(encoding='utf-8'))
+            design = yaml.safe_load(self.design_path.read_text(encoding='utf-8'))
+            print(f"⚠️  Reading from files (fallback)")
+        else:
+            raise ValueError("Strategy and design data not available")
         
         print(f"✅ Loaded strategy plan: {len(strategy.get('goals', []))} goals")
         print(f"✅ Loaded technical design: {len(design.get('modules', []))} modules")
@@ -77,8 +108,16 @@ class PlanningAgent:
         
         # Write outputs
         self._write_outputs(plan)
-        
-        return plan
+
+        # Phase 1.1: Return AgentOutput
+        return AgentOutput(
+            agent_name=self.name,
+            decision="approve",
+            reasoning=f"Merged {len(plan.get('goals', []))} goals with {len(plan.get('modules', []))} modules",
+            data_for_next_agent=plan,
+            confidence=0.88,
+            metadata={"output_dir": str(self.output_dir)}
+        )
 
     def _merge(self, strategy: Dict[str, Any], design: Dict[str, Any]) -> Dict[str, Any]:
         """

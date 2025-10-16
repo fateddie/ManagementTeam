@@ -1,0 +1,27 @@
+# Dashboard Requirements
+# Install with: pip install -r dashboard/requirements.txt
+
+# WHY: FastAPI for REST API - lightweight, modern, async-capable
+# REASONING: Faster than Flask, better docs than Flask, built-in validation
+fastapi==0.104.1
+
+# WHY: Uvicorn as ASGI server - required to run FastAPI
+# REASONING: FastAPI needs an ASGI server; Uvicorn is the standard choice
+uvicorn==0.24.0
+
+# WHY: Streamlit for UI - Python-only, rapid development
+# REASONING: 2-3 hours to build vs 5+ for React, familiar to team
+streamlit==1.28.1
+
+# WHY: Requests for HTTP client - simple, reliable
+# REASONING: Standard library for making HTTP requests from Python
+requests==2.31.0
+
+# WHY: Pydantic for data validation - built into FastAPI
+# REASONING: Already a FastAPI dependency, provides type safety
+pydantic==2.4.2
+
+# Optional but useful:
+# watchdog - file system monitoring for real-time updates
+# networkx - dependency graph generation
+# graphviz - dependency graph visualization

@@ -17,6 +17,8 @@ import os
 import sys
 import datetime
 import argparse
+import hashlib
+import shutil
 from pathlib import Path
 
 # ---------------------------------------------------------------------
@@ -26,14 +28,20 @@ BASE_DIR = Path(__file__).parent.parent.absolute()
 STATE_DIR = Path(__file__).parent / "state"
 LOGS_DIR = Path(__file__).parent / "logs"
 CONFIG_DIR = Path(__file__).parent / "config"
+ARCHIVE_DIR = LOGS_DIR / "archive"
+SCHEMA_DIR = BASE_DIR / "schema"
 
 # Ensure directories exist
 STATE_DIR.mkdir(exist_ok=True)
 LOGS_DIR.mkdir(exist_ok=True)
 CONFIG_DIR.mkdir(exist_ok=True)
+ARCHIVE_DIR.mkdir(exist_ok=True)
+SCHEMA_DIR.mkdir(exist_ok=True)
 
 STATE_FILE = STATE_DIR / "state_schema.json"
 AUDIT_FILE = LOGS_DIR / "audit_trail.json"
+AUDIT_CSV_FILE = LOGS_DIR / "audit_trail.csv"
+VALIDATION_ERROR_FILE = LOGS_DIR / "validation_errors.json"
 PHASE_MAP_FILE = CONFIG_DIR / "phase_agent_map.json"
 
 # ---------------------------------------------------------------------
@@ -56,18 +64,86 @@ def timestamp():
     """Generate ISO 8601 timestamp"""
     return datetime.datetime.utcnow().isoformat() + "Z"
 
-def log_action(variant, phase, agent, action, notes=""):
-    """Log every action to audit trail"""
+def compute_hash(file_path):
+    """Compute SHA-256 hash of file"""
+    if not Path(file_path).exists():
+        return None
+
+    sha256 = hashlib.sha256()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            sha256.update(chunk)
+    return sha256.hexdigest()
+
+def archive_artifact(artifact_path):
+    """Archive artifact file to timestamped backup"""
+    if not Path(artifact_path).exists():
+        return None
+
+    # Create timestamped archive directory
+    ts = datetime.datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    archive_subdir = ARCHIVE_DIR / ts
+    archive_subdir.mkdir(exist_ok=True)
+
+    # Copy file
+    artifact_name = Path(artifact_path).name
+    archive_path = archive_subdir / artifact_name
+    shutil.copy2(artifact_path, archive_path)
+
+    return archive_path
+
+def log_action(variant, phase, agent, action, notes="", file_changed=None):
+    """Log every action to audit trail with hash and archiving"""
+
+    # Compute hash if file specified
+    file_hash = None
+    archived_path = None
+
+    if file_changed and Path(file_changed).exists():
+        file_hash = compute_hash(file_changed)
+        archived_path = archive_artifact(file_changed)
+
+    # Add to JSON log
     audit_log = load_json(AUDIT_FILE, [])
-    audit_log.append({
+    entry = {
         "timestamp": timestamp(),
         "variant": variant,
         "phase": phase,
         "agent": agent,
         "action": action,
         "notes": notes
-    })
+    }
+
+    if file_changed:
+        entry["file_changed"] = str(file_changed)
+    if file_hash:
+        entry["hash"] = file_hash
+    if archived_path:
+        entry["archived_to"] = str(archived_path)
+
+    audit_log.append(entry)
     save_json(AUDIT_FILE, audit_log)
+
+    # Also append to CSV
+    import csv
+    csv_exists = AUDIT_CSV_FILE.exists()
+
+    with open(AUDIT_CSV_FILE, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=[
+            "timestamp", "variant", "phase", "agent", "action",
+            "notes", "file_changed", "hash", "archived_to"
+        ])
+
+        if not csv_exists:
+            writer.writeheader()
+
+        # Ensure all fields exist
+        csv_entry = entry.copy()
+        for field in ["file_changed", "hash", "archived_to"]:
+            if field not in csv_entry:
+                csv_entry[field] = ""
+
+        writer.writerow(csv_entry)
 
 def load_agent_definition(agent_name):
     """Load agent definition file"""
@@ -86,6 +162,53 @@ def load_template(template_name):
         with open(template_file, "r", encoding="utf-8") as f:
             return f.read()
     return f"[Template not found: {template_file}]"
+
+def validate_artifact(artifact_path, schema_name=None):
+    """Validate artifact against schema (PRD-06 implementation)"""
+    from jsonschema import validate, ValidationError
+
+    artifact_path = Path(artifact_path)
+
+    # Only validate JSON files
+    if not artifact_path.exists() or artifact_path.suffix != '.json':
+        return True, None
+
+    # Determine schema file
+    if schema_name is None:
+        schema_name = artifact_path.stem + "_schema.json"
+
+    schema_path = SCHEMA_DIR / schema_name
+
+    # If no schema, skip validation
+    if not schema_path.exists():
+        return True, None
+
+    try:
+        # Load artifact and schema
+        artifact_data = load_json(artifact_path, {})
+        schema_data = load_json(schema_path, {})
+
+        # Validate
+        validate(instance=artifact_data, schema=schema_data)
+        return True, None
+
+    except ValidationError as e:
+        # Log validation error
+        error_log = load_json(VALIDATION_ERROR_FILE, [])
+        error_entry = {
+            "timestamp": timestamp(),
+            "artifact": str(artifact_path),
+            "schema": schema_name,
+            "message": e.message,
+            "path": list(e.path) if e.path else []
+        }
+        error_log.append(error_entry)
+        save_json(VALIDATION_ERROR_FILE, error_log)
+
+        return False, e.message
+
+    except Exception as e:
+        return False, f"Validation error: {str(e)}"
 
 # ---------------------------------------------------------------------
 # Core Orchestrator Logic
@@ -154,10 +277,35 @@ def run_phase(variant_name, phase_num, phase_data, state):
     print(f"{'='*70}\n")
     
     confirmation = input("Confirm completion (y/n/s): ").strip().lower()
-    
+
     if confirmation == "y":
+        # Validate artifact before approval (PRD-06)
+        if template_name:
+            artifact_path = BASE_DIR / "projects" / variant_name / template_name
+
+            print(f"\n🔍 Validating {template_name}...")
+            is_valid, error_message = validate_artifact(artifact_path)
+
+            if not is_valid:
+                print(f"❌ Validation failed: {error_message}")
+                print(f"📝 Error logged to: {VALIDATION_ERROR_FILE}")
+                print(f"\nPlease fix the validation errors and try again.")
+                log_action(variant_name, phase_num, agent_name,
+                          f"Phase {phase_num} validation failed",
+                          notes=error_message)
+                return "paused"
+
+            print(f"✅ Validation passed!")
+
+            # Archive and log with hash
+            log_action(variant_name, phase_num, agent_name,
+                      f"Phase {phase_num} approved by user",
+                      file_changed=str(artifact_path))
+        else:
+            log_action(variant_name, phase_num, agent_name,
+                      f"Phase {phase_num} approved by user")
+
         print(f"\n✅ Phase {phase_num} complete. Saving and proceeding...")
-        log_action(variant_name, phase_num, agent_name, f"Phase {phase_num} approved by user")
         return "approved"
         
     elif confirmation == "s":

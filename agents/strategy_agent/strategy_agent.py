@@ -1,6 +1,7 @@
 """
 strategy_agent.py
 Phase 2 — Strategy Agent
+Phase 1.1 Update — Now inherits from BaseAgent
 ---------------------------------------------------------
 Converts free-form briefs or PRD into structured strategy YAML.
 
@@ -15,6 +16,13 @@ Purpose:
 
 Output:
     strategy_plan.yaml with structured strategic planning data
+
+Changes in Phase 1.1:
+    - Inherits from BaseAgent for standardized interface
+    - Implements name and dependencies properties
+    - Renamed run() → execute(context)
+    - Returns AgentOutput instead of Dict
+    - Added input validation
 """
 
 import yaml
@@ -22,7 +30,11 @@ import json
 import re
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
+
+# Phase 1.1: Import BaseAgent and AgentOutput
+from core.base_agent import BaseAgent, AgentContext
+from core.agent_protocol import AgentOutput
 
 # Try to import OpenAI, fall back gracefully
 try:
@@ -32,11 +44,29 @@ except ImportError:
     OPENAI_AVAILABLE = False
 
 
-class StrategyAgent:
+class StrategyAgent(BaseAgent):
     """
     Strategic planning agent that analyzes PRDs and generates structured strategy plans.
+
+    Phase 1.1: Now implements BaseAgent interface for standardized orchestration.
     """
-    
+
+    # Phase 1.1: Implement required BaseAgent properties
+    @property
+    def name(self) -> str:
+        """Agent name for identification and logging."""
+        return "StrategyAgent"
+
+    @property
+    def dependencies(self) -> List[str]:
+        """
+        No dependencies - this agent runs first in the pipeline.
+
+        StrategyAgent analyzes the PRD directly and doesn't need
+        outputs from other agents.
+        """
+        return []
+
     def __init__(
         self,
         prd_path: str = "./projects/swing-fx-trading-assistant/docs/trading_strategy_prd.md",
@@ -74,13 +104,39 @@ class StrategyAgent:
         else:
             self.client = None
             self.llm_enabled = False
-    
-    def run(self) -> Dict[str, Any]:
+
+    # Phase 1.1: Implement input validation
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """
+        Validate that PRD file exists before execution.
+
+        Args:
+            context: Execution context (not used, PRD path from __init__)
+
+        Returns:
+            True if PRD file exists, False otherwise
+        """
+        if not self.prd_path.exists():
+            print(f"❌ PRD file not found: {self.prd_path}")
+            return False
+        return True
+
+    # Phase 1.1: Renamed run() → execute(), now returns AgentOutput
+    def execute(self, context: AgentContext) -> AgentOutput:
         """
         Main execution method - analyze PRD and generate strategy plan.
 
+        Phase 1.1 Changes:
+            - Renamed from run() to execute() for BaseAgent compliance
+            - Takes AgentContext parameter (for future enhancements)
+            - Returns AgentOutput instead of Dict
+            - Includes confidence score and decision reasoning
+
+        Args:
+            context: Shared execution context
+
         Returns:
-            Dictionary containing strategy plan data
+            AgentOutput with strategy plan data
         """
         # Read PRD
         if not self.prd_path.exists():
@@ -101,8 +157,24 @@ class StrategyAgent:
         # Save as YAML
         yaml_output = yaml.safe_dump(strategy_data, sort_keys=False, default_flow_style=False)
         self.output_path.write_text(yaml_output, encoding='utf-8')
-        
-        return strategy_data
+
+        # Phase 1.1: Return AgentOutput instead of Dict
+        return AgentOutput(
+            agent_name=self.name,
+            decision="approve",
+            reasoning=f"Extracted {len(strategy_data.get('goals', []))} goals, "
+                     f"{len(strategy_data.get('milestones', []))} milestones, "
+                     f"{len(strategy_data.get('risks', []))} risks from PRD",
+            data_for_next_agent=strategy_data,
+            confidence=0.90 if self.llm_enabled else 0.75,
+            flags=[],
+            metadata={
+                "prd_path": str(self.prd_path),
+                "output_path": str(self.output_path),
+                "llm_enabled": self.llm_enabled,
+                "has_addendum": self.addendum_path is not None
+            }
+        )
     
     def _generate_with_llm(self, prd_text: str) -> Dict[str, Any]:
         """Generate strategy plan using OpenAI."""
@@ -319,33 +391,59 @@ PRD Content:
 # ==============================================
 if __name__ == "__main__":
     print("\n" + "=" * 70)
-    print("🎯 STRATEGY AGENT - PHASE 2")
+    print("🎯 STRATEGY AGENT - PHASE 2 + Phase 1.1 Update")
     print("=" * 70 + "\n")
-    
+
     agent = StrategyAgent()
-    
+
+    print(f"Agent Name: {agent.name}")
+    print(f"Dependencies: {agent.dependencies}")
+
     if agent.llm_enabled:
         print("✅ OpenAI client initialized")
     else:
         print("⚠️  OpenAI not available - using fallback extraction")
-    
+
     print(f"📖 Reading PRD from: {agent.prd_path}")
-    
+
     try:
-        result = agent.run()
-        
+        # Phase 1.1: Create AgentContext
+        from core.cache import Cache
+        context = AgentContext(
+            session_id="test_session",
+            inputs={"prd_path": str(agent.prd_path)},
+            cache=Cache(),
+            shared_data={}
+        )
+
+        # Phase 1.1: Validate inputs
+        if not agent.validate_inputs(context):
+            print("❌ Input validation failed")
+            exit(1)
+
+        # Phase 1.1: Execute with context (replaces run())
+        result = agent.execute(context)
+
         print(f"\n✅ Strategy plan generated!")
         print(f"📁 Saved to: {agent.output_path}")
-        print(f"\n📊 Extracted:")
-        print(f"   - Goals: {len(result.get('goals', []))}")
-        print(f"   - Constraints: {len(result.get('constraints', []))}")
-        print(f"   - Milestones: {len(result.get('milestones', []))}")
-        print(f"   - Risks: {len(result.get('risks', []))}")
-        
+        print(f"\n📊 AgentOutput:")
+        print(f"   - Agent: {result.agent_name}")
+        print(f"   - Decision: {result.decision}")
+        print(f"   - Confidence: {result.confidence}")
+        print(f"   - Reasoning: {result.reasoning}")
+
+        # Access the strategy data
+        strategy_data = result.data_for_next_agent
+        print(f"\n📊 Extracted Strategy Data:")
+        print(f"   - Goals: {len(strategy_data.get('goals', []))}")
+        print(f"   - Constraints: {len(strategy_data.get('constraints', []))}")
+        print(f"   - Milestones: {len(strategy_data.get('milestones', []))}")
+        print(f"   - Risks: {len(strategy_data.get('risks', []))}")
+
         print("\n" + "=" * 70)
-        print("✅ STRATEGY AGENT TEST COMPLETE")
+        print("✅ STRATEGY AGENT TEST COMPLETE (Phase 1.1)")
         print("=" * 70 + "\n")
-        
+
     except Exception as e:
         print(f"\n❌ Error: {e}\n")
         import traceback

@@ -90,7 +90,7 @@ class PerplexityConnector:
                 PERPLEXITY_API_URL,
                 json=payload,
                 headers=headers,
-                timeout=30
+                timeout=60  # Increased for complex competitive intelligence queries
             )
             response.raise_for_status()
             data = response.json()

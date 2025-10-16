@@ -1,0 +1,151 @@
+{
+  "project_name": "asksharon.ai",
+  "tagline": "Your AI-powered personal productivity companion",
+  "description": "A voice-first, mobile-friendly AI assistant that manages your email (Gmail, Hostgator, Outlook), calendar, and daily routines while providing life coaching, fitness guidance, and psychological support for busy entrepreneurs and solopreneurs.",
+  
+  "target_users": {
+    "primary": "Personal use by founder",
+    "commercial": "Busy entrepreneurs and solopreneurs who need comprehensive productivity and wellness support",
+    "characteristics": [
+      "Time-constrained business owners",
+      "Need email/calendar management",
+      "Want motivational/coaching support",
+      "Prefer voice interaction for hands-free use",
+      "Value morning routines and daily structure"
+    ]
+  },
+  
+  "core_features": {
+    "email_management": {
+      "providers": ["Gmail", "Hostgator Email", "Outlook (optional)"],
+      "capabilities": [
+        "Read and categorize emails automatically",
+        "Highlight important/urgent messages",
+        "Extract actionable items",
+        "Send emails via voice command",
+        "Draft responses with AI assistance"
+      ]
+    },
+    "calendar_management": {
+      "features": [
+        "Track events and appointments",
+        "Smart reminders for key events",
+        "Extract actionable items from calendar",
+        "Suggest optimal scheduling",
+        "Morning briefing of day's schedule"
+      ]
+    },
+    "coaching_features": {
+      "life_coaching": "Motivational support and goal tracking",
+      "psychology": "Mental wellness check-ins and mindfulness prompts",
+      "fitness": "Workout motivation and tracking",
+      "diet": "Nutrition guidance and meal planning suggestions",
+      "journaling": "End-of-day reflection and next-day preparation"
+    },
+    "voice_interaction": {
+      "primary_interface": true,
+      "platforms": ["Mobile app (iOS/Android)", "Web interface (backup)"],
+      "use_cases": [
+        "Hands-free during morning routine",
+        "Voice commands during workout",
+        "Audio feedback through headphones",
+        "Quick updates while on-the-go"
+      ]
+    },
+    "daily_routines": {
+      "morning": [
+        "Wake-up motivation",
+        "Day overview and priorities",
+        "Workout coaching and tracking",
+        "Empowerment messaging"
+      ],
+      "end_of_day": [
+        "Day recap and journaling",
+        "Tomorrow's preparation",
+        "Wins and learnings capture",
+        "Sleep routine support"
+      ]
+    }
+  },
+  
+  "technical_requirements": {
+    "integrations": [
+      "Gmail API",
+      "Hostgator Email (IMAP/SMTP)",
+      "Outlook API (optional)",
+      "Google Calendar API",
+      "Speech-to-text service (e.g., OpenAI Whisper)",
+      "Text-to-speech service (e.g., ElevenLabs, Google TTS)"
+    ],
+    "storage": "Cloud-based (acceptable for now)",
+    "mobile": "Mobile-first design, responsive web backup",
+    "ai_models": [
+      "LLM for email drafting and coaching (GPT-4/Claude)",
+      "Voice recognition (Whisper)",
+      "Voice synthesis (TTS)"
+    ]
+  },
+  
+  "business_model": {
+    "phase_1": "Personal use - validate concept",
+    "phase_2": "Beta testing with 5-10 entrepreneurs",
+    "phase_3": "Commercial launch if market validation positive",
+    "pricing_ideas": [
+      "Freemium (basic email management free)",
+      "Pro tier ($15-30/month for full coaching features)",
+      "Enterprise tier (team features)"
+    ]
+  },
+  
+  "unique_value_proposition": "Unlike generic productivity apps, asksharon.ai combines email/calendar management with personalized AI coaching in a voice-first mobile experience - perfect for entrepreneurs who need to stay productive while staying mentally and physically healthy.",
+  
+  "success_metrics": {
+    "personal_phase": [
+      "Use daily for 30 days",
+      "Reduces email processing time by 50%",
+      "Complete morning routine 80%+ of days"
+    ],
+    "commercial_phase": [
+      "10 beta users with 70%+ retention",
+      "NPS score > 40",
+      "Users report 30%+ productivity increase"
+    ]
+  },
+  
+  "risks_and_mitigations": {
+    "privacy_concerns": {
+      "risk": "Users uncomfortable with AI reading emails",
+      "mitigation": "Transparent data policies, local processing options in future, encryption"
+    },
+    "voice_recognition_accuracy": {
+      "risk": "Voice commands misunderstood",
+      "mitigation": "Confirmation prompts for critical actions, text fallback option"
+    },
+    "competition": {
+      "risk": "Many productivity apps exist",
+      "mitigation": "Voice-first + coaching combination is unique, entrepreneur-specific positioning"
+    }
+  },
+  
+  "development_phases": [
+    {
+      "phase": 1,
+      "name": "MVP - Email & Voice",
+      "duration": "6-8 weeks",
+      "features": ["Gmail integration", "Basic voice commands", "Email categorization", "Simple morning briefing"]
+    },
+    {
+      "phase": 2,
+      "name": "Coaching & Routines",
+      "duration": "4-6 weeks",
+      "features": ["Life coaching prompts", "Fitness tracking", "Morning/evening routines", "Journaling"]
+    },
+    {
+      "phase": 3,
+      "name": "Mobile App & Polish",
+      "duration": "6-8 weeks",
+      "features": ["Native mobile app", "Improved voice UX", "Calendar integration", "Beta launch"]
+    }
+  ]
+}
+

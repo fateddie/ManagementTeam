@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase 3 \u2014 Competitive Landscape",
+  "description": "Analyzes key competitors, substitutes, and defensibility.",
+  "type": "object",
+  "properties": {
+    "competitors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "strengths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "weaknesses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "description": "List of competitors analyzed."
+    },
+    "differentiation": {
+      "type": "string",
+      "description": "How do we stand out?"
+    },
+    "barriers_to_entry": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What prevents others from entering?"
+    },
+    "strategic_wedge": {
+      "type": "string",
+      "description": "Our defensible starting point or niche."
+    }
+  },
+  "required": [
+    "competitors",
+    "differentiation"
+  ]
+}

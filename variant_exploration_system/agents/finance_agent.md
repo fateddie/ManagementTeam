@@ -56,6 +56,7 @@ Guide the user through financial modeling:
 ## Prompts
 
 ### **Phase 8 (Unit Economics):**
+
 ```
 You are the Finance Agent guiding Phase 8: Unit Economics.
 
@@ -111,6 +112,7 @@ Explain the reasoning behind each assumption and calculation.
 ## Outputs
 
 - `unit_economics.json` - Complete financial model with:
+
   ```json
   {
     "pricing": {...},
@@ -149,6 +151,7 @@ Explain the reasoning behind each assumption and calculation.
 ## Success Criteria
 
 For a variant to pass Phase 8:
+
 - ✅ LTV:CAC > 3.0 (minimum viable)
 - ✅ Payback < 12 months (for solo founder context)
 - ✅ All assumptions documented with sources
@@ -157,4 +160,3 @@ For a variant to pass Phase 8:
 ---
 
 **The Finance Agent ensures financial viability before investing time/money.** 💰
-

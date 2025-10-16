@@ -1,0 +1,32 @@
+{
+  "competitors": [
+    {
+      "name": "Smith.ai",
+      "strengths": [
+        "Human + AI hybrid model",
+        "24/7 availability"
+      ],
+      "weaknesses": [
+        "Higher price point",
+        "Limited EU coverage"
+      ]
+    },
+    {
+      "name": "Moneypenny",
+      "strengths": [
+        "Strong UK presence",
+        "High trust ratings"
+      ],
+      "weaknesses": [
+        "Manual operations",
+        "Scalability issues"
+      ]
+    }
+  ],
+  "differentiation": "Real-time lead qualification + multilingual voice capabilities.",
+  "barriers_to_entry": [
+    "Telephony integrations",
+    "AI training data requirements"
+  ],
+  "strategic_wedge": "Start with high-lead-volume estate agents and clinics."
+}

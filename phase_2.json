@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase 2 \u2014 Market Sizing",
+  "description": "Captures market TAM/SAM/SOM and financial potential.",
+  "type": "object",
+  "properties": {
+    "tam": {
+      "type": "number",
+      "description": "Total Addressable Market (in USD).",
+      "minimum": 0
+    },
+    "sam": {
+      "type": "number",
+      "description": "Serviceable Available Market (USD).",
+      "minimum": 0
+    },
+    "som": {
+      "type": "number",
+      "description": "Serviceable Obtainable Market (USD).",
+      "minimum": 0
+    },
+    "growth_rate": {
+      "type": "number",
+      "description": "Expected CAGR in percent.",
+      "minimum": 0,
+      "maximum": 100,
+      "default": 5
+    },
+    "data_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Cited sources for estimates."
+    }
+  },
+  "required": [
+    "tam",
+    "sam",
+    "som"
+  ]
+}

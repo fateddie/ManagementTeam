@@ -67,7 +67,7 @@ MEM0_API_KEY=your-mem0-key-here
 ### Step 4: Verify
 
 ```bash
-source activate.sh
+source setup/activate.sh
 # Should see: "✅ Environment variables loaded"
 ```
 
@@ -122,7 +122,7 @@ source activate.sh
 ### 1. Shell Scripts Load It
 
 ```bash
-# activate.sh and claude/environment.sh both load config/.env
+# setup/activate.sh and claude/environment.sh both load config/.env
 if [ -f "config/.env" ]; then
     export $(grep -v '^#' config/.env | xargs)
 fi
@@ -201,7 +201,7 @@ cp config/.env.example config/.env
 nano config/.env
 
 # 4. Reload environment
-source activate.sh
+source setup/activate.sh
 ```
 
 ### "Environment variables not loading"
@@ -210,8 +210,8 @@ source activate.sh
 
 ```bash
 # Make sure you SOURCE (not just run) activate.sh
-source activate.sh   # ✅ Correct
-./activate.sh        # ❌ Won't work for env vars
+source setup/activate.sh   # ✅ Correct
+./setup/activate.sh        # ❌ Won't work for env vars
 ```
 
 ### "Keys not working in Python"
@@ -270,7 +270,7 @@ MAX_API_CALLS_PER_MINUTE=60
 
 | File                                         | How               | Purpose              |
 | -------------------------------------------- | ----------------- | -------------------- |
-| `activate.sh`                                | Shell export      | Quick startup        |
+| `setup/activate.sh`                          | Shell export      | Quick startup        |
 | `claude/environment.sh`                      | Shell export      | Full setup           |
 | `src/utils/config_loader.py`                 | Python dotenv     | Central loader       |
 | `src/utils/perplexity_connector.py`          | Via config_loader | API access           |
@@ -301,7 +301,7 @@ export PROJECT_NAME=zzz          # in another script
 - [ ] `config/.env` exists
 - [ ] `.env` is in `.gitignore`
 - [ ] All API keys are set (no "your-" placeholders)
-- [ ] `source activate.sh` shows "Environment variables loaded"
+- [ ] `source setup/activate.sh` shows "Environment variables loaded"
 - [ ] `python -c "from src.utils.config_loader import print_env_status; print_env_status()"` shows keys as ✅
 
 ---

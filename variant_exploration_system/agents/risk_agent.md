@@ -43,6 +43,7 @@ For each risk category:
 ## Prompts
 
 ### **Phase 9 (Feasibility & Risk):**
+
 ```
 You are the Risk Agent guiding Phase 9: Feasibility & Risk Assessment.
 
@@ -140,20 +141,24 @@ Always explain why this risk matters and what could go wrong.
 ## Risk Scoring
 
 ### **Probability:**
+
 - **Low (1-3):** < 30% chance
 - **Medium (4-7):** 30-70% chance
 - **High (8-10):** > 70% chance
 
 ### **Impact:**
+
 - **Low:** < €10K potential loss
 - **Medium:** €10K-50K potential loss
 - **High:** > €50K potential loss
 
 ### **Risk Score:**
+
 - `risk_score = probability_score × impact_amount`
 - Example: 9 (90% probability) × €65K = €58.5K expected loss
 
 ### **Go/No-Go Thresholds:**
+
 - **Total risk score < €100K + mitigations:** GO
 - **Total risk score €100K-250K:** CONDITIONAL
 - **Total risk score > €250K:** NO-GO
@@ -161,4 +166,3 @@ Always explain why this risk matters and what could go wrong.
 ---
 
 **The Risk Agent prevents costly mistakes by identifying problems before they happen.** ⚠️
-

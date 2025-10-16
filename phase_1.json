@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase 1 \u2014 Pain Discovery",
+  "description": "Captures problem validation and customer pain analysis.",
+  "type": "object",
+  "properties": {
+    "customer_segment": {
+      "type": "string",
+      "description": "Target ICP or segment studied."
+    },
+    "pain_points": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of top customer pains."
+    },
+    "evidence_sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs or references for data."
+    },
+    "pain_intensity_score": {
+      "type": "number",
+      "description": "Numeric scale 1\u201310 for pain severity.",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "interview_count": {
+      "type": "integer",
+      "description": "Number of interviews conducted."
+    }
+  },
+  "required": [
+    "customer_segment",
+    "pain_points",
+    "pain_intensity_score"
+  ]
+}

@@ -9,13 +9,13 @@
 
 ## Agent Overview
 
-| Agent | Phases | Role | Key Outputs |
-|-------|--------|------|-------------|
-| [**Planner**](planner_agent.md) | 0, 1, 10, 13 | SOP flow coordinator | Approvals, gates, milestones |
-| [**Market Intelligence**](market_agent.md) | 2-7 | Evidence gathering & analysis | Pain scores, market data |
-| [**Finance**](finance_agent.md) | 8 | Unit economics & ROI | Financial models |
-| [**Risk**](risk_agent.md) | 9 | Risk assessment & mitigation | Risk register |
-| [**Documentation**](doc_agent.md) | 11, 12 | Report synthesis & audit | ADSR report, decision log |
+| Agent                                      | Phases       | Role                          | Key Outputs                  |
+| ------------------------------------------ | ------------ | ----------------------------- | ---------------------------- |
+| [**Planner**](planner_agent.md)            | 0, 1, 10, 13 | SOP flow coordinator          | Approvals, gates, milestones |
+| [**Market Intelligence**](market_agent.md) | 2-7          | Evidence gathering & analysis | Pain scores, market data     |
+| [**Finance**](finance_agent.md)            | 8            | Unit economics & ROI          | Financial models             |
+| [**Risk**](risk_agent.md)                  | 9            | Risk assessment & mitigation  | Risk register                |
+| [**Documentation**](doc_agent.md)          | 11, 12       | Report synthesis & audit      | ADSR report, decision log    |
 
 ---
 
@@ -41,6 +41,7 @@ If paused → Save state, wait for completion
 See `orchestrator/config/phase_agent_map.json` for complete mapping.
 
 **Quick reference:**
+
 - **Phases 0-1:** Planner (intake, scope)
 - **Phases 2-7:** Market Intelligence (research, evidence, pain, market)
 - **Phase 8:** Finance (unit economics)
@@ -54,6 +55,7 @@ See `orchestrator/config/phase_agent_map.json` for complete mapping.
 ## How Agents Work
 
 ### **Each Agent Definition Contains:**
+
 1. **Purpose** - What this agent does
 2. **Responsibilities** - Which phases they handle
 3. **Interaction Pattern** - How they guide the user
@@ -63,6 +65,7 @@ See `orchestrator/config/phase_agent_map.json` for complete mapping.
 7. **Key Principles** - Best practices
 
 ### **Agents Guide, Don't Decide:**
+
 - ✅ Agents ask questions
 - ✅ Agents suggest options
 - ✅ Agents validate inputs
@@ -78,12 +81,14 @@ See `orchestrator/config/phase_agent_map.json` for complete mapping.
 ### **In Cursor/Claude:**
 
 When orchestrator runs, it:
+
 1. Loads the agent definition file for current phase
 2. Shows you the agent's prompt
 3. Guides you through template completion
 4. Waits for your confirmation
 
 **Example interaction:**
+
 ```
 [Phase 0] Idea Intake → Assigned Agent: Planner
 → Task: Fill out /templates/idea_intake.md
@@ -104,4 +109,3 @@ Confirm completion (y/n)? y
 - `doc_agent.md` - Synthesis and audit trail
 
 **All agents documented, version-controlled, and cross-referenced with PRD-03.** 📋
-

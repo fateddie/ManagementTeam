@@ -1,9 +1,8 @@
 # Product Requirements Document
 
-**Project:** Trading Strategy Reference System  
-**Generated:** 2025-10-11 20:43  
-**Summary:** Defines the methodology, technical analysis framework, and risk-management logic for Rob Freyne’s discretionary swing-trading system.  Serves as a foundational document for Claude and management-layer AI agents.
-  
+**Project:** Unnamed  
+**Generated:** 2025-10-15 18:52  
+**Summary:**   
 
 ---
 
@@ -12,16 +11,16 @@
 1. Encode trading philosophy, structure, and decision-making logic into standardized layers.
 2. Enable Claude to reference this system when generating trading plans, checklists, or Pine/Python modules.
 3. Guarantee consistency across strategy documentation, execution scripts, and dashboards.
+4. Facilitate future integration of journaling, macro dashboards, and real-time automation.
+5. Establish a clear risk management framework to protect capital and monitor exposure.
 
 ---
 
 ## ⚠️ Constraints
 
-- All AI outputs must align with methodology, technical, and risk rules
-- Each layer can be upgraded independently
-- All rule changes logged and version-controlled
-- Future integration with journaling, macro dashboards, broker APIs
-- Minimal latency for alerts (<2s for threshold triggers)
+- technical
+- business
+- timeline
 
 ---
 
@@ -56,13 +55,6 @@
 ---
 
 ## 📊 Priorities (MoSCoW)
-
-### Must Have
-- Core methodology accurately reproduced in AI-generated plans
-- Technical layer produces scored, justifiable levels per asset
-- Risk system enforces drawdown thresholds automatically
-- Damage control triggers and logging validated via test trades
-- Documentation versioned and accessible to all management-layer agents
 
 ---
 

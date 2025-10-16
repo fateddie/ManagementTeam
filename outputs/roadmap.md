@@ -1,6 +1,6 @@
-# 📅 Project Roadmap – {'name': 'Trading Strategy Reference System', 'summary': 'Defines the methodology, technical analysis framework, and risk-management logic for Rob Freyne’s discretionary swing-trading system.  Serves as a foundational document for Claude and management-layer AI agents.\n'}
+# 📅 Project Roadmap – Unnamed
 
-**Generated:** 2025-10-11 20:43:17  
+**Generated:** 2025-10-15 18:52:24  
 
 ---
 
@@ -9,6 +9,8 @@
 1. Encode trading philosophy, structure, and decision-making logic into standardized layers.
 2. Enable Claude to reference this system when generating trading plans, checklists, or Pine/Python modules.
 3. Guarantee consistency across strategy documentation, execution scripts, and dashboards.
+4. Facilitate future integration of journaling, macro dashboards, and real-time automation.
+5. Establish a clear risk management framework to protect capital and monitor exposure.
 
 ---
 
@@ -30,22 +32,10 @@
 
 ## 🔧 Technical Stack
 
-**Backend:** Python 3.11, YAML, OpenAI API  
-**Storage:** Local JSON/YAML files  
-**Orchestration:** Logging, Pathlib, Importlib  
 
 ---
 
 ## 🏗️  System Modules
-
-### MethodologyEngine
-**Purpose:** Bias formation using multi-timeframe analysis (Monthly→Weekly→Daily→4H).  
-
-### TechnicalFramework
-**Purpose:** Confluence scoring (0–10) combining timeframe alignment, momentum, and sentiment.  
-
-### RiskManager
-**Purpose:** Drawdown monitoring (5%/10% thresholds) and damage control.  
 
 ---
 

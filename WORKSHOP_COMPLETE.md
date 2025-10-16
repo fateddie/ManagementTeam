@@ -10,11 +10,13 @@
 ## 🚀 **WHAT YOU CAN DO RIGHT NOW**
 
 ### **Command:**
+
 ```bash
 python scripts/run_idea_to_project.py "Your business idea"
 ```
 
 ### **What Happens:**
+
 1. **Refinement** - Clarifies your idea (~30 seconds)
 2. **Market Intelligence** - Gathers 6 categories of data from Perplexity (~2 minutes)
 3. **Round 1** - Assesses viability with real competitor data (~30 seconds)
@@ -45,12 +47,14 @@ The workshop automatically researches **6 critical aspects**:
 ## 🎯 **OPTIMIZED FOR YOUR CONTEXT**
 
 ### **Ambitious Solo Founder:**
+
 - ✅ Can build products yourself (low cost)
-- ✅ Can launch quickly (weeks not months)  
+- ✅ Can launch quickly (weeks not months)
 - ✅ Can charge if addressing real pain points
 - ✅ Target smaller niches profitably
 
 ### **Analysis Focuses On:**
+
 - **Pain Validation:** Are people currently paying competitors?
 - **Build Feasibility:** Can YOU build MVP in 2-4 weeks?
 - **Quick Validation:** How to test demand in 1 week
@@ -58,6 +62,7 @@ The workshop automatically researches **6 critical aspects**:
 - **Niche Opportunities:** Too small for VC, perfect for you
 
 ### **What Changed:**
+
 - ❌ Not asking: "Can this be a $1B company?"
 - ✅ Now asking: "Can you build and charge for this in 4 weeks?"
 - ❌ Not analyzing: Massive TAM and VC metrics
@@ -68,9 +73,11 @@ The workshop automatically researches **6 critical aspects**:
 ## 💡 **EXAMPLE RESULTS**
 
 ### **Your Personal Assistant Idea:**
+
 **Original:** "Email, calendar, life coaching, fitness, diet, journaling, voice interaction"
 
 **Workshop Analysis:**
+
 - **Initial Viability:** 24-33/50 (too broad, scope creep)
 - **Biggest Risk:** Scope too large for solo founder
 - **Solution:** Narrow to ONE feature (email management)
@@ -78,6 +85,7 @@ The workshop automatically researches **6 critical aspects**:
 - **Recommendation:** GO - but start with email only
 
 **Key Insights:**
+
 - Motion.ai charges $34/month for AI calendar
 - Superhuman charges $30/month for email enhancement
 - Sunrise Calendar failed despite $30M funding (lesson: don't compete with Google)
@@ -89,11 +97,13 @@ The workshop automatically researches **6 critical aspects**:
 ## 🔍 **COMPLETE TRANSPARENCY**
 
 ### **See the AI's Reasoning:**
+
 ```bash
 python scripts/show_workshop_reasoning.py "Your idea"
 ```
 
 Shows:
+
 - AI's plain-English analysis
 - All calculations with formulas
 - Tradeoff analysis
@@ -101,12 +111,14 @@ Shows:
 - Why each number was chosen
 
 ### **Verify the Sources:**
+
 ```bash
 python scripts/save_workshop_sources.py "Your idea"
 open outputs/workshops/sources_*.html
 ```
 
 Shows:
+
 - All Perplexity sources organized by category
 - Clickable links to verify claims
 - Beautiful HTML presentation
@@ -116,6 +128,7 @@ Shows:
 ## ✅ **WHAT WAS BUILT (Phases 1-2 Complete)**
 
 ### **Core System:**
+
 - ✅ `IterativeWorkshopAgent` - 3-round methodology (600+ lines)
 - ✅ Perplexity integration - 6 optimized queries
 - ✅ Chain-of-Thought reasoning - Visible thinking process
@@ -123,18 +136,21 @@ Shows:
 - ✅ Agent registry integration - Stage 1.5 in workflow
 
 ### **Scripts:**
+
 - ✅ `run_idea_to_project.py` - Quick workflow
 - ✅ `show_workshop_reasoning.py` - Detailed analysis
 - ✅ `save_workshop_sources.py` - Source verification (HTML)
 
 ### **Documentation:**
+
 - ✅ SOLO_FOUNDER_ANALYSIS_FRAMEWORK.md
-- ✅ ESSENTIAL_ANALYSIS_QUESTIONS.md  
+- ✅ ESSENTIAL_ANALYSIS_QUESTIONS.md
 - ✅ WORKSHOP_USAGE_GUIDE.md
 - ✅ PROMPT_BEST_PRACTICES_COMPLIANCE.md
 - ✅ IMPLEMENTATION_STATUS.md
 
 ### **Testing:**
+
 - ✅ 10 unit tests passing
 - ✅ 3 integration tests passing
 - ✅ Tested with multiple real ideas
@@ -151,13 +167,14 @@ Shows:
 ✅ **Failure Lessons** - Learn from Sunrise, Mailbox mistakes  
 ✅ **Source Verification** - Click links to verify claims  
 ✅ **Complete Reasoning** - See AI's thinking process  
-✅ **Fast Execution** - ~4 minutes per idea  
+✅ **Fast Execution** - ~4 minutes per idea
 
 ---
 
 ## 🚀 **READY TO USE**
 
 **Test with your real ideas:**
+
 ```bash
 python scripts/run_idea_to_project.py "Your first idea"
 python scripts/run_idea_to_project.py "Your second idea"
@@ -165,11 +182,13 @@ python scripts/run_idea_to_project.py "Your third idea"
 ```
 
 **See detailed reasoning:**
+
 ```bash
 python scripts/show_workshop_reasoning.py "Your best idea"
 ```
 
 **Verify the data:**
+
 ```bash
 python scripts/save_workshop_sources.py "Your best idea"
 open outputs/workshops/sources_*.html
@@ -180,6 +199,7 @@ open outputs/workshops/sources_*.html
 ## 📈 **WHAT TO EXPECT**
 
 ### **Good Ideas Will:**
+
 - Show real pain (people paying competitors)
 - Be buildable in 2-4 weeks (realistic for solo)
 - Have specific niche (too small for VC, perfect for you)
@@ -187,6 +207,7 @@ open outputs/workshops/sources_*.html
 - Receive GO recommendation
 
 ### **Bad Ideas Will:**
+
 - Show no one paying (free alternatives exist)
 - Require 6+ months to build (too complex for solo)
 - Compete directly with Google (impossible to win)

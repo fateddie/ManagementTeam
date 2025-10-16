@@ -1,0 +1,11 @@
+{
+  "tam": 1200000000,
+  "sam": 250000000,
+  "som": 50000000,
+  "growth_rate": 8.5,
+  "data_sources": [
+    "IBISWorld Virtual Assistant Industry Report (2025)",
+    "Google Ads search volume for 'AI receptionist'",
+    "HubSpot SMB automation report"
+  ]
+}

@@ -1,6 +1,7 @@
 """
 orchestrator.py
 Phase 1.5 – Management-Team-Ready Orchestrator
+Phase 1.1 Update – Standardized BaseAgent Interface
 """
 
 import importlib
@@ -9,6 +10,10 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
+
+# Phase 1.1: Import BaseAgent components
+from core.base_agent import BaseAgent, AgentContext
+from core.cache import Cache
 
 
 class Orchestrator:
@@ -66,46 +71,98 @@ class Orchestrator:
         return agents
 
     def run_cycle(self):
-        """Execute all active agents in sequence."""
+        """
+        Execute all active agents in sequence.
+
+        Phase 1.1 Changes:
+            - Removed method guessing (hasattr checks)
+            - All agents now use standardized execute(context)
+            - Created AgentContext for shared data
+            - Validate inputs before execution
+            - Store AgentOutput in shared context
+        """
         self.logger.info("Cycle start")
-        print(f"🔄 Starting orchestration cycle...\n")
-        
+        print(f"🔄 Starting orchestration cycle (Phase 1.1)...\n")
+
+        # Phase 1.1: Create shared execution context
+        context = AgentContext(
+            session_id=self.session_id,
+            inputs=self._load_inputs(),
+            cache=self._init_cache(),
+            shared_data={}
+        )
+
         for agent in self.agents:
-            name = agent.__class__.__name__
+            name = agent.name if isinstance(agent, BaseAgent) else agent.__class__.__name__
             self.logger.info(f"Running {name}")
             print(f"▶️  {name}...")
-            
+
             try:
-                # Try different execution methods based on agent type
-                if hasattr(agent, 'run_cycle'):
-                    result = agent.run_cycle()
-                elif hasattr(agent, 'run'):
-                    result = agent.run()
-                elif hasattr(agent, 'search'):
-                    # Research agent - provide a query
-                    topic = "best practices for AI agent orchestration and project management"
-                    result = agent.search(topic, focus="research")
-                elif hasattr(agent, 'execute'):
-                    result = agent.execute()
+                # Phase 1.1: Validate inputs first
+                if isinstance(agent, BaseAgent):
+                    if not agent.validate_inputs(context):
+                        raise ValueError(f"Input validation failed for {name}")
+
+                # Phase 1.1: Standardized execution
+                if isinstance(agent, BaseAgent):
+                    result = agent.execute(context)
+                    # Validate AgentOutput
+                    result.validate()
+                    # Store in shared context for downstream agents
+                    context.shared_data[name] = result
                 else:
-                    raise NotImplementedError(f"No recognized execution method")
-                
+                    # Legacy agents (not yet migrated)
+                    print(f"   ⚠️  {name} not migrated to BaseAgent yet")
+                    result = self._run_legacy_agent(agent)
+
                 self.results[name] = result
                 self.logger.info(f"{name} completed")
-                print(f"   ✅ Complete\n")
-                
+
+                # Display confidence if available
+                if hasattr(result, 'confidence'):
+                    print(f"   ✅ Complete (confidence: {result.confidence:.2f})\n")
+                else:
+                    print(f"   ✅ Complete\n")
+
             except NotImplementedError as e:
                 self.logger.info(f"{name} SKIPPED – {e}")
                 print(f"   ⏭️  Skipped: {e}\n")
                 self.results[name] = {"status": "skipped", "reason": str(e)}
-                
+
             except Exception as e:
                 self.results[name] = {"error": str(e)}
                 self.logger.error(f"{name} failed: {e}")
                 print(f"   ❌ Failed: {e}\n")
-        
+
         self._write_summary()
         self.logger.info("Cycle complete")
+
+    def _load_inputs(self):
+        """Load input files for agents."""
+        return {
+            "prd_path": "./projects/swing-fx-trading-assistant/docs/trading_strategy_prd.md"
+        }
+
+    def _init_cache(self):
+        """Initialize cache for performance optimization."""
+        try:
+            return Cache()
+        except Exception:
+            return None
+
+    def _run_legacy_agent(self, agent):
+        """
+        Fallback for agents not yet migrated to BaseAgent.
+        Phase 1.1: This method will be removed once all agents are migrated.
+        """
+        if hasattr(agent, 'run_cycle'):
+            return agent.run_cycle()
+        elif hasattr(agent, 'run'):
+            return agent.run()
+        elif hasattr(agent, 'execute'):
+            return agent.execute()
+        else:
+            raise NotImplementedError(f"Agent {agent.__class__.__name__} has no execution method")
 
     def _write_summary(self):
         """Generate session summary from template."""

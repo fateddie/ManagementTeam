@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Phase 0 \u2014 Idea Intake",
+  "description": "Initial idea capture before validation or scoping.",
+  "type": "object",
+  "properties": {
+    "idea_title": {
+      "type": "string",
+      "description": "Short, descriptive title of the idea."
+    },
+    "problem_statement": {
+      "type": "string",
+      "description": "What problem does this idea aim to solve?"
+    },
+    "hypothesis": {
+      "type": "string",
+      "description": "Your hypothesis about why this will work."
+    },
+    "proposed_solution": {
+      "type": "string",
+      "description": "Outline the proposed solution."
+    },
+    "initial_confidence": {
+      "type": "number",
+      "description": "Confidence level (0\u20131).",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.5
+    }
+  },
+  "required": [
+    "idea_title",
+    "problem_statement",
+    "proposed_solution"
+  ]
+}

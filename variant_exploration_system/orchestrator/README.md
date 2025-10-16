@@ -25,6 +25,7 @@ orchestrator/
 ## How It Works
 
 ### **1. Initialization**
+
 ```python
 # Load or create state
 state = {
@@ -35,18 +36,19 @@ state = {
 ```
 
 ### **2. Phase Execution**
+
 ```python
 for phase in range(14):  # Phases 0-13
     # Load agent for this phase
     agent = get_agent(phase)
-    
+
     # Display task
     print(f"[Phase {phase}] {phase_name} → Agent: {agent}")
     print(f"→ Task: Fill out {template_file}")
-    
+
     # Wait for confirmation
     confirmed = input("Confirm completion (y/n)? ")
-    
+
     if confirmed == "y":
         save_artifact()
         log_decision()
@@ -57,6 +59,7 @@ for phase in range(14):  # Phases 0-13
 ```
 
 ### **3. State Management**
+
 ```python
 # After each action
 state["current_phase"] = next_phase
@@ -70,6 +73,7 @@ state["paused_at"] = timestamp()
 ```
 
 ### **4. Audit Logging**
+
 ```python
 # Every action logged
 audit_trail.append({
@@ -88,38 +92,42 @@ audit_trail.append({
 
 See `config/phase_agent_map.json` for complete mapping.
 
-| Phases | Agent | Focus |
-|--------|-------|-------|
-| 0-1 | Planner | Intake, scope |
-| 2-7 | Market Intelligence | Research, evidence, pain, market |
-| 8 | Finance | Unit economics |
-| 9 | Risk | Risk assessment |
-| 10 | Planner | GTM strategy |
-| 11-12 | Documentation | Synthesis, decision |
-| 13 | Planner | Comparison |
+| Phases | Agent               | Focus                            |
+| ------ | ------------------- | -------------------------------- |
+| 0-1    | Planner             | Intake, scope                    |
+| 2-7    | Market Intelligence | Research, evidence, pain, market |
+| 8      | Finance             | Unit economics                   |
+| 9      | Risk                | Risk assessment                  |
+| 10     | Planner             | GTM strategy                     |
+| 11-12  | Documentation       | Synthesis, decision              |
+| 13     | Planner             | Comparison                       |
 
 ---
 
 ## Usage
 
 ### **Start New Variant:**
+
 ```bash
 cd /Users/robertfreyne/Documents/ClaudeCode/ManagementTeam/variant_exploration_system
 python run_orchestrator.py --variant my_variant
 ```
 
 ### **Resume Paused Variant:**
+
 ```bash
 python run_orchestrator.py --variant my_variant
 # Auto-resumes at saved phase
 ```
 
 ### **Start at Specific Phase:**
+
 ```bash
 python run_orchestrator.py --variant my_variant --phase 5
 ```
 
 ### **Compare Variants:**
+
 ```bash
 python run_orchestrator.py --compare
 ```
@@ -179,6 +187,7 @@ Confirm completion (y/n/s): y
 ## State Persistence
 
 ### **State Schema:**
+
 ```json
 {
   "variant_name": "email_for_freelancers",
@@ -195,6 +204,7 @@ Confirm completion (y/n/s): y
 ```
 
 ### **Audit Trail:**
+
 ```json
 [
   {
@@ -239,4 +249,3 @@ Confirm completion (y/n/s): y
 ---
 
 **The modular orchestrator implements PRD-04 specifications for rigorous, transparent workflow control.** ⚙️
-

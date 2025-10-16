@@ -1,0 +1,8 @@
+{
+  "current_phase": 0,
+  "phase_name": "idea_intake",
+  "status": "initialized",
+  "approvals": [],
+  "last_action": "workflow_started",
+  "next_phase": 1
+}

@@ -1,0 +1,7 @@
+{
+  "idea_title": "AI Receptionist Assistant",
+  "problem_statement": "Small businesses miss calls and lose leads due to limited staff availability.",
+  "hypothesis": "An AI receptionist that answers calls, schedules appointments, and qualifies leads can save businesses money and increase conversion rates.",
+  "proposed_solution": "A cloud-based AI phone receptionist that integrates with booking software like Calendly or HubSpot.",
+  "initial_confidence": 0.8
+}

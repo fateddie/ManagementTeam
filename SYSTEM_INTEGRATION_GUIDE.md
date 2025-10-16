@@ -1,4 +1,5 @@
-# System Integration Guide  
+# System Integration Guide
+
 ### Management Layer ↔ Commercial ROI Workshop ↔ Variant Exploration System (VES)
 
 ---
@@ -7,13 +8,65 @@
 
 This guide explains how the **Variant Exploration System (VES)** fits within the wider **Management Layer** and **Commercial ROI Workshop** architecture.
 
-**The goal:** Create a seamless loop from *strategic idea selection* → *evidence gathering* → *ROI evaluation* → *executive decision*.
+**The goal:** Create a seamless loop from _strategic idea selection_ → _evidence gathering_ → _ROI evaluation_ → _executive decision_.
 
 **The benefit:** Transform raw ideas into validated, actionable projects through a rigorous, evidence-based process with complete traceability.
 
 ---
 
 ## 2. Overview Diagram
+
+### **Interactive Flowchart (Mermaid)**
+
+```mermaid
+flowchart TD
+
+    subgraph M["🧠 Management Layer"]
+        MA1["Strategy Agent"]
+        MA2["Planner Agent"]
+        MA3["Financial Agent"]
+        MA4["Market Intelligence Agent"]
+        MA5["Risk Agent"]
+        MA6["Documentation Agent"]
+    end
+
+    subgraph W["📈 Commercial ROI Workshop"]
+        W1["Pain Validation Framework"]
+        W2["Market & TAM Analysis"]
+        W3["Unit Economics & ROI Modelling"]
+        W4["Competitive / Wedge Analysis"]
+        W5["GTM Readiness & Scoring Rubric"]
+    end
+
+    subgraph V["⚙️ Variant Exploration System (VES)"]
+        V1["13-Phase SOP Execution"]
+        V2["Evidence Collection & Cleaning"]
+        V3["Pain Tagging & Quantification"]
+        V4["Market / Econ / Risk Analysis"]
+        V5["Comparison & Hybridisation"]
+        V6["Audit Trail + Reports"]
+    end
+
+    %% Flow connections
+    M -->|Initiate Idea / Allocate Agents| W
+    W -->|Define Evaluation Criteria| V
+    V -->|Collect Evidence + Produce Artifacts| W
+    W -->|Apply Rubric / ROI Scoring| M
+    M -->|Approve / Conditional / Reject Decision| V
+    M -->|Archive & Update Knowledge Graph| M
+
+    %% Styling
+    classDef layer fill:#0f172a,stroke:#334155,stroke-width:1px,color:#f1f5f9,font-weight:bold;
+    classDef node fill:#1e293b,stroke:#94a3b8,color:#e2e8f0,font-size:12px;
+    class M,W,V layer;
+    class MA1,MA2,MA3,MA4,MA5,MA6,W1,W2,W3,W4,W5,V1,V2,V3,V4,V5,V6 node;
+```
+
+**Note:** This flowchart renders interactively in GitHub, Cursor, and can be integrated into Streamlit dashboards using `st.markdown()` with Mermaid support.
+
+---
+
+### **Detailed ASCII Diagram**
 
 ```
                          ┌─────────────────────────────────┐
@@ -276,6 +329,7 @@ This guide explains how the **Variant Exploration System (VES)** fits within the
 **Role:** Strategic governance and orchestration
 
 **Key Agents:**
+
 - **Strategy Agent:** Defines market positioning and competitive strategy
 - **Planner Agent:** Sets evaluation criteria and manages approval gates
 - **Financial Agent:** Manages budget allocation and ROI tracking
@@ -284,18 +338,21 @@ This guide explains how the **Variant Exploration System (VES)** fits within the
 - **Documentation Agent:** Maintains knowledge graph and insights
 
 **Inputs:**
+
 - Business objectives and strategic goals
 - Market conditions and constraints
 - Resource availability (budget, time, team)
 - Stakeholder requirements
 
 **Outputs:**
+
 - Strategic constraints (e.g., "Focus on solo founders")
 - Success criteria (e.g., "LTV:CAC > 3.0, Payback < 12 months")
 - Approval thresholds (e.g., "Pain must be 5× price")
 - Resource allocation decisions
 
 **When it acts:**
+
 - **Start:** When a new idea is proposed
 - **End:** After VES completes, to make final decision
 
@@ -306,6 +363,7 @@ This guide explains how the **Variant Exploration System (VES)** fits within the
 **Role:** Decision framework and analytical templates
 
 **Key Frameworks:**
+
 1. **Pain Validation Framework** - Quantify problem severity
 2. **Market & TAM Analysis** - Size the opportunity
 3. **Unit Economics & ROI Modeling** - Model financial viability
@@ -314,18 +372,21 @@ This guide explains how the **Variant Exploration System (VES)** fits within the
 6. **Decision Rubric** - Apply Approve/Conditional/Reject criteria
 
 **Inputs:**
+
 - Refined ideas from Management Layer
 - Success criteria and thresholds
 - Strategic constraints
 - Evidence from VES
 
 **Outputs:**
+
 - Variant suggestions (2-3 variants to explore)
 - Frameworks to apply during VES execution
 - Comparison matrix with scored variants
 - Decision recommendation (Approve/Conditional/Reject)
 
 **When it acts:**
+
 - **Start:** After Management Layer sets criteria
 - **Middle:** Generates variants for VES to explore
 - **End:** Applies frameworks to VES evidence, makes recommendation
@@ -337,6 +398,7 @@ This guide explains how the **Variant Exploration System (VES)** fits within the
 **Role:** Execution engine for evidence collection
 
 **Key Components:**
+
 - **13-Phase SOP:** Standardized workflow
 - **Orchestrator:** Interactive execution controller
 - **Structured Artifacts:** 12+ files per variant
@@ -344,12 +406,14 @@ This guide explains how the **Variant Exploration System (VES)** fits within the
 - **Audit Trail:** Complete traceability
 
 **Inputs:**
+
 - Variant hypotheses from Workshop
 - Research questions and methodology
 - Success criteria from Management Layer
 - Support from Management Agents (during execution)
 
 **Outputs:**
+
 - 12+ structured files per variant
 - Evidence package (75+ sources)
 - Comparison matrix (side-by-side metrics)
@@ -357,6 +421,7 @@ This guide explains how the **Variant Exploration System (VES)** fits within the
 - Complete audit trail
 
 **When it acts:**
+
 - **Middle:** Between strategy setting and final decision
 - **Duration:** Executes all 13 phases for each variant
 
@@ -460,6 +525,7 @@ workshop_criteria = PlannerAgent.set_evaluation_criteria({
 ```
 
 **What gets passed:**
+
 - Refined idea description
 - Success thresholds
 - Resource constraints
@@ -485,6 +551,7 @@ for variant in variants:
 ```
 
 **What gets passed:**
+
 - Variant hypothesis
 - Research questions
 - Frameworks to apply
@@ -523,6 +590,7 @@ elif phase == 9:
 ```
 
 **What gets passed:**
+
 - Phase data and context
 - Variant-specific information
 - Evidence collected so far
@@ -552,6 +620,7 @@ decision = WorkshopAgent.apply_decision_rubric(evidence)
 ```
 
 **What gets passed:**
+
 - All structured artifacts
 - Source citations
 - Audit trail
@@ -585,6 +654,7 @@ PlannerAgent.execute_recommendation(recommendation)
 ```
 
 **What gets passed:**
+
 - Decision (Approve/Conditional/Reject)
 - Justification with metrics
 - Recommended next steps
@@ -604,15 +674,15 @@ YOU: "I have an idea for a personal productivity assistant"
 Strategy Agent analyzes:
   • Market: Productivity tools = €5B, growing 12% CAGR
   • Recommendation: "Focus on solo founders, not enterprises"
-  
+
 Market Intelligence Agent identifies:
   • Google Calendar: 80% market share, 1B users
   • Suggestion: "Target niches Google ignores"
-  
+
 Risk Agent flags:
   • High risk competing with free tools
   • Recommendation: "Niche targeting + premium pricing"
-  
+
 Planner Agent sets criteria:
   • LTV:CAC > 3.0
   • Payback < 12 months
@@ -628,7 +698,7 @@ Output: Strategic constraints + success criteria
 Commercial ROI Workshop analyzes base idea:
   • Too broad: 6 features (email, calendar, coaching, fitness, diet, journaling)
   • Recommendation: "Explore focused variants"
-  
+
 Generated variants:
   1. Email management for freelance designers
   2. Calendar assistant for ADHD entrepreneurs
@@ -645,33 +715,33 @@ For Variant 1 (Email for Freelancers):
 Phase 0: Intake
   • Idea: "Email management for freelance designers"
   • ICP: "Designers ages 25-40, managing 50+ client emails/day"
-  
+
 Phase 1-2: Scope & Research Plan
   • Hypothesis: "Freelance designers will pay €25/mo for email triage"
   • Research: User interviews, surveys, competitor analysis
-  
+
 Phase 3-6: Evidence & Pain Scoring
   • Market Intelligence Agent gathers 75 sources
   • Conducted 12 user interviews
   • Pain score: 8.2/10 (strong)
-  
+
 Phase 7: Market Analysis
   • TAM: €450M (email management for creatives)
   • SAM: €45M (reachable market)
   • SOM: €1.2M (Year 1 target)
-  
+
 Phase 8: Unit Economics
   • Financial Agent models:
     - LTV: €300, CAC: €60
     - LTV:CAC: 5.0 ✅
     - Payback: 3 months ✅
-  
+
 Phase 9: Risk Assessment
   • Risk Agent identifies:
     - Google competition: Medium (mitigated by niche)
     - Technical complexity: Low
     - Market saturation: Medium
-  
+
 Phase 10-12: GTM, Synthesis, Decision
   • GTM: Content marketing + design communities
   • Recommendation: GO
@@ -726,12 +796,12 @@ Output: Recommendation with full justification
 YOU review comparison matrix and approve:
 
 DECISION 1: APPROVE Variant 1
-  
+
   Planner Agent executes:
     ✅ Create project: "Email Management for Freelance Designers"
     ✅ Timeline: 3 weeks (Week 1: Core email triage, Week 2: Quick actions, Week 3: Beta launch)
     ✅ Milestones: 5 defined checkpoints
-  
+
   Financial Agent executes:
     ✅ Allocate budget: €5,000
       - Development: €0 (your time)
@@ -740,37 +810,37 @@ DECISION 1: APPROVE Variant 1
       - Beta incentives: €500
       - Buffer: €2,500
     ✅ Set tracking: Monthly ARR, CAC, LTV
-  
+
   Technical Architect executes:
     ✅ Tech stack: Python, Flask, Gmail API, PostgreSQL
     ✅ Architecture: Microservices (email processor, API, frontend)
     ✅ Infrastructure: Digital Ocean, €50/mo
-  
+
   Documentation Agent executes:
     ✅ Generate PRD: Product Requirements Document
     ✅ Technical specs: API documentation, data models
     ✅ Update knowledge graph: Link idea → workshop → decision → project
 
 DECISION 2: CONDITIONAL Variant 2
-  
+
   Conditions to validate:
     • Reduce CAC from €75 to €50 (test cheaper channels)
     • Conduct 10 user interviews with ADHD entrepreneurs
     • Find 5 paying beta customers
-  
+
   Market Intelligence Agent schedules:
     ✅ User interview recruitment campaign
-  
+
   Planner Agent schedules:
     ✅ Revalidation meeting in 2 weeks
 
 DECISION 3: REJECT Variant 3
-  
+
   Reasons:
     • Payback (8 months) exceeds threshold (6 months for this market)
     • Competition from existing morning routine apps
     • Marginal differentiation
-  
+
   Documentation Agent archives:
     ✅ Archive to: data/archived_variants/morning_coach_2025-10-16
     ✅ Lessons learned: "Morning routine market saturated, need stronger wedge"
@@ -783,31 +853,37 @@ Output: Project ready for development!
 ## 7. Benefits of Integrated System
 
 ### **7.1 Strategic Alignment**
+
 - All variants evaluated against strategic criteria
 - No "random walk" through ideas
 - Every decision traceable to strategic goals
 
 ### **7.2 Evidence-Based Decisions**
+
 - 75+ sources per variant
 - All metrics justified with data
 - No "gut feel" - everything backed by evidence
 
 ### **7.3 Rapid Iteration**
+
 - Explore 3 variants in parallel
 - 10-15 hours per variant (vs months with traditional consulting)
 - Can pivot quickly based on evidence
 
 ### **7.4 Complete Traceability**
+
 - Every decision logged
 - All sources tracked
 - Can replay entire decision-making process
 
 ### **7.5 Reusable Frameworks**
+
 - Same SOP for all variants
 - Same frameworks for all ideas
 - Continuously improving process
 
 ### **7.6 Resource Efficiency**
+
 - Management agents contribute where needed
 - No duplicate work across variants
 - Automated evidence collection (Perplexity)
@@ -875,18 +951,18 @@ python orchestrator.py --compare
 
 ## 10. Benefits of Integrated System
 
-| Benefit | Explanation |
-|---------|-------------|
-| **Traceable Governance** | Every Management Layer decision traces down to raw evidence stored in `/data/raw` and cited in reports. |
-| **Reusable Logic** | The ROI Workshop defines "what good looks like," while VES operationalizes "how to measure it." |
-| **Agent Alignment** | Each agent has clear accountability: Planner (flow), Market (data), Finance (math), Risk (constraints). |
-| **Human Oversight** | You remain the sole Approver; the system only presents structured, transparent evidence. |
-| **Scalable Framework** | New projects plug in by reusing the same SOP and Workshop templates. |
-| **Unified Decision Stack** | One ecosystem from idea → evidence → ROI → decision. |
-| **Full Traceability** | Every decision traceable to source data and rationale. |
-| **Reuse & Scalability** | Same SOP reused across all ideas and markets. |
-| **Agent Coordination** | Each agent contributes data only within their domain. |
-| **Governance Integrity** | No "black box" outputs — everything reviewable. |
+| Benefit                    | Explanation                                                                                             |
+| -------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Traceable Governance**   | Every Management Layer decision traces down to raw evidence stored in `/data/raw` and cited in reports. |
+| **Reusable Logic**         | The ROI Workshop defines "what good looks like," while VES operationalizes "how to measure it."         |
+| **Agent Alignment**        | Each agent has clear accountability: Planner (flow), Market (data), Finance (math), Risk (constraints). |
+| **Human Oversight**        | You remain the sole Approver; the system only presents structured, transparent evidence.                |
+| **Scalable Framework**     | New projects plug in by reusing the same SOP and Workshop templates.                                    |
+| **Unified Decision Stack** | One ecosystem from idea → evidence → ROI → decision.                                                    |
+| **Full Traceability**      | Every decision traceable to source data and rationale.                                                  |
+| **Reuse & Scalability**    | Same SOP reused across all ideas and markets.                                                           |
+| **Agent Coordination**     | Each agent contributes data only within their domain.                                                   |
+| **Governance Integrity**   | No "black box" outputs — everything reviewable.                                                         |
 
 ---
 
@@ -895,18 +971,20 @@ python orchestrator.py --compare
 ### **End-to-End Example: AI Agent Marketplace**
 
 **1. Management Layer Kick-off**
+
 ```
 Planner Agent initiates:
   → "Initiate ROI Workshop for Idea: AI Agent Marketplace"
-  
+
 Strategy Agent provides context:
   → "Focus on B2B SaaS, target SMEs and agencies"
-  
+
 Market Intelligence Agent:
   → "AI agent market = $2B, growing 45% CAGR"
 ```
 
 **2. ROI Workshop Template Loaded**
+
 ```json
 {
   "workshop_id": "WORKSHOP_2025_10_16_AI_MARKETPLACE",
@@ -926,6 +1004,7 @@ Market Intelligence Agent:
 ```
 
 **3. Variant Exploration System Run**
+
 ```
 Generate 3 variants:
   • Variant 1: Marketplace for SMEs (small businesses)
@@ -933,7 +1012,7 @@ Generate 3 variants:
   • Variant 3: Marketplace for Agencies (team collaboration)
 
 Orchestrator executes 13-phase SOP for each variant:
-  
+
   Variant 1 (SMEs):
     Phase 0-2: Intake, Scope, Research Plan
     Phase 3-6: Evidence collection (82 sources), Pain scoring (7.8/10)
@@ -941,15 +1020,16 @@ Orchestrator executes 13-phase SOP for each variant:
     Phase 8: Unit economics (LTV:CAC 4.2, Payback 4 months)
     Phase 9: Risk assessment (Medium risk)
     Phase 10-12: GTM, Synthesis, Decision (GO)
-    
+
   Variant 2 (Freelancers):
     [Similar process, outputs different metrics]
-    
+
   Variant 3 (Agencies):
     [Similar process, outputs different metrics]
 ```
 
 **4. Workshop Evaluation**
+
 ```
 ROI Workshop applies scoring rubric:
 
@@ -979,6 +1059,7 @@ Results aggregated in:
 ```
 
 **5. Decision Stage**
+
 ```
 Strategy Agent briefs you:
   "Variant 1 (SME marketplace) shows strongest metrics.
@@ -999,6 +1080,7 @@ Planner Agent executes:
 ```
 
 **6. Feedback Logged**
+
 ```
 Documentation Agent archives:
   ✅ All variant artifacts → /projects/variant_1/, variant_2/, variant_3/
@@ -1019,16 +1101,16 @@ Next actions logged:
 
 ## 12. Data & Reporting Integration
 
-| Layer | Report Type | Where Stored | Format | Audience |
-|-------|-------------|--------------|--------|----------|
-| **VES** | Raw evidence, source logs | `/projects/<variant>/` | JSON, MD, CSV | Technical team, auditors |
-| **VES** | Phase artifacts | `/projects/<variant>/*.json` | JSON, YAML, MD | Workshop analyzer, agents |
-| **VES** | Comparison matrix | `/reports/comparison_matrix.md` | Markdown table | Decision makers |
-| **ROI Workshop** | Scored summary | `/reports/variant_summary.json` | JSON | Management layer |
-| **ROI Workshop** | Rankings | `/reports/variant_rankings.json` | JSON | Strategy agent |
-| **Management Layer** | Decision trace | `/logs/decision_registry.json` | JSON | Compliance, audit |
-| **Management Layer** | Knowledge graph | External DB or `management_memory.json` | Neo4j / JSON | Strategy, planning |
-| **Dashboard** | Live status | Streamlit app (in-memory) | Real-time UI | All stakeholders |
+| Layer                | Report Type               | Where Stored                            | Format         | Audience                  |
+| -------------------- | ------------------------- | --------------------------------------- | -------------- | ------------------------- |
+| **VES**              | Raw evidence, source logs | `/projects/<variant>/`                  | JSON, MD, CSV  | Technical team, auditors  |
+| **VES**              | Phase artifacts           | `/projects/<variant>/*.json`            | JSON, YAML, MD | Workshop analyzer, agents |
+| **VES**              | Comparison matrix         | `/reports/comparison_matrix.md`         | Markdown table | Decision makers           |
+| **ROI Workshop**     | Scored summary            | `/reports/variant_summary.json`         | JSON           | Management layer          |
+| **ROI Workshop**     | Rankings                  | `/reports/variant_rankings.json`        | JSON           | Strategy agent            |
+| **Management Layer** | Decision trace            | `/logs/decision_registry.json`          | JSON           | Compliance, audit         |
+| **Management Layer** | Knowledge graph           | External DB or `management_memory.json` | Neo4j / JSON   | Strategy, planning        |
+| **Dashboard**        | Live status               | Streamlit app (in-memory)               | Real-time UI   | All stakeholders          |
 
 ### **Key Storage Locations:**
 
@@ -1078,6 +1160,7 @@ Each agent runs as a **Cursor Task File** or **claude.md agent script**, referen
 You'll control the workflow interactively through **Cursor's chat or terminal**:
 
 **1. Orchestrator (VES Layer)**
+
 ```bash
 # In Cursor terminal:
 cd variant_exploration_system
@@ -1088,6 +1171,7 @@ python orchestrator.py --variant sme_marketplace
 ```
 
 **2. Planner Agent (Management Layer)**
+
 ```python
 # As Cursor task file: planner_agent.py
 # Monitors state and dependencies
@@ -1100,6 +1184,7 @@ planner_agent.py:
 ```
 
 **3. Workshop Analyzer (ROI Workshop Layer)**
+
 ```python
 # As Cursor task file: workshop_analyzer.py
 # Calculates feasibility & ROI scores
@@ -1133,24 +1218,26 @@ Cursor commits:
 
 ### **Cursor Integration Points:**
 
-| Component | Cursor Role | Example Command |
-|-----------|-------------|-----------------|
-| **VES Orchestrator** | Terminal execution + interactive prompts | `python orchestrator.py` |
-| **Planner Agent** | Task file monitoring state | `python agents/planning_agent/planner.py` |
-| **Workshop Analyzer** | Task file scoring variants | `python agents/workshop_agent/analyzer.py` |
-| **Documentation Agent** | Automated file generation | Triggered by orchestrator |
-| **Streamlit Dashboard** | Visual UI layer | `streamlit run dashboard.py` |
+| Component               | Cursor Role                              | Example Command                            |
+| ----------------------- | ---------------------------------------- | ------------------------------------------ |
+| **VES Orchestrator**    | Terminal execution + interactive prompts | `python orchestrator.py`                   |
+| **Planner Agent**       | Task file monitoring state               | `python agents/planning_agent/planner.py`  |
+| **Workshop Analyzer**   | Task file scoring variants               | `python agents/workshop_agent/analyzer.py` |
+| **Documentation Agent** | Automated file generation                | Triggered by orchestrator                  |
+| **Streamlit Dashboard** | Visual UI layer                          | `streamlit run dashboard.py`               |
 
 ---
 
 ## 14. Control & Governance
 
 ### **Approval Gates**
+
 - ✅ **All gates** require explicit human approval
 - ✅ Each phase ends with Confirm / Revise / Park decision
 - ✅ No auto-advancement without your consent
 
 ### **Artifact Metadata**
+
 - ✅ **Every artifact** includes:
   - `variant`: Which variant it belongs to
   - `phase`: Which phase generated it
@@ -1159,12 +1246,14 @@ Cursor commits:
   - `approver`: Who approved it
 
 ### **Audit Trail**
+
 - ✅ **Complete traceability**:
   - Strategic decisions → Workshop criteria → Variant evidence → Raw sources
   - Can replay entire decision-making process
   - All approvals/revisions logged with timestamps
 
 ### **Schema Validation**
+
 - ✅ **Consistency enforcement**:
   - All variants use identical schemas
   - JSON validation on all structured files
@@ -1172,6 +1261,7 @@ Cursor commits:
   - Markdown linting
 
 ### **Example Audit Trail Entry:**
+
 ```json
 {
   "decision_id": "DEC_2025_10_16_001",
@@ -1202,34 +1292,35 @@ Cursor commits:
 
 ## 15. Feedback Triggers
 
-| Event | Triggered Response | Responsible Layer | Example |
-|-------|-------------------|-------------------|---------|
-| **Scope drift detected** | Orchestrator pauses, Planner notified | Management | User adds features mid-phase → Planner reviews scope |
-| **New market insight** | Research plan updated mid-run | VES | Perplexity finds new competitor → Update Phase 7 |
-| **Compliance blocker** | Risk Agent injects new rule into Workshop | ROI Workshop | GDPR requirement discovered → Risk Agent adds constraint |
-| **Schema drift** | Documentation Agent runs validation | Management | JSON format mismatch → Validator corrects |
-| **Variant merge request** | Orchestrator executes Hybridization phase | VES | Combine pricing from V1 + features from V2 |
-| **Budget exceeded** | Financial Agent flags, approval required | Management | CAC projections too high → Rework economics |
-| **Timeline slip** | Planner Agent escalates | Management | Phase taking too long → Decide to park or continue |
+| Event                     | Triggered Response                        | Responsible Layer | Example                                                  |
+| ------------------------- | ----------------------------------------- | ----------------- | -------------------------------------------------------- |
+| **Scope drift detected**  | Orchestrator pauses, Planner notified     | Management        | User adds features mid-phase → Planner reviews scope     |
+| **New market insight**    | Research plan updated mid-run             | VES               | Perplexity finds new competitor → Update Phase 7         |
+| **Compliance blocker**    | Risk Agent injects new rule into Workshop | ROI Workshop      | GDPR requirement discovered → Risk Agent adds constraint |
+| **Schema drift**          | Documentation Agent runs validation       | Management        | JSON format mismatch → Validator corrects                |
+| **Variant merge request** | Orchestrator executes Hybridization phase | VES               | Combine pricing from V1 + features from V2               |
+| **Budget exceeded**       | Financial Agent flags, approval required  | Management        | CAC projections too high → Rework economics              |
+| **Timeline slip**         | Planner Agent escalates                   | Management        | Phase taking too long → Decide to park or continue       |
 
 ---
 
 ## 16. Implementation Path Forward
 
-| Step | Layer | Deliverable | Owner | Timeline |
-|------|-------|-------------|-------|----------|
-| **1** | Management | Update Management Layer config to include `workshop_runner` role that launches VES | Planner Agent | Week 1 |
-| **2** | ROI Workshop | Convert workshop checklist & decision rubric into `roi_workshop_template.json` | Documentation Agent | Week 1 |
-| **3** | VES | Finalize orchestrator & comparison scripts (✅ COMPLETE) | You | ✅ Done |
-| **4** | Management | Integrate logs from VES into global decision registry | Documentation Agent | Week 2 |
-| **5** | All Layers | Create `workshop_analyzer.py` to auto-score variants | Financial + Planner | Week 2-3 |
-| **6** | Management | Build knowledge graph integration (Neo4j or JSON) | Documentation Agent | Week 3-4 |
-| **7** | Dashboard | Extend Streamlit dashboard to show active workshops, variant status, decisions | Technical team | Week 4-6 |
-| **8** | Integration | End-to-end testing with real idea | You + All agents | Week 6 |
+| Step  | Layer        | Deliverable                                                                        | Owner               | Timeline |
+| ----- | ------------ | ---------------------------------------------------------------------------------- | ------------------- | -------- |
+| **1** | Management   | Update Management Layer config to include `workshop_runner` role that launches VES | Planner Agent       | Week 1   |
+| **2** | ROI Workshop | Convert workshop checklist & decision rubric into `roi_workshop_template.json`     | Documentation Agent | Week 1   |
+| **3** | VES          | Finalize orchestrator & comparison scripts (✅ COMPLETE)                           | You                 | ✅ Done  |
+| **4** | Management   | Integrate logs from VES into global decision registry                              | Documentation Agent | Week 2   |
+| **5** | All Layers   | Create `workshop_analyzer.py` to auto-score variants                               | Financial + Planner | Week 2-3 |
+| **6** | Management   | Build knowledge graph integration (Neo4j or JSON)                                  | Documentation Agent | Week 3-4 |
+| **7** | Dashboard    | Extend Streamlit dashboard to show active workshops, variant status, decisions     | Technical team      | Week 4-6 |
+| **8** | Integration  | End-to-end testing with real idea                                                  | You + All agents    | Week 6   |
 
 ### **Detailed Implementation Steps:**
 
 **Step 1: Add workshop_runner to Management Layer**
+
 ```yaml
 # agents/orchestrator/agent_registry.yaml
 agents:
@@ -1246,6 +1337,7 @@ agents:
 ```
 
 **Step 2: Create ROI Workshop Template**
+
 ```json
 // config/roi_workshop_template.json
 {
@@ -1274,16 +1366,17 @@ agents:
   },
   "scoring_weights": {
     "pain_score": 0.25,
-    "market_size": 0.20,
-    "ltv_cac": 0.20,
+    "market_size": 0.2,
+    "ltv_cac": 0.2,
     "payback": 0.15,
-    "competitive_position": 0.10,
-    "technical_feasibility": 0.10
+    "competitive_position": 0.1,
+    "technical_feasibility": 0.1
   }
 }
 ```
 
 **Step 3: VES Finalization** ✅ **COMPLETE**
+
 ```bash
 # Already built:
 variant_exploration_system/
@@ -1294,6 +1387,7 @@ variant_exploration_system/
 ```
 
 **Step 4: Decision Registry Integration**
+
 ```json
 // data/decision_registry.json
 {
@@ -1319,12 +1413,14 @@ variant_exploration_system/
 ### **Phase 2 Enhancements:**
 
 **1. Automated Evidence Collectors**
+
 - Reddit API integration for user pain points
 - X (Twitter) API for market sentiment
 - Google Trends for search volume data
 - Product Hunt for competitor launches
 
 **2. Real-Time Progress Dashboard**
+
 ```
 Streamlit Dashboard showing:
   • Active workshops (in progress)
@@ -1335,6 +1431,7 @@ Streamlit Dashboard showing:
 ```
 
 **3. Graph Database Integration**
+
 ```cypher
 // Neo4j example
 CREATE (idea:Idea {name: "AI Marketplace"})
@@ -1348,6 +1445,7 @@ CREATE (variant)-[:RESULTED_IN]->(decision)
 ```
 
 **4. Notification Layer**
+
 - Slack/Email notifications for:
   - Pending phase approvals
   - Workshop completion
@@ -1355,6 +1453,7 @@ CREATE (variant)-[:RESULTED_IN]->(decision)
   - Budget alerts
 
 **5. Advanced Analytics**
+
 - Success rate tracking across workshops
 - Common failure patterns
 - Benchmark database (industry averages)
@@ -1401,14 +1500,14 @@ CREATE (variant)-[:RESULTED_IN]->(decision)
 
 ### **Key Metrics:**
 
-| Metric | Traditional Approach | AI-Powered System |
-|--------|---------------------|-------------------|
-| **Time per idea** | 2-5 months | 2-3 days |
-| **Cost per idea** | €20K-50K | €0.50-2.00 |
-| **Ideas validated/year** | 2-4 | 50-100+ |
-| **Success rate** | 10% (guessing) | 60% (evidence-based) |
-| **Traceability** | Low (PowerPoint decks) | High (complete audit trail) |
-| **Scalability** | Low (consultant bandwidth) | High (reusable process) |
+| Metric                   | Traditional Approach       | AI-Powered System           |
+| ------------------------ | -------------------------- | --------------------------- |
+| **Time per idea**        | 2-5 months                 | 2-3 days                    |
+| **Cost per idea**        | €20K-50K                   | €0.50-2.00                  |
+| **Ideas validated/year** | 2-4                        | 50-100+                     |
+| **Success rate**         | 10% (guessing)             | 60% (evidence-based)        |
+| **Traceability**         | Low (PowerPoint decks)     | High (complete audit trail) |
+| **Scalability**          | Low (consultant bandwidth) | High (reusable process)     |
 
 ### **What You've Built:**
 
@@ -1417,7 +1516,7 @@ CREATE (variant)-[:RESULTED_IN]->(decision)
 ✅ **Variant Exploration System** - 13-phase evidence engine  
 ✅ **Integration** - Seamless data flow between layers  
 ✅ **Governance** - Complete audit trail and approval gates  
-✅ **Documentation** - Comprehensive guides for all components  
+✅ **Documentation** - Comprehensive guides for all components
 
 ---
 
@@ -1426,4 +1525,3 @@ CREATE (variant)-[:RESULTED_IN]->(decision)
 **Transform intuition into measurable, evidence-backed business decisions.**
 
 **From idea to validated project in days, not months.**
-

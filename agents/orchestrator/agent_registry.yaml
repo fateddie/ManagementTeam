@@ -39,4 +39,4 @@ agents:
   - name: IterativeWorkshopAgent
     path: "agents.workshop_agent.workshop_agent:IterativeWorkshopAgent"
     active: true # ✅ Phase 1.5 - Workshop Integration
-    stage: 1.5  # Between refinement and vertical
+    stage: 1.5 # Between refinement and vertical

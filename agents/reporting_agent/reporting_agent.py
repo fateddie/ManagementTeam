@@ -1,6 +1,7 @@
 """
 reporting_agent.py
 Phase 6 – Reporting & Testing Automation
+Phase 1.1 Update — Now inherits from BaseAgent
 ---------------------------------------------------------
 Generates build summaries, validation reports, and archives old sessions.
 
@@ -15,6 +16,12 @@ Outputs:
     - reports/session_audit_<timestamp>.json
     - reports/validation_report_<timestamp>.md
     - reports/build_summary_<timestamp>.md
+
+Changes in Phase 1.1:
+    - Inherits from BaseAgent
+    - Depends on DocumentationAgent (runs last)
+    - Renamed run() → execute(context)
+    - Returns AgentOutput
 """
 
 import os
@@ -25,12 +32,34 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
 
+# Phase 1.1: Import BaseAgent
+from core.base_agent import BaseAgent, AgentContext
+from core.agent_protocol import AgentOutput
 
-class ReportingAgent:
+
+class ReportingAgent(BaseAgent):
     """
     Reporting and validation agent for quality control and audit trail.
+
+    Phase 1.1: Now implements BaseAgent interface for standardized orchestration.
     """
-    
+
+    # Phase 1.1: Implement required BaseAgent properties
+    @property
+    def name(self) -> str:
+        """Agent name for identification and logging."""
+        return "ReportingAgent"
+
+    @property
+    def dependencies(self) -> List[str]:
+        """
+        Depends on DocumentationAgent - runs last to audit all outputs.
+
+        ReportingAgent validates all outputs from the entire pipeline
+        and generates final audit reports.
+        """
+        return ["DocumentationAgent"]
+
     def __init__(
         self,
         outputs_dir: str = "./outputs/",
@@ -52,12 +81,35 @@ class ReportingAgent:
         self.report_dir = self.outputs / "reports"
         self.report_dir.mkdir(exist_ok=True, parents=True)
 
-    def run(self) -> Dict[str, Any]:
+    # Phase 1.1: Implement input validation
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """
+        Validate that outputs directory exists.
+
+        Args:
+            context: Execution context
+
+        Returns:
+            True if outputs directory exists, False otherwise
+        """
+        return self.outputs.exists()
+
+    # Phase 1.1: Renamed run() → execute(), now returns AgentOutput
+    def execute(self, context: AgentContext) -> AgentOutput:
         """
         Main execution - audit, validate, report, archive.
-        
+
+        Phase 1.1 Changes:
+            - Renamed from run() to execute() for BaseAgent compliance
+            - Takes AgentContext parameter
+            - Returns AgentOutput instead of Dict
+            - Includes confidence score and decision reasoning
+
+        Args:
+            context: Shared execution context
+
         Returns:
-            Dictionary with audit results
+            AgentOutput with audit and validation results
         """
         print("📊 Reporting Agent starting...")
         
@@ -76,15 +128,30 @@ class ReportingAgent:
         # Step 4: Archive old files
         archived_count = self._archive_old()
         print(f"✅ Archived {archived_count} old files")
-        
+
         print("✅ Reporting complete.")
-        
-        return {
-            "audit": audit,
-            "validation": validation,
-            "archived": archived_count,
-            "status": "complete"
-        }
+
+        # Phase 1.1: Return AgentOutput instead of Dict
+        return AgentOutput(
+            agent_name=self.name,
+            decision="approve",
+            reasoning=f"Audited {len(audit['outputs'])} outputs, validated {len(validation['valid'])} files, archived {archived_count} old files",
+            data_for_next_agent={
+                "audit": audit,
+                "validation": validation,
+                "archived": archived_count,
+                "status": "complete"
+            },
+            confidence=0.95,  # High confidence - objective validation
+            flags=[],
+            metadata={
+                "outputs_dir": str(self.outputs),
+                "report_dir": str(self.report_dir),
+                "valid_count": len(validation['valid']),
+                "invalid_count": len(validation['invalid']),
+                "archived_count": archived_count
+            }
+        )
 
     def _collect_audit(self) -> Dict[str, Any]:
         """Collect all outputs and logs for audit."""
@@ -259,26 +326,52 @@ class ReportingAgent:
 # ==============================================
 if __name__ == "__main__":
     print("\n" + "=" * 70)
-    print("📊 REPORTING AGENT - PHASE 6")
+    print("📊 REPORTING AGENT - PHASE 6 + Phase 1.1 Update")
     print("=" * 70 + "\n")
-    
+
     agent = ReportingAgent()
-    
+
+    print(f"Agent Name: {agent.name}")
+    print(f"Dependencies: {agent.dependencies}\n")
+
     try:
-        result = agent.run()
-        
+        # Phase 1.1: Create AgentContext
+        from core.cache import Cache
+        context = AgentContext(
+            session_id="test_session",
+            inputs={},
+            cache=Cache(),
+            shared_data={}
+        )
+
+        # Phase 1.1: Validate inputs
+        if not agent.validate_inputs(context):
+            print("❌ Input validation failed")
+            exit(1)
+
+        # Phase 1.1: Execute with context (replaces run())
+        result = agent.execute(context)
+
         print(f"\n✅ Reporting complete!")
-        print(f"\n📊 Results:")
-        print(f"   - Outputs audited: {len(result['audit']['outputs'])}")
-        print(f"   - Logs found: {len(result['audit']['logs'])}")
-        print(f"   - Valid files: {len(result['validation']['valid'])}")
-        print(f"   - Invalid files: {len(result['validation']['invalid'])}")
-        print(f"   - Files archived: {result['archived']}")
-        
+        print(f"\n📊 AgentOutput:")
+        print(f"   - Agent: {result.agent_name}")
+        print(f"   - Decision: {result.decision}")
+        print(f"   - Confidence: {result.confidence}")
+        print(f"   - Reasoning: {result.reasoning}")
+
+        # Access the audit data
+        report_data = result.data_for_next_agent
+        print(f"\n📊 Audit Results:")
+        print(f"   - Outputs audited: {len(report_data['audit']['outputs'])}")
+        print(f"   - Logs found: {len(report_data['audit']['logs'])}")
+        print(f"   - Valid files: {len(report_data['validation']['valid'])}")
+        print(f"   - Invalid files: {len(report_data['validation']['invalid'])}")
+        print(f"   - Files archived: {report_data['archived']}")
+
         print("\n" + "=" * 70)
-        print("✅ REPORTING AGENT TEST COMPLETE")
+        print("✅ REPORTING AGENT TEST COMPLETE (Phase 1.1)")
         print("=" * 70 + "\n")
-        
+
     except Exception as e:
         print(f"\n❌ Error: {e}\n")
         import traceback

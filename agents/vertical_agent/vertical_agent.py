@@ -1,5 +1,6 @@
 """
 vertical_agent.py
+Phase 1.1 Update — Now inherits from BaseAgent
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Vertical Agent - Business Vertical Evaluation & Scoring
 
@@ -8,6 +9,12 @@ Purpose:
     to recommend the best next project.
 
 Location: agents/vertical_agent/vertical_agent.py
+
+Changes in Phase 1.1:
+    - Inherits from BaseAgent
+    - No dependencies (evaluation stage)
+    - Renamed run() → execute(context)
+    - Returns AgentOutput
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
@@ -18,11 +25,9 @@ from typing import List, Dict, Any
 # Import scoring utilities
 from src.utils.scoring_utils import score_all_verticals, get_recommendation
 
-# Import agent protocol for orchestrator integration
-try:
-    from core.agent_protocol import AgentOutput
-except ImportError:
-    AgentOutput = None
+# Phase 1.1: Import BaseAgent
+from core.base_agent import BaseAgent, AgentContext
+from core.agent_protocol import AgentOutput
 
 
 def run_vertical_agent(ideas: List[Dict], framework: str = "RICE") -> Dict:
@@ -331,13 +336,31 @@ def _write_recommendation_file(recommendation: Dict, framework: str = "RICE"):
     print(f"📄 Recommendation saved to {output_file}")
 
 
-class VerticalAgent:
+class VerticalAgent(BaseAgent):
     """
     Class-based Vertical Agent for orchestrator integration.
-    
+
     Can load verticals from YAML file and save results.
+
+    Phase 1.1: Now implements BaseAgent interface for standardized orchestration.
     """
-    
+
+    # Phase 1.1: Implement required BaseAgent properties
+    @property
+    def name(self) -> str:
+        """Agent name for identification and logging."""
+        return "VerticalAgent"
+
+    @property
+    def dependencies(self) -> List[str]:
+        """
+        No dependencies - evaluation stage, independent of other agents.
+
+        VerticalAgent evaluates business opportunities and doesn't need
+        outputs from other agents.
+        """
+        return []
+
     def __init__(
         self,
         verticals_path: str = "./inputs/verticals.yaml",
@@ -358,13 +381,36 @@ class VerticalAgent:
         
         # Ensure directories exist
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    def run(self) -> Any:
+
+    # Phase 1.1: Implement input validation
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """
+        Validate that verticals data is available or examples can be used.
+
+        Args:
+            context: Execution context
+
+        Returns:
+            True (always valid - can use examples if no input file)
+        """
+        return True  # Always valid - can use example verticals
+
+    # Phase 1.1: Renamed run() → execute(), now returns AgentOutput
+    def execute(self, context: AgentContext) -> AgentOutput:
         """
         Main execution method - loads, scores, saves, returns results.
-        
+
+        Phase 1.1 Changes:
+            - Renamed from run() to execute() for BaseAgent compliance
+            - Takes AgentContext parameter
+            - Returns AgentOutput instead of dict
+            - Includes confidence score and decision reasoning
+
+        Args:
+            context: Shared execution context
+
         Returns:
-            AgentOutput or dict with results
+            AgentOutput with vertical evaluation results
         """
         print("🎯 Vertical Agent starting...")
         
@@ -385,9 +431,31 @@ class VerticalAgent:
         
         # Print summary
         print(f"\n{result['summary']}")
-        
-        # Return AgentOutput for orchestrator
-        return self._create_agent_output(result)
+
+        # Phase 1.1: Return AgentOutput directly
+        top = result.get('top_choice')
+        if not top:
+            raise ValueError("No valid verticals to evaluate")
+
+        return AgentOutput(
+            agent_name=self.name,
+            decision="approve",
+            reasoning=result['summary'],
+            data_for_next_agent={
+                'recommended_vertical': top['name'],
+                'score': top['score'],
+                'all_scores': result.get('all_ranked', []),
+                'proactive_notes': result.get('proactive_notes', [])
+            },
+            confidence=0.85,
+            flags=[],
+            metadata={
+                "verticals_path": str(self.verticals_path),
+                "output_path": str(self.output_path),
+                "framework": self.framework,
+                "num_verticals_evaluated": len(result.get('all_ranked', []))
+            }
+        )
     
     def _load_verticals(self) -> List[Dict]:
         """Load vertical ideas from YAML file."""
@@ -429,34 +497,6 @@ class VerticalAgent:
         with open(self.output_path, 'w') as f:
             yaml.safe_dump(result, f, sort_keys=False)
         print(f"💾 Results saved to {self.output_path}")
-    
-    def _create_agent_output(self, result: Dict) -> Any:
-        """
-        Create AgentOutput for orchestrator integration.
-        
-        Args:
-            result: Scoring result dict
-            
-        Returns:
-            AgentOutput or plain dict
-        """
-        if AgentOutput is None:
-            return result
-        
-        top = result['top_choice']
-        
-        return AgentOutput(
-            agent_name="VerticalAgent",
-            decision="approve",
-            reasoning=result['summary'],
-            data_for_next_agent={
-                'recommended_vertical': top['name'],
-                'score': top['score'],
-                'all_scores': result['all_ranked']
-            },
-            confidence=0.85,
-            flags=[]
-        )
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -466,15 +506,51 @@ class VerticalAgent:
 def main():
     """Run Vertical Agent from command line."""
     print("\n" + "="*60)
-    print("🎯 VERTICAL AGENT - Business Idea Evaluation")
+    print("🎯 VERTICAL AGENT - Business Idea Evaluation + Phase 1.1 Update")
     print("="*60 + "\n")
-    
+
     agent = VerticalAgent()
-    result = agent.run()
-    
-    print("\n" + "="*60)
-    print("✅ Evaluation Complete!")
-    print("="*60)
+
+    print(f"Agent Name: {agent.name}")
+    print(f"Dependencies: {agent.dependencies}\n")
+
+    try:
+        # Phase 1.1: Create AgentContext
+        from core.cache import Cache
+        context = AgentContext(
+            session_id="test_session",
+            inputs={},
+            cache=Cache(),
+            shared_data={}
+        )
+
+        # Phase 1.1: Validate inputs
+        if not agent.validate_inputs(context):
+            print("❌ Input validation failed")
+            exit(1)
+
+        # Phase 1.1: Execute with context (replaces run())
+        result = agent.execute(context)
+
+        print(f"\n📊 AgentOutput:")
+        print(f"   - Agent: {result.agent_name}")
+        print(f"   - Decision: {result.decision}")
+        print(f"   - Confidence: {result.confidence}")
+        print(f"   - Reasoning: {result.reasoning}")
+
+        # Access the vertical data
+        vertical_data = result.data_for_next_agent
+        print(f"\n🎯 Recommended Vertical: {vertical_data['recommended_vertical']}")
+        print(f"   Score: {vertical_data['score']}")
+
+        print("\n" + "="*60)
+        print("✅ Evaluation Complete (Phase 1.1)!")
+        print("="*60)
+
+    except Exception as e:
+        print(f"\n❌ Error: {e}\n")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":

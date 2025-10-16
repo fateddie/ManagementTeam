@@ -1,5 +1,6 @@
 """
 opportunity_ranking_agent.py
+Phase 1.1 Update — Now inherits from BaseAgent
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Opportunity Ranking Agent
 
@@ -13,7 +14,7 @@ Location: agents/opportunity_ranking/opportunity_ranking_agent.py
 
 Criteria:
     - Market Size
-    - Niche Attractiveness  
+    - Niche Attractiveness
     - Competitive Edge
     - Personal Fit / Skill Match
     - Resource Requirement
@@ -21,6 +22,12 @@ Criteria:
     - Scalability Potential
 
 Phase: 14 - Advanced Opportunity Ranking
+
+Changes in Phase 1.1:
+    - Inherits from BaseAgent
+    - Depends on VerticalAgent
+    - Renamed run() → execute(context)
+    - Returns AgentOutput
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 """
 
@@ -38,20 +45,36 @@ sys.path.insert(0, str(project_root))
 # Import scoring utilities
 from src.utils.score_utils import weighted_score
 
-# Import agent protocol
-try:
-    from core.agent_protocol import AgentOutput
-except ImportError:
-    AgentOutput = None
+# Phase 1.1: Import BaseAgent
+from core.base_agent import BaseAgent, AgentContext
+from core.agent_protocol import AgentOutput
 
 
-class OpportunityRankingAgent:
+class OpportunityRankingAgent(BaseAgent):
     """
     Advanced opportunity ranking with weighted scoring.
-    
+
     Uses 7 strategic criteria instead of simple RICE scoring.
+
+    Phase 1.1: Now implements BaseAgent interface for standardized orchestration.
     """
-    
+
+    # Phase 1.1: Implement required BaseAgent properties
+    @property
+    def name(self) -> str:
+        """Agent name for identification and logging."""
+        return "OpportunityRankingAgent"
+
+    @property
+    def dependencies(self) -> List[str]:
+        """
+        Depends on VerticalAgent - enhances vertical evaluation with advanced scoring.
+
+        OpportunityRankingAgent takes verticals from VerticalAgent
+        and applies more sophisticated weighted scoring.
+        """
+        return ["VerticalAgent"]
+
     def __init__(
         self,
         ideas_path: str = "./data/opportunity/idea_blocks.json",
@@ -72,13 +95,37 @@ class OpportunityRankingAgent:
         
         # Ensure output directory exists
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
-    
-    def run(self) -> Any:
+
+    # Phase 1.1: Implement input validation
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """
+        Validate that ideas are available (from file or shared context).
+
+        Args:
+            context: Execution context
+
+        Returns:
+            True (always valid - can use examples if no input)
+        """
+        return True  # Always valid - can use example ideas
+
+    # Phase 1.1: Renamed run() → execute(), now returns AgentOutput
+    def execute(self, context: AgentContext) -> AgentOutput:
         """
         Main execution method.
-        
+
+        Phase 1.1 Changes:
+            - Renamed from run() to execute() for BaseAgent compliance
+            - Takes AgentContext parameter
+            - Returns AgentOutput instead of dict
+            - Can access vertical data from shared context
+            - Includes confidence score and decision reasoning
+
+        Args:
+            context: Shared execution context
+
         Returns:
-            AgentOutput or dict with ranking results
+            AgentOutput with ranked opportunities
         """
         print("📊 Opportunity Ranking Agent starting...")
         
@@ -101,9 +148,38 @@ class OpportunityRankingAgent:
         
         # Step 4: Write outputs
         self._write_outputs(ranked, config)
-        
-        # Step 5: Return result
-        return self._create_agent_output(ranked, config)
+
+        # Phase 1.1: Return AgentOutput directly
+        top = ranked[0] if ranked else None
+
+        if not top:
+            return AgentOutput(
+                agent_name=self.name,
+                decision="skip",
+                reasoning="No valid opportunities to rank",
+                data_for_next_agent={},
+                confidence=0.0,
+                flags=["no_input"]
+            )
+
+        return AgentOutput(
+            agent_name=self.name,
+            decision="approve",
+            reasoning=f"Top opportunity: {top['name']} (score: {top['score']:.2f})",
+            data_for_next_agent={
+                'top_opportunity': top,
+                'all_ranked': ranked[:5],  # Top 5
+                'scoring_framework': config.get('framework', 'Advanced Weighted')
+            },
+            confidence=0.85,
+            flags=top.get('risk_flags', []),
+            metadata={
+                "ideas_path": str(self.ideas_path),
+                "weights_path": str(self.weights_path),
+                "output_path": str(self.output_path),
+                "num_opportunities_ranked": len(ranked)
+            }
+        )
     
     def _load_idea_blocks(self) -> List[Dict]:
         """Load idea blocks from JSON file."""
@@ -370,50 +446,6 @@ class OpportunityRankingAgent:
                     f.write("\n")
                 
                 f.write("---\n\n")
-    
-    def _create_agent_output(self, ranked: List[Dict], config: Dict) -> Any:
-        """Create AgentOutput for orchestrator."""
-        if AgentOutput is None:
-            return {'ranked': ranked, 'config': config}
-        
-        top = ranked[0] if ranked else None
-        
-        if not top:
-            return AgentOutput(
-                agent_name="OpportunityRankingAgent",
-                decision="skip",
-                reasoning="No valid opportunities to rank",
-                data_for_next_agent={},
-                confidence=0.0,
-                flags=["no_input"]
-            )
-        
-        return AgentOutput(
-            agent_name="OpportunityRankingAgent",
-            decision="approve",
-            reasoning=f"Top opportunity: {top['name']} (score: {top['score']:.2f})",
-            data_for_next_agent={
-                'top_opportunity': top,
-                'all_ranked': ranked[:5],  # Top 5
-                'scoring_framework': config.get('framework', 'Advanced Weighted')
-            },
-            confidence=0.85,
-            flags=top.get('risk_flags', [])
-        )
-    
-    def _create_error_output(self, error_msg: str) -> Any:
-        """Create error output."""
-        if AgentOutput is None:
-            return {'error': error_msg}
-        
-        return AgentOutput(
-            agent_name="OpportunityRankingAgent",
-            decision="skip",
-            reasoning=f"Error: {error_msg}",
-            data_for_next_agent={},
-            confidence=0.0,
-            flags=["error"]
-        )
 
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -423,15 +455,53 @@ class OpportunityRankingAgent:
 def main():
     """Run from command line."""
     print("\n" + "="*70)
-    print("📊 OPPORTUNITY RANKING AGENT - Advanced Weighted Scoring")
+    print("📊 OPPORTUNITY RANKING AGENT - Advanced Weighted Scoring + Phase 1.1 Update")
     print("="*70 + "\n")
-    
+
     agent = OpportunityRankingAgent()
-    result = agent.run()
-    
-    print("\n" + "="*70)
-    print("✅ Ranking Complete!")
-    print("="*70)
+
+    print(f"Agent Name: {agent.name}")
+    print(f"Dependencies: {agent.dependencies}\n")
+
+    try:
+        # Phase 1.1: Create AgentContext
+        from core.cache import Cache
+        context = AgentContext(
+            session_id="test_session",
+            inputs={},
+            cache=Cache(),
+            shared_data={}
+        )
+
+        # Phase 1.1: Validate inputs
+        if not agent.validate_inputs(context):
+            print("❌ Input validation failed")
+            exit(1)
+
+        # Phase 1.1: Execute with context (replaces run())
+        result = agent.execute(context)
+
+        print(f"\n📊 AgentOutput:")
+        print(f"   - Agent: {result.agent_name}")
+        print(f"   - Decision: {result.decision}")
+        print(f"   - Confidence: {result.confidence}")
+        print(f"   - Reasoning: {result.reasoning}")
+
+        # Access the ranking data
+        ranking_data = result.data_for_next_agent
+        if ranking_data.get('top_opportunity'):
+            top = ranking_data['top_opportunity']
+            print(f"\n🥇 Top Opportunity: {top['name']}")
+            print(f"   Score: {top['score']:.2f}")
+
+        print("\n" + "="*70)
+        print("✅ Ranking Complete (Phase 1.1)!")
+        print("="*70)
+
+    except Exception as e:
+        print(f"\n❌ Error: {e}\n")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":

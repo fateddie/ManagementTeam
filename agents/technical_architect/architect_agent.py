@@ -1,6 +1,7 @@
 """
 architect_agent.py
 Phase 3 — Technical Architect Agent
+Phase 1.1 Update — Now inherits from BaseAgent
 ---------------------------------------------------------
 Converts strategy_plan.yaml into a structured technical design document.
 
@@ -14,12 +15,23 @@ Purpose:
 
 Output:
     technical_design.yaml with complete technical architecture
+
+Changes in Phase 1.1:
+    - Inherits from BaseAgent for standardized interface
+    - Depends on StrategyAgent output
+    - Renamed run() → execute(context)
+    - Returns AgentOutput instead of Dict
+    - Accesses strategy data from shared context
 """
 
 import yaml
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
+
+# Phase 1.1: Import BaseAgent and AgentOutput
+from core.base_agent import BaseAgent, AgentContext
+from core.agent_protocol import AgentOutput
 
 # Try to import OpenAI, fall back gracefully
 try:
@@ -29,13 +41,31 @@ except ImportError:
     OPENAI_AVAILABLE = False
 
 
-class TechnicalArchitectAgent:
+class TechnicalArchitectAgent(BaseAgent):
     """
     Technical architecture agent that converts strategy into technical design.
+
+    Phase 1.1: Now implements BaseAgent interface for standardized orchestration.
     """
-    
+
+    # Phase 1.1: Implement required BaseAgent properties
+    @property
+    def name(self) -> str:
+        """Agent name for identification and logging."""
+        return "TechnicalArchitectAgent"
+
+    @property
+    def dependencies(self) -> List[str]:
+        """
+        Depends on StrategyAgent - needs strategy plan to generate architecture.
+
+        The technical design is based on the strategic goals and
+        constraints identified by the StrategyAgent.
+        """
+        return ["StrategyAgent"]
+
     def __init__(
-        self, 
+        self,
         strategy_path: str = "./outputs/strategy_plan.yaml",
         output_path: str = "./outputs/technical_design.yaml"
     ):
@@ -62,23 +92,64 @@ class TechnicalArchitectAgent:
         else:
             self.client = None
             self.llm_enabled = False
-    
-    def run(self) -> Dict[str, Any]:
+
+    # Phase 1.1: Implement input validation
+    def validate_inputs(self, context: AgentContext) -> bool:
+        """
+        Validate that strategy data is available (either from file or shared context).
+
+        Args:
+            context: Execution context with shared agent data
+
+        Returns:
+            True if strategy data is available, False otherwise
+        """
+        # Check if strategy is available from upstream agent
+        strategy_output = context.get_agent_output("StrategyAgent")
+        if strategy_output:
+            return True
+
+        # Fallback: check if strategy file exists
+        if self.strategy_path.exists():
+            return True
+
+        print(f"❌ Strategy data not available from agent or file: {self.strategy_path}")
+        return False
+
+    # Phase 1.1: Renamed run() → execute(), now returns AgentOutput
+    def execute(self, context: AgentContext) -> AgentOutput:
         """
         Main execution method - analyze strategy and generate technical design.
-        
+
+        Phase 1.1 Changes:
+            - Renamed from run() to execute() for BaseAgent compliance
+            - Takes AgentContext parameter
+            - Returns AgentOutput instead of Dict
+            - Prioritizes shared context data over file reading
+            - Includes confidence score and decision reasoning
+
+        Args:
+            context: Shared execution context with strategy data
+
         Returns:
-            Dictionary containing technical design data
+            AgentOutput with technical design data
         """
-        # Check if strategy plan exists
-        if not self.strategy_path.exists():
-            print(f"⚠️  Strategy plan not found: {self.strategy_path}")
-            print("   Creating fallback technical design...")
-            return self._generate_fallback_design()
-        
-        # Read strategy plan
-        strategy_text = self.strategy_path.read_text(encoding='utf-8')
-        strategy_data = yaml.safe_load(strategy_text)
+        # Phase 1.1: Try to get strategy from shared context first
+        strategy_output = context.get_agent_output("StrategyAgent")
+        if strategy_output:
+            print(f"✅ Using strategy data from StrategyAgent (confidence: {strategy_output.confidence})")
+            strategy_data = strategy_output.data_for_next_agent
+            strategy_text = yaml.safe_dump(strategy_data)
+        elif self.strategy_path.exists():
+            # Fallback: read from file (for backwards compatibility)
+            print(f"⚠️  Reading strategy from file: {self.strategy_path}")
+            strategy_text = self.strategy_path.read_text(encoding='utf-8')
+            strategy_data = yaml.safe_load(strategy_text)
+        else:
+            # No strategy data available
+            print(f"⚠️  Strategy plan not found, creating fallback design...")
+            strategy_data = None
+            strategy_text = ""
 
         # Generate technical design
         if self.llm_enabled:
@@ -88,15 +159,30 @@ class TechnicalArchitectAgent:
         
         # Save as YAML
         yaml_output = yaml.safe_dump(
-            technical_design, 
-            sort_keys=False, 
+            technical_design,
+            sort_keys=False,
             default_flow_style=False
         )
         self.output_path.write_text(yaml_output, encoding='utf-8')
-        
+
         print(f"✅ Technical design saved to: {self.output_path}")
-        
-        return technical_design
+
+        # Phase 1.1: Return AgentOutput instead of Dict
+        return AgentOutput(
+            agent_name=self.name,
+            decision="approve",
+            reasoning=f"Designed {len(technical_design.get('modules', []))} modules, "
+                     f"{len(technical_design.get('data_models', []))} data models based on strategy",
+            data_for_next_agent=technical_design,
+            confidence=0.85 if self.llm_enabled else 0.70,
+            flags=[],
+            metadata={
+                "strategy_path": str(self.strategy_path),
+                "output_path": str(self.output_path),
+                "llm_enabled": self.llm_enabled,
+                "used_shared_context": strategy_output is not None if 'strategy_output' in locals() else False
+            }
+        )
     
     def _generate_with_llm(self, strategy_text: str) -> Dict[str, Any]:
         """Generate technical design using OpenAI."""
