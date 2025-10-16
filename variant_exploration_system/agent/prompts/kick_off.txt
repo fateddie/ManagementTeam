@@ -1,0 +1,34 @@
+╔══════════════════════════════════════════════════════════════════╗
+║              VARIANT EXPLORATION SYSTEM - KICK-OFF               ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Let's begin variant exploration.
+
+I'll help you explore several possible variants of one base idea through a
+rigorous, evidence-based process.
+
+Please provide:
+
+1️⃣  Describe your base idea in one sentence.
+    (Example: "AI-powered personal assistant for busy professionals")
+
+2️⃣  List any regions or markets you'd like to explore.
+    (Example: "North America, Europe" or "Global")
+
+3️⃣  Define success criteria.
+    (Examples: 
+     - Payback < 12 months
+     - 5 LOIs (Letters of Intent) before building
+     - LTV:CAC > 3.0
+     - €50K ARR in Year 1)
+
+4️⃣  Identify key assumptions or risks you already see.
+    (Examples:
+     - "Assumes people will pay for productivity tools"
+     - "Risk: Google might dominate this space"
+     - "Assumption: Can build MVP in 2-3 weeks")
+
+══════════════════════════════════════════════════════════════════
+
+📝 YOUR RESPONSES:
+

@@ -1,0 +1,46 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                   VARIANT GENERATION                             ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Based on your input, I'll suggest 2–3 variant paths that explore different:
+  •  Markets (B2B vs B2C, different industries)
+  •  Customer segments (freelancers vs enterprises, different personas)
+  •  Delivery models (SaaS vs marketplace vs agency, pricing tiers)
+
+You can choose any combination to proceed, or merge them into a hybrid later.
+
+══════════════════════════════════════════════════════════════════
+
+VARIANT SUGGESTIONS:
+
+Variant 1:
+  Name: [Market/Customer A]
+  ICP: [Ideal Customer Profile]
+  Problem Focus: [Specific pain area]
+  Unique Angle: [What makes this different]
+
+Variant 2:
+  Name: [Market/Customer B]
+  ICP: [Ideal Customer Profile]
+  Problem Focus: [Specific pain area]
+  Unique Angle: [What makes this different]
+
+Variant 3:
+  Name: [Market/Customer C]
+  ICP: [Ideal Customer Profile]
+  Problem Focus: [Specific pain area]
+  Unique Angle: [What makes this different]
+
+══════════════════════════════════════════════════════════════════
+
+Which variant(s) would you like to explore?
+  ☐  Variant 1
+  ☐  Variant 2
+  ☐  Variant 3
+  ☐  All three (in parallel)
+  ☐  Custom combination
+
+══════════════════════════════════════════════════════════════════
+
+📝 YOUR SELECTION:
+

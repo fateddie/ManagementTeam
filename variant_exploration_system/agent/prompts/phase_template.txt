@@ -1,0 +1,25 @@
+╔══════════════════════════════════════════════════════════════════╗
+║          PHASE {phase_number}: {phase_name}                                    
+╚══════════════════════════════════════════════════════════════════╝
+
+PROCESS:
+  1️⃣  I'll ask up to four focused questions
+  2️⃣  I'll summarize your responses into a structured artifact
+  3️⃣  You'll Confirm & Continue or Revise before we proceed
+
+══════════════════════════════════════════════════════════════════
+
+📝 PHASE INPUT:
+
+Please provide your analysis, data, or responses for this phase.
+
+Tips:
+  • Be specific and evidence-based
+  • Include sources (URLs, interviews, surveys) where applicable
+  • Quantify when possible (numbers, percentages, timeframes)
+  • Note any assumptions explicitly
+
+══════════════════════════════════════════════════════════════════
+
+YOUR RESPONSE:
+

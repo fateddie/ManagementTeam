@@ -1,0 +1,48 @@
+╔══════════════════════════════════════════════════════════════════╗
+║            CROSS-VARIANT COMPARISON & DECISION                   ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Here's the comparison summary of all variants, including metrics like:
+  • Average Pain Score (higher = more painful problem)
+  • Market Size (TAM in €M)
+  • LTV:CAC (Lifetime Value to Customer Acquisition Cost ratio)
+  • Payback Period (months to recover CAC)
+  • Compliance/Regulatory Risk
+  • Technical Feasibility
+
+══════════════════════════════════════════════════════════════════
+
+COMPARISON MATRIX:
+
+| Metric              | Variant 1 | Variant 2 | Variant 3 |
+|---------------------|-----------|-----------|-----------|
+| Avg Pain Score      |           |           |           |
+| TAM (€M)            |           |           |           |
+| SAM (€M)            |           |           |           |
+| Payback (months)    |           |           |           |
+| LTV:CAC             |           |           |           |
+| Compliance Risk     |           |           |           |
+| Technical Feasibility|          |           |           |
+| Build Time (weeks)  |           |           |           |
+| Confidence Level    |           |           |           |
+
+══════════════════════════════════════════════════════════════════
+
+How would you like to proceed?
+
+OPTION 1: ✅ Advance One Variant
+  → Choose the highest-scoring variant and move to development
+  → Best when one variant clearly dominates
+
+OPTION 2: 🔗 Combine Two or More into a Hybrid
+  → Take the ICP from Variant 1 + pricing from Variant 2
+  → Best when different variants excel in different areas
+
+OPTION 3: ⏸️  Park or Defer All
+  → None of the variants meet success criteria
+  → Need to pivot or gather more evidence
+
+══════════════════════════════════════════════════════════════════
+
+📝 YOUR DECISION:
+
