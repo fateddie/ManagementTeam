@@ -12,6 +12,7 @@ numpy
 pyyaml
 python-dotenv
 jinja2
+jsonschema
 
 # AI & Research
 openai
@@ -20,6 +21,16 @@ openai
 # Dashboard & Visualization
 streamlit
 plotly
+
+# Phase 2: API Integrations
+praw  # Reddit API
+pytrends  # Google Trends API
+tweepy  # X (Twitter) API
+textblob  # Sentiment analysis
+
+# Phase 2: ML & Predictions
+scikit-learn
+joblib
 
 # Optional future tools
 slack_sdk
