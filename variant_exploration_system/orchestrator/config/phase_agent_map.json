@@ -1,0 +1,108 @@
+{
+  "description": "Maps each SOP phase to the responsible agent",
+  "version": "1.0",
+  "phases": [
+    {
+      "phase": 0,
+      "phase_name": "Idea Intake",
+      "agent": "Planner",
+      "template": "idea_intake.md",
+      "agent_file": "agents/planner_agent.md"
+    },
+    {
+      "phase": 1,
+      "phase_name": "Scope Definition",
+      "agent": "Planner",
+      "template": "scope.yaml",
+      "agent_file": "agents/planner_agent.md"
+    },
+    {
+      "phase": 2,
+      "phase_name": "Research Plan",
+      "agent": "Market Intelligence",
+      "template": "research_plan.md",
+      "agent_file": "agents/market_agent.md"
+    },
+    {
+      "phase": 3,
+      "phase_name": "Evidence Collection",
+      "agent": "Market Intelligence",
+      "template": null,
+      "output_dir": "/data/raw/",
+      "agent_file": "agents/market_agent.md"
+    },
+    {
+      "phase": 4,
+      "phase_name": "Cleaning & Chain-of-Custody",
+      "agent": "Market Intelligence",
+      "template": null,
+      "output_dir": "/data/clean/",
+      "agent_file": "agents/market_agent.md"
+    },
+    {
+      "phase": 5,
+      "phase_name": "Pain Extraction & Tagging",
+      "agent": "Market Intelligence",
+      "template": "pains_tagged.json",
+      "agent_file": "agents/market_agent.md"
+    },
+    {
+      "phase": 6,
+      "phase_name": "Pain Quantification",
+      "agent": "Market Intelligence",
+      "template": "pain_scores.json",
+      "agent_file": "agents/market_agent.md"
+    },
+    {
+      "phase": 7,
+      "phase_name": "Market & Competition",
+      "agent": "Market Intelligence",
+      "template": "market_competition.md",
+      "agent_file": "agents/market_agent.md"
+    },
+    {
+      "phase": 8,
+      "phase_name": "Unit Economics",
+      "agent": "Finance",
+      "template": "unit_economics.json",
+      "agent_file": "agents/finance_agent.md"
+    },
+    {
+      "phase": 9,
+      "phase_name": "Feasibility & Risk",
+      "agent": "Risk",
+      "template": "risk_register.json",
+      "agent_file": "agents/risk_agent.md"
+    },
+    {
+      "phase": 10,
+      "phase_name": "GTM Options & Prioritisation",
+      "agent": "Planner",
+      "template": "gtm_options.md",
+      "agent_file": "agents/planner_agent.md"
+    },
+    {
+      "phase": 11,
+      "phase_name": "Synthesis (ADSR Report)",
+      "agent": "Documentation",
+      "template": "report_ADSR.md",
+      "agent_file": "agents/doc_agent.md"
+    },
+    {
+      "phase": 12,
+      "phase_name": "Decision & Logging",
+      "agent": "Documentation",
+      "template": "decision_log.json",
+      "agent_file": "agents/doc_agent.md"
+    },
+    {
+      "phase": 13,
+      "phase_name": "Cross-Variant Comparison",
+      "agent": "Planner",
+      "template": "comparison_matrix.md",
+      "output_dir": "/reports/",
+      "agent_file": "agents/planner_agent.md"
+    }
+  ]
+}
+
