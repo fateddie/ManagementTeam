@@ -79,9 +79,9 @@ PHASES = [
     "Cross-Variant Comparison & Hybridisation"
 ]
 
-# Phase to filename mapping
+# Phase to filename mapping (from PRD-02 templates)
 PHASE_FILES = {
-    0: "idea_intake.json",
+    0: "idea_intake.md",         # Changed from .json to .md per PRD-02
     1: "scope.yaml",
     2: "research_plan.md",
     3: None,  # Evidence collection - saves to /data/raw/
@@ -90,7 +90,7 @@ PHASE_FILES = {
     6: "pain_scores.json",
     7: "market_competition.md",
     8: "unit_economics.json",
-    9: "feasibility_risk.md",
+    9: "risk_register.json",     # Changed from feasibility_risk.md per PRD-02
     10: "gtm_options.md",
     11: "report_ADSR.md",
     12: "decision_log.json",
@@ -112,6 +112,21 @@ def run_orchestrator(variant="variant_1"):
     
     variant_dir = os.path.join(ROOT, "projects", variant)
     os.makedirs(variant_dir, exist_ok=True)
+    
+    # Initialize variant with templates if this is a new variant
+    if state.get("phase", 0) == 0 and not os.path.exists(os.path.join(variant_dir, "idea_intake.md")):
+        print(f"\n📋 Initializing new variant '{variant}' with templates...")
+        template_dir = os.path.join(ROOT, "templates")
+        if os.path.exists(template_dir):
+            import shutil
+            for template_file in os.listdir(template_dir):
+                if template_file.endswith(('.md', '.json', '.yaml')):
+                    src = os.path.join(template_dir, template_file)
+                    dst = os.path.join(variant_dir, template_file)
+                    shutil.copy2(src, dst)
+            print(f"✅ Templates copied to {variant_dir}")
+        else:
+            print(f"⚠️  Template directory not found: {template_dir}")
     
     print(f"\n{'='*70}")
     print(f"  VARIANT EXPLORATION SYSTEM")

@@ -1,0 +1,12 @@
+{
+  "description": "Risk register capturing impact, probability, and mitigation.",
+  "risks": [
+    {
+      "risk_id": "R-001",
+      "description": "Integration delays",
+      "impact": "High",
+      "probability": "Medium",
+      "mitigation": "Define clear API specs early"
+    }
+  ]
+}
