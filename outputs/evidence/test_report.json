@@ -4,16 +4,368 @@
     "productivity app for developers",
     "task management"
   ],
-  "collected_at": "2025-10-16T16:04:23.818055Z",
+  "collected_at": "2025-10-17T10:44:44.285554Z",
   "sources": {
     "reddit": {
-      "total_posts": 0,
-      "pain_points": [],
+      "total_posts": 4,
+      "pain_points": [
+        {
+          "keyword": "issue",
+          "frequency": 14,
+          "avg_score": 0.4,
+          "avg_sentiment": 0.09,
+          "examples": [
+            {
+              "text": "At BitDive we use HashiCorp Vault PKI to issue short-lived certificates and we completely avoid the filesystem: keys and certificate chains live only in process memory",
+              "keyword": "issue",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1o15z4f/mtls_in_spring_why_it_matters_and_how_to/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.08,
+                "subjectivity": 0.63,
+                "label": "neutral"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "Some time before TTL expiration, the service contacts Vault again, issues a fresh pair, and hot-swaps the `SSLContext` without interrupting traffic",
+              "keyword": "issue",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1o15z4f/mtls_in_spring_why_it_matters_and_how_to/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.3,
+                "subjectivity": 0.5,
+                "label": "positive"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "getTrustManagers(), null);\n                return ctx;\n            } catch (Exception e) {\n                throw new IllegalStateException(\"SSLContext build failed\", e);\n            }\n        }\n    }\n    \n\nThe Vault side starts with minimal policies: the application is allowed to `update` the `pki/issue/<role>` path to issue certs and to `read` `pki/ca/pem` to build its TrustStore",
+              "keyword": "issue",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1o15z4f/mtls_in_spring_why_it_matters_and_how_to/",
+              "score": 0,
+              "sentiment": {
+                "polarity": -0.15,
+                "subjectivity": 0.45,
+                "label": "negative"
+              },
+              "is_comment": false
+            }
+          ],
+          "importance_score": 14.05
+        },
+        {
+          "keyword": "need",
+          "frequency": 11,
+          "avg_score": 1.0,
+          "avg_sentiment": 0.15,
+          "examples": [
+            {
+              "text": "Use Claude if you need to, but it is better to have transparent and testable code for tools, integrations, and everything that you can",
+              "keyword": "need",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.5,
+                "subjectivity": 0.5,
+                "label": "positive"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "So what? Write the tools directly, add the methods you need, and add your own error messages",
+              "keyword": "need",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.35,
+                "subjectivity": 0.7,
+                "label": "positive"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "Claude Code / Gemini CLI can help you build the clients YOU need if used with careful instruction",
+              "keyword": "need",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": -0.1,
+                "subjectivity": 1.0,
+                "label": "neutral"
+              },
+              "is_comment": false
+            }
+          ],
+          "importance_score": 11.11
+        },
+        {
+          "keyword": "hard",
+          "frequency": 5,
+          "avg_score": 1.0,
+          "avg_sentiment": -0.17,
+          "examples": [
+            {
+              "text": "Even then, building this stuff is hard",
+              "keyword": "hard",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": -0.29,
+                "subjectivity": 0.54,
+                "label": "negative"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "Think hard about where AI sits, what it does, and where your users live",
+              "keyword": "hard",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": -0.08,
+                "subjectivity": 0.52,
+                "label": "neutral"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "If the model says \u201cdone\u201d without a valid token + tool receipt, we hard-fail and surface a next step",
+              "keyword": "hard",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.0,
+                "subjectivity": 0.0,
+                "label": "neutral"
+              },
+              "is_comment": true
+            }
+          ],
+          "importance_score": 5.05
+        },
+        {
+          "keyword": "challenge",
+          "frequency": 3,
+          "avg_score": 0.7,
+          "avg_sentiment": 0.11,
+          "examples": [
+            {
+              "text": "A major part of wanting to share this is that each time I open Reddit and X, my feed is a deluge of posts about someone spinning up an app on Lovable and getting to 10,000 users overnight with no mention of any of the execution or implementation challenges that siege my team every day",
+              "keyword": "challenge",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.19,
+                "subjectivity": 0.5,
+                "label": "positive"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "Instead of pitching, I thought I\u2019d share some of the *technical challenges* we ran into and how we solved them might be useful for others tackling queue-heavy or API-reliant systems",
+              "keyword": "challenge",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1npeazn/scaling_whatsapp_otp_delivery_with_laravel_redis/",
+              "score": 1,
+              "sentiment": {
+                "polarity": 0.15,
+                "subjectivity": 0.05,
+                "label": "positive"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "**Challenges & solutions:**\n\n* **Scaling message queues**: OTPs need to be near-instant, but WhatsApp API calls can stall",
+              "keyword": "challenge",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1npeazn/scaling_whatsapp_otp_delivery_with_laravel_redis/",
+              "score": 1,
+              "sentiment": {
+                "polarity": 0.0,
+                "subjectivity": 0.0,
+                "label": "neutral"
+              },
+              "is_comment": false
+            }
+          ],
+          "importance_score": 3.0199999999999996
+        },
+        {
+          "keyword": "problem",
+          "frequency": 2,
+          "avg_score": 0.5,
+          "avg_sentiment": 0.03,
+          "examples": [
+            {
+              "text": "Most problems stem from small oversights",
+              "keyword": "problem",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1o15z4f/mtls_in_spring_why_it_matters_and_how_to/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.12,
+                "subjectivity": 0.45,
+                "label": "positive"
+              },
+              "is_comment": false
+            },
+            {
+              "text": ")?\n\nCurious to hear how others have approached similar problems \ud83d\udc40",
+              "keyword": "problem",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1npeazn/scaling_whatsapp_otp_delivery_with_laravel_redis/",
+              "score": 1,
+              "sentiment": {
+                "polarity": -0.05,
+                "subjectivity": 0.7,
+                "label": "neutral"
+              },
+              "is_comment": false
+            }
+          ],
+          "importance_score": 2.01
+        },
+        {
+          "keyword": "annoying",
+          "frequency": 2,
+          "avg_score": 0.0,
+          "avg_sentiment": -0.34,
+          "examples": [
+            {
+              "text": "Here, trying to catch that the LLM didn't use the tool and warning the user is annoying to implement",
+              "keyword": "annoying",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": -0.8,
+                "subjectivity": 0.9,
+                "label": "negative"
+              },
+              "is_comment": false
+            },
+            {
+              "text": "Some of the most annoying things I\u2019ve ever experienced building praxos were related to time or space:\n\n\\--Double booking calendar slots",
+              "keyword": "annoying",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": 0.12,
+                "subjectivity": 0.67,
+                "label": "positive"
+              },
+              "is_comment": false
+            }
+          ],
+          "importance_score": 2.0
+        },
+        {
+          "keyword": "doesn't work",
+          "frequency": 1,
+          "avg_score": 0.0,
+          "avg_sentiment": -0.17,
+          "examples": [
+            {
+              "text": "The fact that LLM will just lie and say that it has sent the email when it hasn't and the output can just be plain wrong (incorrect invoicing can destroy a business) is scary to me and this unreliability simply doesn't work for me in the real world for critical business functions",
+              "keyword": "doesn't work",
+              "source": "reddit",
+              "subreddit": "programming",
+              "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+              "score": 0,
+              "sentiment": {
+                "polarity": -0.17,
+                "subjectivity": 0.53,
+                "label": "negative"
+              },
+              "is_comment": true
+            }
+          ],
+          "importance_score": 1.0
+        }
+      ],
       "sentiment": {
-        "avg_polarity": 0,
-        "distribution": {}
+        "avg_polarity": 0.04,
+        "distribution": {
+          "positive": 0.37,
+          "neutral": 0.45,
+          "negative": 0.18
+        },
+        "sentiment_label": "neutral"
       },
-      "top_posts": []
+      "top_posts": [
+        {
+          "id": "1nu3y89",
+          "title": "Lessons learned from building AI agents in the consumer space",
+          "selftext": "I've spent the past three months building an AI companion / assistant, and a whole bunch of thoughts have been simmering in the back of my mind.\n\nA major part of wanting to share this is that each time I open Reddit and X, my feed is a deluge of posts about someone spinning up an app on Lovable and getting to 10,000 users overnight with no mention of any of the execution or implementation challenges that siege my team every day. My default is to both (1) treat it with skepticism, since exaggerating AI capabilities online is the zeitgeist, and (2) treat it with a hint of dread because, maybe, something got overlooked and the mad men are right. The two thoughts can coexist in my mind, even if (2) is unlikely.\n\nFor context, I am an applied mathematician-turned-engineer and have been developing software, both for personal and commercial use, for close to 15 years now. Even then, building this stuff is hard.\n\nI think that what we have developed is quite good, and we have come up with a few cool solutions and work arounds I feel other people might find useful. If you're in the process of building something new, I hope that helps you.\n\n**1-Atomization. Short, precise prompts with specific LLM calls yield the least mistakes.**\n\nSprawling, all-in-one prompts are fine for development and quick iteration but are a sure way of getting substandard (read, fictitious) outputs in production. We have had much more success weaving together *small, deterministic steps*, with the LLM confined to tasks that require language parsing.\n\nFor example, here is a pipeline for billing emails:\n\n\\*Step 1 \\[LLM\\]: parse billing / utility emails with a parser. Extract vendor name, price, and dates.\n\n\\*Step 2 \\[software\\]: determine whether this looks like a subscription vs one-off purchase.\n\n\\*Step 3 \\[software\\]: validate against the user\u2019s stored payment history.\n\n\\*Step 4 \\[software\\]: fetch tone metadata from user's email history, as stored in a memory graph database.\n\n\\*Step 5 \\[LLM\\]: ingest user tone examples and payment history as context. Draft cancellation email in user's tone.\n\nThere's plenty of talk on X about context engineering. To me, the more important concept behind why atomizing calls matters revolves about the fact that LLMs operate in probabilistic space. Each extra degree of freedom (lengthy prompt, multiple instructions, ambiguous wording) expands the size of the choice space, increasing the risk of drift.\n\nThe art hinges on compressing the probability space down to something small enough such that the model can\u2019t wander off. Or, if it does, deviations are well defined and can be architected around.\n\n**2-Hallucinations are the new normal. Trick the model into hallucinating the right way.**\n\nEven with atomization, you'll still face made-up outputs. Of these, lies such as \"job executed successfully\" will be the thorniest silent killers. Taking these as a given allows you to engineer traps around them.\n\nExample: fake tool calls are an effective way of logging model failures.\n\nGoing back to our use case, an LLM shouldn't be able to send an email whenever any of the following two circumstances occurs: (1) an email integration is not set up; (2) the user has added the integration but not given permission for autonomous use. The LLM will sometimes still say the task is done, even though it lacks any tool to do it.\n\nHere, trying to catch that the LLM didn't use the tool and warning the user is annoying to implement. But handling dynamic tool creation is easier. So, a clever solution is to inject a mock SendEmail tool into the prompt. When the model calls it, we intercept, capture the attempt, and warn the user. It also allows us to give helpful directives to the user about their integrations.\n\nOn that note, language-based tasks that involve a degree of embodied experience, such as the passage of time, are fertile ground for errors. Beware.\n\nSome of the most annoying things I\u2019ve ever experienced building praxos were related to time or space:\n\n\\--Double booking calendar slots. The LLM may be perfectly capable of parroting the definition of \"booked\" as a concept, but will forget about the physicality of being booked, i.e.: that a person cannot hold two appointments at a same time because it is not physically possible.\n\n\\--Making up dates and forgetting information updates across email chains when drafting new emails. Let t1 < t2 < t3 be three different points in time, in chronological order. Then suppose that X is information received at t1. An event that affected X at t2 may not be accounted for when preparing an email at t3.\n\nThe way we solved this relates to my third point.\n\n**3-Do the mud work.**\n\nLLMs are already unreliable. If you can build good code around them, do it. Use Claude if you need to, but it is better to have transparent and testable code for tools, integrations, and everything that you can.\n\nExamples:\n\n\\--LLMs are bad at understanding time; did you catch the model trying to double book? No matter. Build code that performs the check, return a helpful error code to the LLM, and make it retry.\n\n\\--MCPs are not reliable. Or at least I couldn't get them working the way I wanted. So what? Write the tools directly, add the methods you need, and add your own error messages. This will take longer, but you can organize it and control every part of the process. Claude Code / Gemini CLI can help you build the clients YOU need if used with careful instruction.\n\nBonus point: for both workarounds above, you can add type signatures to every tool call and constrain the search space for tools / prompt user for info when you don't have what you need.\n\n\u00a0\n\n**Addendum: now is a good time to experiment with new interfaces.**\n\nConversational software opens a new horizon of interactions. The interface and user experience are half the product. Think hard about where AI sits, what it does, and where your users live.\n\nIn our field, Siri and Google Assistant were a decade early but directionally correct. Voice and conversational software are beautiful, more intuitive ways of interacting with technology. However, the capabilities were not there until the past two years or so.\n\nWhen we started working on praxos we devoted ample time to thinking about what would feel natural. For us, being available to users via text and voice, through iMessage, WhatsApp and Telegram felt like a superior experience. After all, when you talk to other people, you do it through a messaging platform.\n\nI want to emphasize this again: think about the delivery method. If you bolt it on later, you will end up rebuilding the product. Avoid that mistake.\n\n\u00a0\n\nI hope this helps those of you who are actively building new things. Good luck!!",
+          "score": 0,
+          "num_comments": 6,
+          "created_utc": 1759206955.0,
+          "subreddit": "programming",
+          "url": "https://reddit.com/r/programming/comments/1nu3y89/lessons_learned_from_building_ai_agents_in_the/",
+          "author": "AdmiralUrbi"
+        },
+        {
+          "id": "1o15z4f",
+          "title": "mTLS in Spring: why it matters and how to implement it with HashiCorp Vault and in-memory certificates (BitDive case study)",
+          "selftext": "At BitDive we handle sensitive user data and production telemetry every day, which is why security for us isn\u2019t a set of plugins and checkboxes\u2014it\u2019s the foundation of the entire platform. We build systems using Zero-Trust principles: every request must be authenticated, every channel must be encrypted, and privileges must be strictly minimal. In practice, that means we enable mutual authentication at the TLS layer\u2014mTLS\u2014for any network interaction. If \u201cregular\u201d TLS only validates the server\u2019s identity, mTLS adds the second side: the client also presents a certificate and is verified. For internal service-to-service traffic this sharply reduces the risk of MITM and impersonation, turns the certificate into a robust machine identity, and simplifies authorization based on the service\u2019s identity rather than shifting tokens or network perimeters.\n\nTo make mTLS a first-class part of the platform rather than a manual configuration, it must be dynamic. At BitDive we use HashiCorp Vault PKI to issue short-lived certificates and we completely avoid the filesystem: keys and certificate chains live only in process memory. This approach eliminates \u201cevergreen\u201d certs, reduces the value of stolen artifacts, and lets us rotate service identity without restarts. The typical lifecycle looks like this: a service authenticates to Vault (via Kubernetes JWT or AppRole), requests a key/certificate pair from a PKI role with a tight TTL, builds an in-memory KeyStore and TrustStore, constructs an `SSLContext` from them, and wires it into the inbound server (Tomcat or Netty) and into all outbound HTTP clients. Some time before TTL expiration, the service contacts Vault again, issues a fresh pair, and hot-swaps the `SSLContext` without interrupting traffic.\n\nThe implementation rests on careful handling of PEM and the JCA. We parse the private key and the certificate chain, assemble a temporary in-memory `PKCS12` keystore, build a TrustStore from the root/issuing CA, and then construct a TLS 1.3 `SSLContext`. In code this is straightforward: a utility that turns PEM bytes into `KeyStore` and `TrustStore`, and a factory that initializes `KeyManagerFactory` and `TrustManagerFactory` to yield a ready `SSLContext`. Crucially, nothing touches disk: `KeyStore#load(null, null)` creates an in-memory store, and the key plus chain are inserted directly.\n\n    public final class PemToKeyStore {\n        public static KeyStore keyStoreFromPem(byte[] pkPem, byte[] chainPem, char[] pwd) {\n            try {\n                PrivateKey key = PemUtils.readPrivateKey(pkPem);           // PKCS#8\n                X509Certificate[] chain = PemUtils.readCertificateChain(chainPem);\n                KeyStore ks = KeyStore.getInstance(\"PKCS12\");\n                ks.load(null, null);\n                ks.setKeyEntry(\"key\", key, pwd, chain);\n                return ks;\n            } catch (Exception e) {\n                throw new IllegalStateException(\"KeyStore build failed\", e);\n            }\n        }\n        public static KeyStore trustStoreFromCa(byte[] caPem) {\n            try {\n                X509Certificate ca = PemUtils.readCertificate(caPem);\n                KeyStore ts = KeyStore.getInstance(\"PKCS12\");\n                ts.load(null, null);\n                ts.setCertificateEntry(\"ca\", ca);\n                return ts;\n            } catch (Exception e) {\n                throw new IllegalStateException(\"TrustStore build failed\", e);\n            }\n        }\n        public static SSLContext build(KeyStore ks, char[] pwd, KeyStore ts) {\n            try {\n                var kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());\n                kmf.init(ks, pwd);\n                var tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());\n                tmf.init(ts);\n                var ctx = SSLContext.getInstance(\"TLSv1.3\");\n                ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);\n                return ctx;\n            } catch (Exception e) {\n                throw new IllegalStateException(\"SSLContext build failed\", e);\n            }\n        }\n    }\n    \n\nThe Vault side starts with minimal policies: the application is allowed to `update` the `pki/issue/<role>` path to issue certs and to `read` `pki/ca/pem` to build its TrustStore. On the PKI role we enforce strict SANs and `enforce_hostnames`, constrain domains, and keep TTL short so a certificate truly lives only minutes. The Vault client itself can be built on `RestClient` or `WebClient`. It calls the issue endpoint, receives `private_key`, `certificate`, and either `ca_chain` or `issuing_ca`, and returns these bytes to the service, where the `SSLContext` is assembled.\n\n    u/Service\n    @RequiredArgsConstructor\n    public class VaultPkiClient {\n        private final RestClient vault; // RestClient/WebClient configured with Vault auth\n    \n        public IssuedCert issue(String cn, List<String> altNames) {\n            var req = Map.of(\"common_name\", cn, \"alt_names\", String.join(\",\", altNames), \"ttl\", \"15m\");\n            var resp = vault.post().uri(\"/v1/pki/issue/bitdive-service\").body(req)\n                .retrieve().toEntity(VaultIssueResponse.class).getBody();\n            return new IssuedCert(\n                resp.getData().get(\"private_key\").getBytes(StandardCharsets.UTF_8),\n                // server chain (certificate + CA chain if returned separately)\n                (resp.getData().get(\"certificate\") + \"\\n\" + String.join(\"\\n\", resp.getData().get(\"ca_chain\")))\n                    .getBytes(StandardCharsets.UTF_8),\n                resp.getData().get(\"issuing_ca\").getBytes(StandardCharsets.UTF_8) // for the TrustStore\n            );\n        }\n    \n        public byte[] readCaPem() {\n            return vault.get().uri(\"/v1/pki/ca/pem\").retrieve()\n                .toEntity(byte[].class).getBody();\n        }\n    }\n    \n\nThe \u201cheart\u201d of the setup is the dynamic piece. We keep a simple holder with a `volatile` reference to the current `SSLContext` and a scheduler that issues a new certificate well before the old one expires and swaps the context. If Vault is temporarily unavailable, we avoid breaking existing connections, retry the rotation, and raise an alert at the same time.\n\n    @Component\n    public class DynamicSslContextHolder {\n        private volatile SSLContext current;\n        public SSLContext get() { return current; }\n        public void set(SSLContext ctx) { this.current = ctx; }\n    }\n    \n    @Configuration\n    @RequiredArgsConstructor\n    @Slf4j\n    public class SslBootstrap {\n        private final VaultPkiClient pki;\n        private final DynamicSslContextHolder holder;\n    \n        @PostConstruct\n        public void init() { rotate(); }\n    \n        @Scheduled(fixedDelayString = \"PT5M\")\n        public void rotate() {\n            var crt = pki.issue(\"service-a.bitdive.internal\", List.of(\"service-a\", \"localhost\"));\n            var ks = PemToKeyStore.keyStoreFromPem(crt.privateKey(), crt.certificateChain(), \"pwd\".toCharArray());\n            var ts = PemToKeyStore.trustStoreFromCa(crt.issuingCa());\n            holder.set(PemToKeyStore.build(ks, \"pwd\".toCharArray(), ts));\n            log.info(\"mTLS SSLContext rotated\");\n        }\n    }\n    \n\nIntegrating with the inbound server in Spring Boot depends on the stack. With embedded Tomcat it\u2019s enough to enable TLS on the connector, pass the ready `SSLContext`, and require client authentication. This is where mTLS \u201cfully engages\u201d: the server verifies the client certificate against our TrustStore built from Vault\u2019s CA, and the client verifies the server certificate\u2014closing the loop symmetrically.\n\n    @Configuration\n    @RequiredArgsConstructor\n    public class TomcatMtlsConfig {\n        private final DynamicSslContextHolder holder;\n    \n        @Bean\n        public TomcatServletWebServerFactory tomcat() {\n            var f = new TomcatServletWebServerFactory();\n            f.addConnectorCustomizers(connector -> {\n                connector.setScheme(\"https\");\n                connector.setSecure(true);\n                connector.setPort(8443);\n                var p = (AbstractHttp11JsseProtocol<?>) connector.getProtocolHandler();\n                p.setSSLEnabled(true);\n                p.setSslContext(holder.get());\n                p.setClientAuth(\"need\");\n                p.setSslProtocol(\"TLSv1.3\");\n            });\n            return f;\n        }\n    }\n    \n\nFor WebFlux/Netty the idea is the same, but you\u2019ll convert `javax.net.ssl.SSLContext` into a Netty `io.netty.handler.ssl.SslContext` through a thin adapter and set `SslClientAuth.REQUIRE`. Outbound HTTP clients must also use the current context: for Apache HttpClient it\u2019s an `SSLConnectionSocketFactory` built from your `SSLContext`; for Reactor Netty you configure `HttpClient.create().secure(ssl -> ssl.sslContext(...))`. If you use connection pools, make sure you re-initialize them on rotation; otherwise old TLS sessions will linger with \u201cstale\u201d certificates and handshakes will start failing at the worst moment.\n\nYou should extend mTLS to infrastructure dependencies as well: Postgres with `clientcert=verify-full`, ClickHouse with a TLS port and client cert requirement on HTTP/Native, Kafka/Redis with mTLS enabled. If a given driver cannot accept a ready `SSLContext`, you have two options: use a transport that can (for example, an HTTP client to ClickHouse), or add a socket factory/adapter layer that injects your context deeper into the stack.\n\nOperationally, a few core ideas go a long way. Certificates should be short-lived and rotation should be proactive: with a 15-minute TTL, we renew every five to seven minutes. Enable Vault auditing to record issuance/renewals, and monitor \u201ctime to expiry\u201d for each `SSLContext` alongside rotation error rates. Pin your CA: the application must only trust the CA issued by Vault, not the host\u2019s system truststore. If regulations require CRL/OCSP, enable them; but with short TTLs, expiry itself becomes your primary mitigation for stolen material. In Kubernetes it\u2019s useful to separate policies\u2014and even Vault namespaces\u2014per environment so that dev cannot issue certificates for prod domains.\n\nMost problems stem from small oversights. Someone forgets to enable client authentication on the server and ends up with plain TLS instead of mTLS. Someone writes keys and certs to temporary files, not realizing those files get into backups, diagnostics artifacts, or become accessible via the container\u2019s filesystem. Someone relies on the system truststore and then wonders why a service suddenly trusts extra roots. Or they configure long TTLs and rely on revocation, whereas in dynamic environments rotation with small lifetimes is far more reliable.\n\nIn the end, mTLS becomes genuinely convenient and safe when it\u2019s embedded into the platform and automated. The combination of Spring Boot 3.x and HashiCorp Vault PKI turns machine identity into a managed resource just like configuration and secrets: we issue certificates that live for minutes, rotate them on the fly, write nothing to disk, and pin trust to a specific CA. For BitDive this isn\u2019t an add-on to the architecture; it\u2019s inseparable from it. Security doesn\u2019t slow development because it\u2019s transparent and repeatable. If you\u2019re building microservices from scratch\u2014or refactoring an existing system\u2014start with a modest step: define PKI roles in Vault, test issuance and rotation in staging, wire the `SSLContext` into your inbound server and outbound clients, and then extend mTLS across every critical channel.",
+          "score": 0,
+          "num_comments": 1,
+          "created_utc": 1759916438.0,
+          "subreddit": "programming",
+          "url": "https://reddit.com/r/programming/comments/1o15z4f/mtls_in_spring_why_it_matters_and_how_to/",
+          "author": "Wide-Chocolate-763"
+        },
+        {
+          "id": "1npeazn",
+          "title": "Scaling WhatsApp OTP delivery with Laravel + Redis (what we learned building CrunchzApp)",
+          "selftext": "Hey folks,\n\nOver the last few months I\u2019ve been building **CrunchzApp**, a SaaS platform for sending WhatsApp OTPs and notifications at scale. Instead of pitching, I thought I\u2019d share some of the *technical challenges* we ran into and how we solved them might be useful for others tackling queue-heavy or API-reliant systems.\n\n**Stack**: Laravel 12, InertiaJS React, MariaDB, Redis, Horizon.\n\n**Challenges & solutions:**\n\n* **Scaling message queues**: OTPs need to be near-instant, but WhatsApp API calls can stall. We leaned on Redis + Horizon for distributed queues and optimized retry/backoff strategies.\n* **Channel load balancing**: To avoid throttling, we built a round-robin algorithm that distributes messages across multiple WhatsApp channels.\n* **Testing safely**: Every new channel automatically starts in a 7-day sandbox mode, tied to the subscription trial. This was tricky to design since it uses the same API surface as production, just with restrictions.\n* **Monitoring third-party reliability**: WhatsApp sometimes delays or rejects messages. We had to build logging + alerting so developers can see exactly where the failure happens (our system, or WhatsApp).\n\nI\u2019d love to get some discussion going on these points:\n\n* If you\u2019ve worked on queue-heavy apps, what\u2019s your go-to approach for keeping jobs \u201creal-time enough\u201d under load?\n* Any favorite strategies for monitoring external APIs when your SLA depends on them?\n* How do you balance building developer-friendly APIs with maintaining internal complexity (sandboxing, routing, retries, etc.)?\n\nCurious to hear how others have approached similar problems \ud83d\udc40",
+          "score": 1,
+          "num_comments": 2,
+          "created_utc": 1758725690.0,
+          "subreddit": "programming",
+          "url": "https://reddit.com/r/programming/comments/1npeazn/scaling_whatsapp_otp_delivery_with_laravel_redis/",
+          "author": "masitings"
+        },
+        {
+          "id": "1nijnmx",
+          "title": "GitHub - Blockia-Labs/blockialabs-ssi: This repository contains reusable libraries for building a W3C-compliant Self-Sovereign Identity (SSI) system.",
+          "selftext": "After 6 months of building our identity platform (Blockia ID), we're open-sourcing the TypeScript SDK that powers it.\n\n**Why another SSI SDK?**\n\nWe evaluated every existing solution:\n\n* [Walt.id](http://walt.id/)\u00a0\u2192 Great features, but we needed TS libs/\n* Sphereon \u2192 Powerful but complex with minimal docs\n* Veramo \u2192 Plugin system means writing most code yourself\n* Credo \u2192 Came closest but still needed significant custom work\n\n**What we built:**\n\n* Pure TypeScript\n* 11 modular NPM packages (89KB total)\n* Issue verifiable credentials\n* Latest OpenID4VCI/VP standards\n* Production-tested for 6 months in real app\n\n**Who needs this?**\u00a0With digital identity becoming mandatory (EU 2026, US states rolling out mobile licenses, Canada's digital ID programs), many company will need SSI capabilities. This is for TypeScript teams who want to ship features, not become cryptography experts.\n\n**Links:**\n\n* INfo:\u00a0[https://ssi-sdk.blockialabs.com](https://ssi-sdk.blockialabs.com/)\n* GitHub:\u00a0[https://github.com/Blockia-Labs/blockialabs-ssi](https://github.com/Blockia-Labs/blockialabs-ssi)\n* NPM:\u00a0[https://www.npmjs.com/search?q=%40blockialabs%2Fssi](https://www.npmjs.com/search?q=%40blockialabs%2Fssi)\n\nApache 2.0 licensed. Drop a \u2b50 on GitHub to support the team's hard work, share with developers who might benefit, and let us know what features you need.  \n",
+          "score": 5,
+          "num_comments": 0,
+          "created_utc": 1758034279.0,
+          "subreddit": "programming",
+          "url": "https://reddit.com/r/programming/comments/1nijnmx/github_blockialabsblockialabsssi_this_repository/",
+          "author": "CellistNegative1402"
+        }
+      ]
     },
     "google_trends": {
       "primary_keyword": "productivity app for developers",
@@ -36,11 +388,38 @@
         ],
         "timeframe": "today 12-m",
         "geo": "worldwide",
-        "collected_at": "2025-10-16T16:04:24.710185Z",
-        "comparison": {},
-        "ranked": [],
-        "winner": null,
-        "note": "Mock data - Google Trends not configured"
+        "collected_at": "2025-10-17T10:44:47.947143Z",
+        "comparison": {
+          "productivity app for developers": {
+            "avg_interest": 0.0,
+            "max_interest": 0,
+            "current_interest": 0,
+            "trend": "stable"
+          },
+          "task management": {
+            "avg_interest": 50.7,
+            "max_interest": 100,
+            "current_interest": 43,
+            "trend": "rising"
+          }
+        },
+        "ranked": [
+          {
+            "keyword": "task management",
+            "avg_interest": 50.7,
+            "max_interest": 100,
+            "current_interest": 43,
+            "trend": "rising"
+          },
+          {
+            "keyword": "productivity app for developers",
+            "avg_interest": 0.0,
+            "max_interest": 0,
+            "current_interest": 0,
+            "trend": "stable"
+          }
+        ],
+        "winner": "task management"
       }
     },
     "x": {
@@ -52,7 +431,7 @@
   },
   "unified_insights": {
     "overall_sentiment": {
-      "score": 0.0,
+      "score": 0.02,
       "label": "neutral",
       "sources": 2
     },
@@ -73,10 +452,10 @@
       ],
       "strength": "weak"
     },
-    "pain_points_discovered": 0,
+    "pain_points_discovered": 7,
     "data_sources": 3,
     "recommendation": "\u26a0\ufe0f CAUTION - Weak market signals, significant validation needed"
   },
-  "evidence_score": 5,
-  "collection_time_seconds": 0.9
+  "evidence_score": 11,
+  "collection_time_seconds": 3.86
 }

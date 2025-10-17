@@ -1,8 +1,8 @@
 # Evidence Collection Report
 
 **Idea:** productivity app for developers
-**Collected:** 2025-10-16T16:04:23.818055Z
-**Evidence Score:** 5/100
+**Collected:** 2025-10-17T10:44:44.285554Z
+**Evidence Score:** 11/100
 
 ---
 
@@ -12,20 +12,20 @@
 
 ### Market Validation
 
-**Overall Sentiment:** neutral (0.0)
+**Overall Sentiment:** neutral (0.02)
 
 **Market Strength:** weak
 
-**Pain Points Discovered:** 0
+**Pain Points Discovered:** 7
 
 ---
 
 ## Data Sources
 
 ### Reddit
-- **Posts Analyzed:** 0
-- **Pain Points:** 0
-- **Top Pain Keywords:** 
+- **Posts Analyzed:** 4
+- **Pain Points:** 7
+- **Top Pain Keywords:** issue, need, hard, challenge, problem
 
 ### Google Trends
 - **Primary Keyword:** productivity app for developers
