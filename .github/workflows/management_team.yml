@@ -117,7 +117,7 @@ jobs:
 
   code-quality:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: 📥 Checkout repository
       uses: actions/checkout@v4
@@ -126,27 +126,52 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+        cache: 'pip'
 
     - name: 📦 Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install -r requirements-dev.txt
 
-    - name: 🔍 Check code formatting (basic)
+    - name: 🎨 Check code formatting with Black
       run: |
-        echo "Checking Python syntax..."
-        python -m py_compile agents/**/*.py cli/**/*.py 2>/dev/null || true
-        echo "✅ Syntax check complete"
+        echo "Checking code formatting..."
+        black --check --diff .
+      continue-on-error: true
 
-    - name: 📊 Count lines of code
+    - name: 🔍 Lint with Ruff
       run: |
-        echo "## 📊 Code Statistics" >> $GITHUB_STEP_SUMMARY
+        echo "Running Ruff linter..."
+        ruff check . --output-format=github
+      continue-on-error: true
+
+    - name: 🧪 Run tests with pytest
+      run: |
+        echo "Running test suite..."
+        pytest tests/ -v --cov --cov-report=term-missing --cov-report=xml
+      continue-on-error: true
+
+    - name: 📊 Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+      continue-on-error: true
+
+    - name: 📊 Code Statistics
+      run: |
+        echo "## 📊 Code Quality Report" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Python files:**" >> $GITHUB_STEP_SUMMARY
-        find . -name "*.py" -not -path "./venv/*" -not -path "./.venv/*" | wc -l >> $GITHUB_STEP_SUMMARY
+        echo "### 📈 Statistics" >> $GITHUB_STEP_SUMMARY
+        echo "**Python files:** $(find . -name '*.py' -not -path './venv/*' -not -path './.venv/*' | wc -l)" >> $GITHUB_STEP_SUMMARY
+        echo "**Total lines:** $(find . -name '*.py' -not -path './venv/*' -not -path './.venv/*' -exec cat {} \; | wc -l)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Total lines:**" >> $GITHUB_STEP_SUMMARY
-        find . -name "*.py" -not -path "./venv/*" -not -path "./.venv/*" -exec cat {} \; | wc -l >> $GITHUB_STEP_SUMMARY
+        echo "### ✅ Quality Checks" >> $GITHUB_STEP_SUMMARY
+        echo "- Black formatting: See above" >> $GITHUB_STEP_SUMMARY
+        echo "- Ruff linting: See above" >> $GITHUB_STEP_SUMMARY
+        echo "- Pytest tests: See above" >> $GITHUB_STEP_SUMMARY
 
   documentation-check:
     runs-on: ubuntu-latest

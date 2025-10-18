@@ -32,6 +32,18 @@ textblob  # Sentiment analysis
 scikit-learn
 joblib
 
+# Phase 3: Social Media Trending Intelligence System
+google-api-python-client  # YouTube Data API
+transformers  # Hugging Face models (TwHIN-BERT, RoBERTa, BART)
+torch  # PyTorch for transformers
+sentence-transformers  # Sentence embeddings for BERTopic
+bertopic  # Topic modeling with transformers
+umap-learn  # Dimensionality reduction for BERTopic
+hdbscan  # Clustering for BERTopic
+
+# Phase 16: Persistent Memory System
+redis  # In-memory database for persistent agent memory
+
 # Optional future tools
 slack_sdk
 chromadb

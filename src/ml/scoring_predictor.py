@@ -20,7 +20,7 @@ Usage:
 import json
 import pickle
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 import numpy as np
 
@@ -214,7 +214,7 @@ class ScoringPredictor:
             "feature_importance": feature_importance,
             "model_version": "1.0",
             "features_used": len(features),
-            "predicted_at": datetime.utcnow().isoformat() + "Z"
+            "predicted_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
         }
 
         print(f"✅ Prediction complete - Success probability: {prediction['success_probability']}%")
@@ -366,7 +366,7 @@ class ScoringPredictor:
             "feature_importance": [],
             "model_version": "heuristic",
             "features_used": 0,
-            "predicted_at": datetime.utcnow().isoformat() + "Z",
+            "predicted_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             "note": "Mock prediction - ML not available"
         }
 

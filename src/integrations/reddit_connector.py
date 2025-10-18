@@ -20,7 +20,7 @@ import os
 import json
 import time
 from typing import List, Dict, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 try:
@@ -175,7 +175,7 @@ class RedditConnector:
             "total_pain_points": len(pain_points),
             "pain_points": self._rank_pain_points(pain_points),
             "posts": all_posts[:20],  # Top 20 posts
-            "collected_at": datetime.utcnow().isoformat() + "Z",
+            "collected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             "sentiment_summary": self._analyze_overall_sentiment(pain_points)
         }
 
@@ -297,7 +297,7 @@ class RedditConnector:
             "total_pain_points": 0,
             "pain_points": [],
             "posts": [],
-            "collected_at": datetime.utcnow().isoformat() + "Z",
+            "collected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             "sentiment_summary": {"avg_polarity": 0, "distribution": {}},
             "note": "Mock data - Reddit API not configured"
         }

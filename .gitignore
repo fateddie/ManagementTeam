@@ -90,6 +90,29 @@ coverage.xml
 # --- Jupyter Notebook ---
 .ipynb_checkpoints
 
+# --- Development Tools ---
+# MyPy type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# Black
+.black/
+
+# Pre-commit
+.pre-commit-cache/
+
+# Documentation builds
+site/
+docs/_build/
+
+# Test artifacts
+.hypothesis/
+*.hypothesis/
+
 # Keep important files even in ignored directories
 !config/templates/
 !docs/system/

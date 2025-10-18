@@ -1,0 +1,266 @@
+# ==============================================
+# Trend Research Agent Configuration
+# ==============================================
+# Configuration for social media trending intelligence system
+# Used by TrendResearchAgent and related modules
+
+version: "1.0"
+agent_name: "TrendResearchAgent"
+
+# ==============================================
+# Data Collection Settings
+# ==============================================
+data_collection:
+  default_platforms:
+    - youtube
+    - reddit
+    - twitter
+
+  max_results_per_platform:
+    youtube: 50
+    reddit: 100
+    twitter: 100
+
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 30
+
+  caching:
+    enabled: true
+    cache_ttl_hours: 6  # Cache data for 6 hours
+
+# ==============================================
+# Platform-Specific Settings
+# ==============================================
+platforms:
+  youtube:
+    enabled: true
+    default_region: "US"
+    default_category: "all"  # or specific: "tech", "gaming", "education"
+    quota_limit: 10000  # Daily quota limit
+
+  reddit:
+    enabled: true
+    default_subreddits:
+      - productivity
+      - SaaS
+      - Entrepreneur
+      - startups
+      - technology
+    time_filter: "month"  # day, week, month, year, all
+
+  twitter:
+    enabled: true
+    default_language: "en"
+    include_retweets: false
+
+  linkedin:
+    enabled: false  # Requires partnership approval
+    note: "LinkedIn API requires partner program approval"
+
+# ==============================================
+# AI Model Settings
+# ==============================================
+ai_models:
+  twhin_bert:
+    model_name: "Twitter/twhin-bert-base"
+    enabled: true
+    device: "auto"  # auto, cpu, cuda, mps
+    batch_size: 32
+
+  sentiment:
+    model_name: "cardiffnlp/twitter-roberta-base-sentiment"
+    enabled: true
+    device: "auto"
+
+  zero_shot:
+    model_name: "facebook/bart-large-mnli"
+    enabled: true
+    device: "auto"
+
+  topic_modeling:
+    model_name: "all-MiniLM-L6-v2"  # Sentence transformer
+    enabled: true
+    min_topic_size: 5
+    nr_topics: "auto"  # or specific number
+
+  pain_point_extraction:
+    ner_model: "dslim/bert-base-NER"
+    enabled: true
+    severity_threshold: 5.0  # 0-10 scale
+
+# ==============================================
+# Analysis Thresholds
+# ==============================================
+thresholds:
+  virality:
+    low: 30
+    medium: 60
+    high: 80
+
+  pain_severity:
+    low: 2.5
+    medium: 5.0
+    high: 7.5
+    critical: 9.0
+
+  confidence:
+    min_data_items: 50  # Minimum items for high confidence
+    min_pain_percentage: 30  # Minimum % for pain point confidence
+    min_topics: 3  # Minimum topics for topic confidence
+
+# ==============================================
+# Reporting Settings
+# ==============================================
+reporting:
+  output_directory: "outputs/trend_research"
+  formats:
+    - json
+    - markdown
+
+  include_sections:
+    - data_collection_summary
+    - viral_analysis
+    - pain_points
+    - topic_clusters
+    - recommendations
+
+  save_raw_data: false  # Save full API responses
+
+  markdown_template: |
+    # Trend Research Report
+
+    **Query:** {{query}}
+    **Date:** {{timestamp}}
+    **Platforms:** {{platforms}}
+
+    ## Data Collection
+    {{data_summary}}
+
+    ## Viral Analysis
+    {{viral_analysis}}
+
+    ## Pain Points
+    {{pain_points}}
+
+    ## Topics
+    {{topics}}
+
+    ## Recommendations
+    {{recommendations}}
+
+# ==============================================
+# Custom Topics for Zero-Shot Classification
+# ==============================================
+custom_topics:
+  product_related:
+    - "product quality"
+    - "features and functionality"
+    - "user experience"
+    - "performance and speed"
+    - "reliability and bugs"
+
+  business_related:
+    - "pricing and value"
+    - "customer service"
+    - "documentation and support"
+    - "onboarding and setup"
+    - "integrations"
+
+  market_related:
+    - "competitive advantage"
+    - "market demand"
+    - "target audience"
+    - "growth potential"
+    - "market trends"
+
+# ==============================================
+# Recommendation Engine Settings
+# ==============================================
+recommendations:
+  max_recommendations: 10
+  priority_weights:
+    pain_severity: 0.4
+    market_size: 0.3
+    virality: 0.2
+    topic_relevance: 0.1
+
+  categories:
+    - product_opportunity
+    - content_strategy
+    - market_trend
+    - competitive_insight
+    - growth_tactic
+
+# ==============================================
+# Performance Optimization
+# ==============================================
+performance:
+  use_parallel_collection: true
+  max_workers: 3  # Concurrent API requests
+
+  memory_optimization:
+    enabled: true
+    max_cache_size_mb: 500
+    clear_cache_on_complete: false
+
+  batch_processing:
+    enabled: true
+    batch_size: 50
+
+# ==============================================
+# Logging & Debugging
+# ==============================================
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  log_api_responses: false
+  log_model_predictions: false
+  save_debug_data: false
+
+# ==============================================
+# Feature Flags
+# ==============================================
+features:
+  enable_trend_tracking: true  # Track trends over time
+  enable_competitor_analysis: false  # Analyze competitor content (future)
+  enable_influencer_detection: false  # Identify influencers (future)
+  enable_hashtag_analysis: true  # Analyze hashtag effectiveness
+  enable_timing_optimization: true  # Optimal posting times
+
+# ==============================================
+# Integration Settings
+# ==============================================
+integrations:
+  evidence_collector:
+    enabled: true
+    merge_with_existing: true  # Merge with Phase 2 evidence collector
+
+  vertical_agent:
+    enabled: true
+    pass_pain_points: true  # Pass pain points to vertical scoring
+
+  strategy_agent:
+    enabled: true
+    pass_trends: true  # Pass trending topics to strategy
+
+# ==============================================
+# API Keys & Credentials
+# ==============================================
+# IMPORTANT: API keys should be stored in .env file, not here!
+# This section documents what environment variables are expected.
+
+required_env_vars:
+  - YOUTUBE_API_KEY
+  - REDDIT_CLIENT_ID
+  - REDDIT_CLIENT_SECRET
+  - X_BEARER_TOKEN
+
+optional_env_vars:
+  - LINKEDIN_API_KEY  # For future use
+
+# ==============================================
+# Notes
+# ==============================================
+# Last Updated: 2025-10-17
+# Version: 1.0
+# Maintainer: Management Team System

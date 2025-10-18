@@ -21,7 +21,7 @@ import os
 import json
 import time
 from typing import List, Dict, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 try:
@@ -190,7 +190,7 @@ class XConnector:
             results = {
                 "query": query,
                 "total_tweets": len(processed_tweets),
-                "collected_at": datetime.utcnow().isoformat() + "Z",
+                "collected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                 "tweets": processed_tweets[:20],  # Top 20 for storage
                 "top_influential_tweets": top_tweets,
                 "sentiment_summary": sentiment_summary,

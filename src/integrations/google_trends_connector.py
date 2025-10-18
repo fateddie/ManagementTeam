@@ -20,7 +20,7 @@ Usage:
 import json
 import time
 from typing import List, Dict, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -103,7 +103,7 @@ class GoogleTrendsConnector:
                 "keyword": keyword,
                 "timeframe": timeframe,
                 "geo": geo or "worldwide",
-                "collected_at": datetime.utcnow().isoformat() + "Z",
+                "collected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                 "interest_over_time": self._process_interest_over_time(interest_over_time, keyword),
                 "related_queries": self._process_related_queries(related_queries, keyword),
                 "interest_by_region": self._process_interest_by_region(interest_by_region, keyword),
@@ -297,7 +297,7 @@ class GoogleTrendsConnector:
                 "keywords": keywords,
                 "timeframe": timeframe,
                 "geo": geo or "worldwide",
-                "collected_at": datetime.utcnow().isoformat() + "Z",
+                "collected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
                 "comparison": comparison,
                 "ranked": [{"keyword": k, **v} for k, v in ranked],
                 "winner": ranked[0][0] if ranked else None

@@ -1,6 +1,7 @@
 """
 base_agent.py
 Phase 1.1 – BaseAgent Abstract Class
+Phase 17 – Async/Await & Parallel Execution Support
 ---------------------------------------------------------
 Standardized interface for all agents in the Management Team system.
 
@@ -9,15 +10,18 @@ Purpose:
     - Enable dependency tracking for parallel execution
     - Enforce AgentOutput protocol compliance
     - Provide shared context for inter-agent communication
+    - Support async/await for non-blocking I/O operations
 
 Design Pattern: Abstract Base Class (ABC)
 
 Created: 2025-10-13
+Updated: 2025-10-17 (Phase 17)
 """
 
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, field
+import asyncio
 from core.agent_protocol import AgentOutput
 from core.cache import Cache
 
@@ -194,6 +198,37 @@ class BaseAgent(ABC):
             Any exceptions during execution (will be caught by orchestrator)
         """
         pass
+
+    async def execute_async(self, context: AgentContext) -> AgentOutput:
+        """
+        Async execution method for non-blocking I/O operations.
+
+        Phase 17: Optional async version of execute() for better performance.
+        If not overridden, falls back to synchronous execute() in thread pool.
+
+        Benefits of async:
+            - Non-blocking API calls (OpenAI, Perplexity, etc.)
+            - Better resource utilization during I/O waits
+            - Enables parallel execution of independent agents
+
+        Args:
+            context: Shared execution context
+
+        Returns:
+            AgentOutput with decision, reasoning, data, and confidence
+
+        Example Implementation:
+            async def execute_async(self, context: AgentContext) -> AgentOutput:
+                # Non-blocking API call
+                async with aiohttp.ClientSession() as session:
+                    response = await session.post(url, json=data)
+                    result = await response.json()
+
+                return AgentOutput(...)
+        """
+        # Default: Run synchronous execute() in thread pool
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, self.execute, context)
 
     def validate_inputs(self, context: AgentContext) -> bool:
         """

@@ -31,41 +31,53 @@ from cli.helpers.cli_utils import (
     format_file_size, get_latest_summary, get_latest_validation
 )
 
+# Phase 16: Import ProjectMemory for search commands
+try:
+    from core.project_memory import ProjectMemory
+    MEMORY_AVAILABLE = True
+except ImportError:
+    MEMORY_AVAILABLE = False
+
 LOG_DIR = BASE_DIR / "logs"
 OUT_DIR = BASE_DIR / "outputs"
 
 
-def run_orchestrator(phase: int | None = None):
+def run_orchestrator(phase: int | None = None, use_async: bool = False):
     """Run the full orchestrator or specific phase."""
     print("=" * 70)
     if phase:
         print(f"🚀 Running Phase {phase}: {list_phases().get(phase, 'Unknown')}")
     else:
-        print("🚀 Running Full AI Management Pipeline (All 6 Agents)")
+        mode = "ASYNC" if use_async else "SYNC"
+        print(f"🚀 Running Full AI Management Pipeline ({mode} mode)")
     print("=" * 70 + "\n")
-    
+
     os.chdir(BASE_DIR)
     cmd = [sys.executable, "agents/orchestrator/orchestrator.py"]
-    
+
+    # Add async flag if requested
+    if use_async:
+        cmd.append("--async")
+
     if phase:
         os.environ["PHASE_OVERRIDE"] = str(phase)
-    
+
     try:
         result = subprocess.run(
             cmd,
             check=True,
             env={**os.environ, "PYTHONPATH": str(BASE_DIR)}
         )
-        
+
         print("\n" + "=" * 70)
         print("✅ Pipeline execution complete!")
         print("=" * 70)
-        
+
         # Show quick summary
         show_quick_summary()
-        
+
         return result.returncode
-        
+
     except subprocess.CalledProcessError as e:
         print("\n" + "=" * 70)
         print(f"❌ Pipeline failed with exit code {e.returncode}")
@@ -178,26 +190,149 @@ def clean_old(days: int = 7):
     print("=" * 70)
 
 
+def memory_search(keyword: str):
+    """Search projects by keyword using persistent memory."""
+    if not MEMORY_AVAILABLE:
+        print("❌ Memory system not available. Install redis: pip install redis")
+        return 1
+
+    print("=" * 70)
+    print(f"🔍 SEARCHING PROJECTS FOR: {keyword}")
+    print("=" * 70 + "\n")
+
+    try:
+        memory = ProjectMemory()
+        results = memory.search_projects_with_keyword(keyword)
+
+        if not results:
+            print(f"No projects found containing '{keyword}'")
+            return 0
+
+        print(f"Found {len(results)} result(s):\n")
+
+        for i, result in enumerate(results, 1):
+            print(f"{i}. {result['project_id']} - {result['stage']}")
+            print(f"   Timestamp: {result['timestamp']}")
+            print(f"   Snippet: {result['snippet'][:150]}...")
+            print()
+
+        print("=" * 70)
+        return 0
+
+    except ConnectionError:
+        print("❌ Cannot connect to Redis. Start with: ./scripts/start_redis.sh")
+        return 1
+    except Exception as e:
+        print(f"❌ Search failed: {e}")
+        return 1
+
+
+def memory_history(project_id: str):
+    """Show full history for a project."""
+    if not MEMORY_AVAILABLE:
+        print("❌ Memory system not available. Install redis: pip install redis")
+        return 1
+
+    print("=" * 70)
+    print(f"📚 PROJECT HISTORY: {project_id}")
+    print("=" * 70 + "\n")
+
+    try:
+        memory = ProjectMemory()
+        history = memory.get_project_history(project_id)
+
+        if not history:
+            print(f"No history found for project '{project_id}'")
+            return 0
+
+        print(f"Found {len(history)} stage(s):\n")
+
+        for stage, data in sorted(history.items()):
+            print(f"🔹 {stage}")
+            print(f"   Timestamp: {data.get('timestamp', 'N/A')}")
+            print(f"   Data keys: {list(data.get('data', {}).keys())}")
+            print()
+
+        print("=" * 70)
+        return 0
+
+    except ConnectionError:
+        print("❌ Cannot connect to Redis. Start with: ./scripts/start_redis.sh")
+        return 1
+    except Exception as e:
+        print(f"❌ Failed to retrieve history: {e}")
+        return 1
+
+
+def memory_list():
+    """List all projects in memory."""
+    if not MEMORY_AVAILABLE:
+        print("❌ Memory system not available. Install redis: pip install redis")
+        return 1
+
+    print("=" * 70)
+    print("📋 ALL PROJECTS IN MEMORY")
+    print("=" * 70 + "\n")
+
+    try:
+        memory = ProjectMemory()
+        projects = memory.list_all_projects()
+
+        if not projects:
+            print("No projects in memory yet.")
+            print("Run the pipeline to store project data.")
+            return 0
+
+        print(f"Found {len(projects)} project(s):\n")
+
+        for i, project_id in enumerate(projects, 1):
+            # Get stage count
+            history = memory.get_project_history(project_id)
+            print(f"{i}. {project_id} ({len(history)} stages)")
+
+        print(f"\n" + "=" * 70)
+
+        # Show stats
+        stats = memory.get_stats()
+        print(f"\n📊 Memory Stats:")
+        print(f"   Total projects: {stats.get('total_projects', 0)}")
+        print(f"   Total stages: {stats.get('total_stages', 0)}")
+        print(f"   Memory used: {stats.get('memory_used_mb', 0)} MB")
+        print("=" * 70)
+        return 0
+
+    except ConnectionError:
+        print("❌ Cannot connect to Redis. Start with: ./scripts/start_redis.sh")
+        return 1
+    except Exception as e:
+        print(f"❌ Failed to list projects: {e}")
+        return 1
+
+
 def list_commands():
     """List available phases and commands."""
     print("=" * 70)
     print("📋 AVAILABLE PHASES")
     print("=" * 70 + "\n")
-    
+
     phases = list_phases()
     for num, desc in phases.items():
         print(f"   Phase {num}: {desc}")
-    
+
     print("\n" + "=" * 70)
     print("📋 AVAILABLE COMMANDS")
     print("=" * 70 + "\n")
-    
+
     commands = {
         "run": "Execute full pipeline (all 6 agents)",
+        "run --async": "Execute with async/parallel execution (Phase 17)",
         "phase --n <N>": "Run specific phase only",
         "validate": "Run validation tests only",
         "status": "Show latest build summary",
         "clean --days <N>": "Archive files older than N days (default: 7)",
+        "search <keyword>": "Search projects by keyword (Phase 16)",
+        "history <project_id>": "Show full project history (Phase 16)",
+        "list-projects": "List all projects in memory (Phase 16)",
         "list": "Show available phases and commands"
     }
     
@@ -232,29 +367,42 @@ Examples:
     
     parser.add_argument(
         "command",
-        choices=["run", "phase", "validate", "clean", "status", "list"],
+        choices=["run", "phase", "validate", "clean", "status", "list", "search", "history", "list-projects"],
         help="Task to perform"
     )
-    
+
+    parser.add_argument(
+        "query",
+        nargs="?",
+        help="Search keyword or project ID (for search/history commands)"
+    )
+
     parser.add_argument(
         "--n",
         type=int,
         help="Phase number (1-6) for 'phase' command"
     )
-    
+
     parser.add_argument(
         "--days",
         type=int,
         default=7,
         help="Retention days for 'clean' command (default: 7)"
     )
-    
+
+    parser.add_argument(
+        "--async",
+        action="store_true",
+        dest="use_async",
+        help="Enable async execution with parallel stages (Phase 17)"
+    )
+
     args = parser.parse_args()
-    
+
     # Execute command
     try:
         if args.command == "run":
-            return run_orchestrator()
+            return run_orchestrator(use_async=args.use_async)
             
         elif args.command == "phase":
             if not args.n:
@@ -279,7 +427,24 @@ Examples:
         elif args.command == "status":
             show_status()
             return 0
-            
+
+        elif args.command == "search":
+            if not args.query:
+                print("❌ Error: Please specify a search keyword")
+                print("   Usage: python cli/manage.py search <keyword>")
+                sys.exit(1)
+            return memory_search(args.query)
+
+        elif args.command == "history":
+            if not args.query:
+                print("❌ Error: Please specify a project ID")
+                print("   Usage: python cli/manage.py history <project_id>")
+                sys.exit(1)
+            return memory_history(args.query)
+
+        elif args.command == "list-projects":
+            return memory_list()
+
         elif args.command == "list":
             list_commands()
             return 0

@@ -24,7 +24,7 @@ Usage:
 import json
 import time
 from typing import List, Dict, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -100,7 +100,7 @@ class EvidenceCollector:
         evidence = {
             "idea": idea,
             "keywords": keywords,
-            "collected_at": datetime.utcnow().isoformat() + "Z",
+            "collected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             "sources": {}
         }
 
@@ -135,7 +135,7 @@ class EvidenceCollector:
         evidence = {
             "idea": idea,
             "keywords": keywords,
-            "collected_at": datetime.utcnow().isoformat() + "Z",
+            "collected_at": datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
             "sources": {}
         }
 
