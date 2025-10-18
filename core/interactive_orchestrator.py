@@ -25,6 +25,7 @@ from core.workflow_gates import (
     format_confidence_bar
 )
 from core.workflow_state import WorkflowState
+from core.subagent_coordinator import SubAgentCoordinator
 
 
 class InteractiveOrchestrator(Orchestrator):
@@ -53,6 +54,13 @@ class InteractiveOrchestrator(Orchestrator):
             project_id=self.project_id,
             session_id=self.session_id,
             auto_save=auto_save
+        )
+
+        # Initialize SubAgentCoordinator
+        self.subagent_coordinator = SubAgentCoordinator(
+            project_id=self.project_id,
+            session_id=self.session_id,
+            verbose=True
         )
 
         print(f"\n{'='*60}")
@@ -431,15 +439,77 @@ class InteractiveOrchestrator(Orchestrator):
         print("\nThis will take a few minutes. I'll search for real data and come back with insights.\n")
 
         try:
-            # Use parent class's run method (if available)
-            # For now, just show what would happen
+            # Execute research using appropriate agents
             phase = phase_config['phase']
-            print(f"[Would run agents for {phase} with query: {query}]")
-            print("(Integration with base orchestrator coming next)")
+
+            # Create AgentContext with collected requirements
+            from core.base_agent import AgentContext
+            from core.cache import Cache
+
+            research_context = AgentContext(
+                session_id=self.session_id,
+                inputs={
+                    'research_query': query,
+                    'collected_requirements': collected,
+                    'step_name': step_name,
+                    'project_id': self.project_id
+                },
+                cache=Cache(),
+                shared_data={}
+            )
+
+            # Map phases to appropriate agents
+            agent_map = {
+                'phase_1': 'TrendResearchAgent',  # Pain Discovery
+                'phase_2': 'StrategyAgent',        # Market Sizing
+                'phase_3': 'StrategyAgent'         # Competitive Analysis
+            }
+
+            agent_name = agent_map.get(phase)
+
+            if agent_name:
+                # Load and execute the agent
+                print(f"🔬 Executing {agent_name}...\n")
+
+                # Import and instantiate the agent
+                if agent_name == 'TrendResearchAgent':
+                    from agents.trend_research_agent.trend_research_agent import TrendResearchAgent
+                    agent = TrendResearchAgent()
+                    # Add required inputs for TrendResearchAgent
+                    research_context.inputs['platforms'] = ['reddit', 'youtube', 'twitter']
+                elif agent_name == 'StrategyAgent':
+                    from agents.strategy_agent.strategy_agent import StrategyAgent
+                    agent = StrategyAgent()
+
+                # Execute the agent
+                if agent.validate_inputs(research_context):
+                    result = agent.execute(research_context)
+
+                    # Display results
+                    print(f"\n{'='*60}")
+                    print("📊 RESEARCH RESULTS")
+                    print(f"{'='*60}\n")
+
+                    if hasattr(result, 'summary'):
+                        print(result.summary)
+
+                    # Store results in workflow state
+                    self.workflow_state.save_field(f'{step_name}_research_results', str(result))
+
+                    print(f"\n✅ Research complete! Results saved.\n")
+
+                    # Optional: Run CriticAgent for adversarial review
+                    self._offer_critic_review(step_name, result, collected)
+                else:
+                    print(f"⚠️  Skipping research - agent validation failed")
+            else:
+                print(f"⚠️  No agent mapped for {phase}")
 
         except Exception as e:
             print(f"⚠️  Research failed: {e}")
             print("You can continue manually or retry later.")
+            import traceback
+            traceback.print_exc()
 
     def _explain_pain_discovery_plan(self, collected: Dict[str, Any]):
         """Explain what Pain Discovery research will do."""
@@ -532,6 +602,41 @@ class InteractiveOrchestrator(Orchestrator):
             parts.append(f"- {collected['value_proposition']}")
 
         return " ".join(parts)
+
+    def _offer_critic_review(self, step_name: str, research_result: Any, collected: Dict[str, Any]):
+        """
+        Offer optional CriticAgent review of research results.
+
+        Uses SubAgentCoordinator to run CriticAgent in interactive mode.
+        """
+        print(f"{'─'*60}")
+        print("\n💭 Would you like an adversarial review of these research findings?")
+        print("   The Critic Agent will identify potential risks, gaps, and blind spots.")
+        print()
+
+        choice = input("Run Critic Agent? (y/N): ").strip().lower()
+
+        if choice == 'y':
+            # Prepare context for CriticAgent
+            critic_context = {
+                'topic': step_name,
+                'research_results': str(research_result),
+                'collected_requirements': collected,
+                'project_id': self.project_id
+            }
+
+            # Use SubAgentCoordinator to execute CriticAgent
+            critic_result = self.subagent_coordinator.execute_agent(
+                agent_name='CriticAgent',
+                agent_context=critic_context,
+                agent_callable=None  # Will use placeholder until CriticAgent is implemented
+            )
+
+            # Store critic results if successful
+            if critic_result.get('success'):
+                self.workflow_state.save_field(f'{step_name}_critic_review', str(critic_result))
+        else:
+            print("✓ Skipping critic review\n")
 
     def _print_final_summary(self):
         """Print final workflow summary."""
