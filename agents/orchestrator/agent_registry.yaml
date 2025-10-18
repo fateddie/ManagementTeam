@@ -40,3 +40,27 @@ agents:
     path: "agents.workshop_agent.workshop_agent:IterativeWorkshopAgent"
     active: true # ✅ Phase 1.5 - Workshop Integration
     stage: 1.5 # Between refinement and vertical
+
+  - name: TrendResearchAgent
+    path: "agents.trend_research_agent.trend_research_agent:TrendResearchAgent"
+    active: false # ⏸️  NEW - Social media trending & pain point discovery (activate when needed)
+    stage: 0.5 # Early research stage - runs before strategy
+
+  # Sub-Agents (Meta-level utilities)
+  - name: ExplorerAgent
+    path: "agents.explorer.explorer:ExplorerAgent"
+    active: true # ✅ Silent execution - file/code mapping utility
+    stage: -1 # Meta utility - not a workflow stage
+    execution_mode: silent
+
+  - name: HistorianAgent
+    path: "agents.historian.historian:HistorianAgent"
+    active: true # ✅ Silent execution - project snapshot utility
+    stage: -2 # Meta utility - not a workflow stage
+    execution_mode: silent
+
+  - name: CriticAgent
+    path: "agents.critic.critic:CriticAgent"
+    active: true # ✅ Interactive execution - adversarial review
+    stage: -3 # Meta utility - not a workflow stage
+    execution_mode: interactive
