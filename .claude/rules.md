@@ -414,11 +414,36 @@ PHASE_OVERRIDE=5 python agents/orchestrator/orchestrator.py
 ---
 
 ## 🧩 CLAUDE BEHAVIOUR MODES
-| Mode | Description |
-|------|--------------|
-| **Planning Mode** | Generate structured plans, PRDs, TDRs with error handling considerations |
-| **Build Mode** | Generate modular, testable code with async support and proper error handling |
-| **Review Mode** | Audit changes for: error handling, async patterns, test coverage, documentation |
+
+**WHY:** Different tasks require different approaches - planning needs breadth, building needs precision, reviewing needs thoroughness.
+
+| Mode | Description | When to Use |
+|------|-------------|-------------|
+| **Planning Mode** | Generate structured plans, PRDs, TDRs with error handling considerations | Before major changes, analyzing unfamiliar code, understanding architecture |
+| **Build Mode** | Generate modular, testable code with async support and proper error handling | Implementing features, fixing bugs, refactoring code |
+| **Review Mode** | Audit changes for: error handling, async patterns, test coverage, documentation | Before commits, after refactoring, security checks |
+
+### Anthropic Best Practices
+
+**Use Plan Mode for Safe Analysis:**
+- Read-only exploration of codebase
+- Understand before modifying
+- Ask broad questions first, then drill down
+
+**Iterative Refactoring:**
+- Small, testable increments
+- Maintain backward compatibility
+- Verify changes through testing
+
+**Leverage Sub-Agents (Task Tool):**
+- Use specialized agents for complex multi-step tasks
+- Run agents in parallel when possible
+- Trust agent outputs but verify critical decisions
+
+**Be Specific:**
+- Provide detailed error context
+- Include reproduction steps for bugs
+- Reference specific files with @ mentions
 
 ---
 
@@ -519,6 +544,64 @@ def save_field(field_name, value):
 
 ---
 
+## 🔒 SECURITY & COLLABORATION BEST PRACTICES
+
+**WHY:** Security prevents data leaks, collaboration ensures team alignment.
+
+### Security Guidelines (Anthropic Recommendations)
+
+**Never Commit Sensitive Data:**
+```python
+# ❌ Bad
+API_KEY = "sk-1234567890"
+
+# ✅ Good
+from config.env_manager import get_config
+API_KEY = get_config().openai_api_key
+```
+
+**Use .gitignore Properly:**
+```
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials.json
+```
+
+**Validate All Inputs:**
+```python
+def process_user_input(data: str) -> str:
+    # Sanitize before processing
+    if not data or len(data) > 10000:
+        raise ValueError("Invalid input length")
+    return data.strip()
+```
+
+### Collaboration Guidelines
+
+**Pull Request Best Practices:**
+- Generate comprehensive PR descriptions
+- Include "WHY" in commit messages
+- Link to relevant issues/docs
+- Add test results
+
+**Documentation Standards:**
+- Explain "WHY" not just "WHAT"
+- Include code examples
+- Keep docs synchronized with code
+- Use project-standard formats (JSDoc, etc.)
+
+**Code Review Focus:**
+- Error handling completeness
+- Security concerns (credentials, injection)
+- Test coverage
+- Performance implications
+- Documentation accuracy
+
+---
+
 ## 📖 REFERENCE DOCUMENTATION
 - **Setup Guide**: `PROJECT_SETUP_TEMPLATE.md`
 - **Async Testing**: `tests/test_async_orchestration.py`
@@ -526,6 +609,7 @@ def save_field(field_name, value):
 - **Config Management**: `config/env_manager.py` pattern (see template)
 - **Conversational Workflow**: `CONVERSATIONAL_WORKFLOW_GUIDE.md`
 - **Workflow Implementation**: `core/interactive_orchestrator.py`
+- **Anthropic Docs**: https://docs.claude.com/en/docs/claude-code/
 
 ---
 
