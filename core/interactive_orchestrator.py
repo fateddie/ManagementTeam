@@ -31,6 +31,7 @@ from core.workflow_state import WorkflowState
 from core.subagent_coordinator import SubAgentCoordinator
 from core.subagent_triggers import SubAgentTriggerEngine  # Phase 4
 from core.ai_conversation_handler import AIConversationHandler  # AI Conversations
+from core.idea_critic import IdeaCritic  # AI Critique & Grammar Correction
 
 
 class InteractiveOrchestrator(Orchestrator):
@@ -55,6 +56,26 @@ class InteractiveOrchestrator(Orchestrator):
 
         self.mode = mode
         self.auto_save = auto_save
+
+        # Ensure project exists in database (fixes FOREIGN KEY constraint errors)
+        if self.context_tracker and project_id is None:
+            # New project - create it in database with specific ID
+            try:
+                existing_project = self.context_tracker.get_project(self.project_id)
+                if not existing_project:
+                    created_id = self.context_tracker.create_project(
+                        name=f"Idea Validation - {self.session_id}",
+                        description="Interactive workflow project",
+                        priority="medium",
+                        project_id=self.project_id  # Use the ID orchestrator assigned
+                    )
+                    if created_id:
+                        logger.info(f"✅ Created project in database: {created_id}")
+                    else:
+                        logger.warning(f"Failed to create project {self.project_id}")
+            except Exception as e:
+                logger.warning(f"Could not create project in database: {e}")
+
         self.workflow_state = WorkflowState(
             project_id=self.project_id,
             session_id=self.session_id,
@@ -78,6 +99,13 @@ class InteractiveOrchestrator(Orchestrator):
             logger.info("✅ AI-powered conversations enabled")
         else:
             logger.info("ℹ️  Using script-based conversations (AI unavailable)")
+
+        # AI Critique: Initialize idea critic
+        self.idea_critic = IdeaCritic()
+        if self.idea_critic.is_available():
+            logger.info("✅ AI-powered critique enabled")
+        else:
+            logger.info("ℹ️  Using basic critique (AI unavailable)")
 
         print(f"\n{'='*60}")
         print(f"🚀 Interactive Workflow - {mode.upper()} MODE")
@@ -379,29 +407,49 @@ class InteractiveOrchestrator(Orchestrator):
 
     def _show_summary_and_approve(self, step_config: Dict[str, Any], collected: Dict[str, Any], completion: Dict[str, Any]) -> bool:
         """
-        Show summary of collected data and get approval to proceed.
+        Show summary of collected data with AI critique, then get approval to proceed.
+
+        NEW: Includes spelling/grammar correction and critique (strengths/weaknesses/suggestions)
 
         Returns:
             True if approved, False if user wants to pause/refine
         """
-        print(f"\n{'='*60}")
-        print("📋 SUMMARY")
-        print(f"{'='*60}\n")
+        # Get AI critique if available
+        critique = None
+        if self.idea_critic.is_available():
+            print("\n🤔 Analyzing your idea...")
+            try:
+                critique = self.idea_critic.critique_idea(
+                    collected_data=collected,
+                    quality_score=completion['score']
+                )
+            except Exception as e:
+                logger.error(f"Critique failed: {e}")
 
-        # Show collected data
-        for field_name, value in collected.items():
-            print(f"• {field_name.replace('_', ' ').title()}: {value}")
+        # Show critique if available
+        if critique:
+            critique_display = self.idea_critic.format_critique_display(critique)
+            print(critique_display)
+        else:
+            # Fallback: Show basic summary
+            print(f"\n{'='*60}")
+            print("📋 SUMMARY")
+            print(f"{'='*60}\n")
 
-        # Show confidence
-        confidence_bar = format_confidence_bar(completion['score'])
-        print(f"\n{confidence_bar} {completion['score']*100:.0f}% Confidence")
+            # Show collected data
+            for field_name, value in collected.items():
+                print(f"• {field_name.replace('_', ' ').title()}: {value}")
 
-        # Show warnings or encouragement
-        if completion['warnings']:
-            for warning in completion['warnings']:
-                print(warning)
-        if completion['encouragement']:
-            print(completion['encouragement'])
+            # Show confidence
+            confidence_bar = format_confidence_bar(completion['score'])
+            print(f"\n{confidence_bar} {completion['score']*100:.0f}% Confidence")
+
+            # Show warnings or encouragement
+            if completion['warnings']:
+                for warning in completion['warnings']:
+                    print(warning)
+            if completion['encouragement']:
+                print(completion['encouragement'])
 
         # Get approval
         print(f"\n{'─'*60}")

@@ -97,7 +97,8 @@ class ProjectContext:
         description: str = "",
         deadline: Optional[datetime] = None,
         priority: str = "medium",
-        tags: Optional[List[str]] = None
+        tags: Optional[List[str]] = None,
+        project_id: Optional[str] = None
     ) -> Optional[str]:
         """
         Create a new project.
@@ -108,12 +109,14 @@ class ProjectContext:
             deadline: Target completion date
             priority: Priority level (low, medium, high, urgent)
             tags: Optional list of tags
+            project_id: Optional specific project ID (if None, generates one)
 
         Returns:
             Project ID if successful, None otherwise
         """
         try:
-            project_id = f"project_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            if project_id is None:
+                project_id = f"project_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             tags_str = json.dumps(tags) if tags else None
 
             conn = self._get_connection()
@@ -753,6 +756,44 @@ class ProjectContext:
         except Exception as e:
             logger.error(f"Failed to add note: {e}")
             return False
+
+    def record_note(
+        self,
+        project_id: str,
+        session_id: str,
+        note_type: str,
+        title: str,
+        content: str,
+        action_id: Optional[int] = None,
+        milestone_id: Optional[int] = None
+    ) -> bool:
+        """
+        Record a note (wrapper around add_note for compatibility).
+
+        WHY: Sub-agent coordinator calls record_note with session_id parameter,
+             but underlying add_note doesn't need it. This wrapper provides
+             compatibility.
+
+        Args:
+            project_id: Project ID
+            session_id: Session ID (for context, currently unused)
+            note_type: Type (issue, success, idea, learning, general, subagent_artifact)
+            title: Note title
+            content: Note content
+            action_id: Optional related action
+            milestone_id: Optional related milestone
+
+        Returns:
+            True if successful, False otherwise
+        """
+        return self.add_note(
+            project_id=project_id,
+            note_type=note_type,
+            title=title,
+            content=content,
+            action_id=action_id,
+            milestone_id=milestone_id
+        )
 
     def get_notes(
         self,
