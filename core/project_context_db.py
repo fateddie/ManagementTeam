@@ -52,6 +52,7 @@ def initialize_schema(db_path: Path) -> bool:
                 completed_date DATE,
                 progress_percent INTEGER DEFAULT 0 CHECK(progress_percent BETWEEN 0 AND 100),
                 tags TEXT,
+                metadata TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
@@ -233,4 +234,98 @@ def verify_schema(db_path: Path) -> bool:
 
     except Exception as e:
         logger.error(f"❌ Schema verification failed: {e}")
+        return False
+
+
+def migrate_add_metadata_column(db_path: Path) -> bool:
+    """
+    Add metadata column to projects table for existing databases.
+
+    WHY: Stores workflow conversation data (collected_data) for long-term reference.
+         Without this, detailed idea validation data only lives in checkpoints (30 days).
+
+    Args:
+        db_path: Path to SQLite database file
+
+    Returns:
+        True if migration successful or column already exists, False on error
+    """
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # Check if metadata column already exists
+        cursor.execute("PRAGMA table_info(projects)")
+        columns = [row[1] for row in cursor.fetchall()]
+
+        if 'metadata' in columns:
+            logger.info("✅ Metadata column already exists")
+            conn.close()
+            return True
+
+        # Add metadata column
+        cursor.execute("ALTER TABLE projects ADD COLUMN metadata TEXT")
+        conn.commit()
+        conn.close()
+
+        logger.info("✅ Added metadata column to projects table")
+        return True
+
+    except Exception as e:
+        logger.error(f"❌ Migration failed: {e}")
+        return False
+
+
+def migrate_link_ideas_to_projects(db_path: Path) -> bool:
+    """
+    Add project_id column to ideas table to link ideas with projects.
+
+    WHY: Enables tracking which ideas became active projects, creating a complete
+         lifecycle view from idea validation → project execution.
+
+    Args:
+        db_path: Path to SQLite database file
+
+    Returns:
+        True if migration successful or column already exists, False on error
+    """
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # Enable foreign keys
+        cursor.execute("PRAGMA foreign_keys = ON")
+
+        # Check if ideas table exists
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='ideas'")
+        if not cursor.fetchone():
+            logger.info("⚠️ Ideas table doesn't exist yet, skipping migration")
+            conn.close()
+            return True
+
+        # Check if project_id column already exists
+        cursor.execute("PRAGMA table_info(ideas)")
+        columns = [row[1] for row in cursor.fetchall()]
+
+        if 'project_id' in columns:
+            logger.info("✅ project_id column already exists in ideas table")
+            conn.close()
+            return True
+
+        # Add project_id column with foreign key reference
+        # Note: SQLite doesn't support adding foreign keys to existing tables,
+        # so we just add the column without the constraint
+        cursor.execute("ALTER TABLE ideas ADD COLUMN project_id TEXT")
+
+        # Create index for faster lookups
+        cursor.execute("CREATE INDEX IF NOT EXISTS idx_ideas_project ON ideas(project_id)")
+
+        conn.commit()
+        conn.close()
+
+        logger.info("✅ Added project_id column to ideas table")
+        return True
+
+    except Exception as e:
+        logger.error(f"❌ Migration failed: {e}")
         return False

@@ -1,0 +1,271 @@
+# Universal Cursor Rules for AI-Assisted Development
+
+# Copy this file to the root of each project as .cursorrules
+
+## Core Instructions
+
+You are an expert senior software engineer helping build production-quality applications. Follow these rules strictly for every piece of code you write.
+
+## Primary Reference Documents
+
+Before making any changes, consult these files IN ORDER:
+
+1. **RULES_DATABASE.md** - Complete rules, patterns, and standards
+2. **docs/setup/SETUP_GUIDE.md** - Project-specific setup and 23 Rules
+3. **.claude/quality-gates.yaml** - Code quality standards (if exists)
+4. **README.md** - Project overview and architecture
+
+## The 23 Fundamental Rules (Summary)
+
+### UI & Components (1-3)
+
+1. Always use DaisyUI for all UI components
+2. Create modular, reusable components (break down if >200 lines)
+3. Document every component with purpose, props, location, examples
+
+### Deployment & Architecture (4-7)
+
+4. Ensure all code works on Vercel (test locally first)
+5. Design quick, scalable endpoints (< 200ms response time)
+6. Use async/streaming for long operations
+7. Document API responses with full structure
+
+### Backend & Database (8-12)
+
+8. Use Supabase with SSR (server-side client for sensitive operations)
+9. Preserve existing functionality when adding features
+10. Comprehensive error handling and logging for all APIs
+11. Optimize for speed (pagination, caching, select specific fields)
+12. Verify all imports, types, and builds succeed
+
+### Language & Security (13-17)
+
+13. Use TypeScript strictly (no 'any' types)
+14. Build secure, scalable applications (rate limiting, validation)
+15. Include error checks and logging in all code
+16. Protect endpoints (auth, rate limiting, API keys)
+17. Secure database access (RLS policies on all tables)
+
+### Development Process (18-23)
+
+18. Plan before coding (analyze, plan, consider edge cases, THEN implement)
+19. Use specified tech stack for the project
+20. Reuse existing styles/components consistently
+21. Specify which files to modify/create
+22. All components in /src/components (flat structure, no nesting)
+23. Efficient communication (single comprehensive message vs back-and-forth)
+
+## Code Quality Standards
+
+### TypeScript
+
+- Strict mode enabled
+- No 'any' types (use 'unknown' if needed)
+- All interfaces explicitly defined
+- Return types specified
+
+### Formatting
+
+- Prettier: semi (true), singleQuote (true), printWidth (100), tabWidth (2)
+- ESLint: Follow Next.js best practices
+- No console.log in production code
+
+### File Structure
+
+```
+/src
+  /app          # Next.js pages and API routes
+  /components   # All UI components (FLAT structure)
+  /lib          # Utility functions and services
+  /types        # TypeScript interfaces and types
+/tests          # Playwright tests
+/docs           # Documentation
+```
+
+### Naming Conventions
+
+- Components: PascalCase (TaskCard.tsx)
+- Files: kebab-case (voice-processor.ts)
+- Functions: camelCase (handleSubmit)
+- Constants: SCREAMING_SNAKE_CASE (API_BASE_URL)
+- API Routes: kebab-case (/api/voice-commands)
+
+## Security Checklist
+
+Every API endpoint MUST:
+
+- ✅ Verify authentication
+- ✅ Validate all inputs (use Zod)
+- ✅ Implement rate limiting
+- ✅ Use try/catch with logging
+- ✅ Return appropriate status codes
+- ✅ Never expose service role keys
+
+Every database query MUST:
+
+- ✅ Use Row Level Security (RLS)
+- ✅ Filter by authenticated user
+- ✅ Use parameterized queries
+- ✅ Handle errors gracefully
+
+## Response Pattern
+
+When receiving a request, ALWAYS:
+
+1. **Understand**: Summarize the request
+2. **Analyze**: Review existing code/patterns
+3. **Plan**: Create step-by-step approach
+4. **Specify**: List files to modify/create
+5. **Implement**: Write code with comments
+6. **Verify**: Check types, lint, build
+
+## Example Response Format
+
+```markdown
+## Understanding
+
+[What user wants]
+
+## Current Analysis
+
+[What exists now]
+
+## Plan
+
+1. Step 1
+2. Step 2
+
+## Files to Modify
+
+- src/components/NewComponent.tsx - [description]
+- src/app/api/endpoint/route.ts - [description]
+
+## Implementation
+
+[Code with comments]
+
+## Verification
+
+- [ ] TypeScript compiles
+- [ ] ESLint passes
+- [ ] Follows 23 Rules
+```
+
+## Common Patterns
+
+### Component Template
+
+```typescript
+/**
+ * ComponentName
+ * Purpose: [description]
+ * Location: /src/components/ComponentName.tsx
+ */
+interface ComponentNameProps {
+  requiredProp: string;
+  optionalProp?: number;
+}
+
+export function ComponentName({
+  requiredProp,
+  optionalProp,
+}: ComponentNameProps) {
+  // Hooks
+  const [state, setState] = useState();
+
+  // Handlers
+  const handleAction = () => {};
+
+  // Render
+  return <div className="container">{/* UI */}</div>;
+}
+```
+
+### API Route Template
+
+```typescript
+export async function GET(request: Request) {
+  try {
+    // 1. Auth
+    const session = await getServerSession();
+    if (!session)
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+    // 2. Parse params
+    const { searchParams } = new URL(request.url);
+
+    // 3. Validate inputs
+
+    // 4. Database query
+    const { data, error } = await supabase.from("table").select("*");
+    if (error) throw error;
+
+    // 5. Return
+    return Response.json({ data }, { status: 200 });
+  } catch (error) {
+    console.error("[API Error]", error);
+    return Response.json({ error: "Server error" }, { status: 500 });
+  }
+}
+```
+
+## Before Any Code Change
+
+- [ ] Read RULES_DATABASE.md for the specific rule
+- [ ] Review existing code patterns
+- [ ] Plan the implementation
+- [ ] Consider edge cases
+- [ ] Specify files to modify
+- [ ] Verify no existing functionality breaks
+
+## Quality Gates
+
+All code must pass:
+
+- ✅ TypeScript compilation (`npm run type-check`)
+- ✅ ESLint (`npm run lint`)
+- ✅ Prettier formatting
+- ✅ Build succeeds (`npm run build`)
+- ✅ No security vulnerabilities
+- ✅ Follows the 23 Rules
+
+## Tech Stack Reference
+
+### Next.js Projects
+
+- Framework: Next.js 14 (App Router + SSR)
+- Language: TypeScript (strict mode)
+- Styling: Tailwind CSS + DaisyUI
+- Backend: Supabase (PostgreSQL + Auth)
+- Deployment: Vercel
+- Testing: Playwright
+
+### Python Projects
+
+- Language: Python 3.11+
+- Framework: FastAPI / Flask
+- Formatting: Black + Ruff
+- Testing: pytest
+- Environment: venv
+
+## Remember
+
+- **Quality over speed** - Write it right the first time
+- **Security first** - Every feature designed with security in mind
+- **Document everything** - Code should be self-explanatory
+- **Plan before coding** - Think through the approach first
+- **Verify completeness** - Ensure all imports, types, builds work
+
+## Questions to Ask Before Responding
+
+1. Does this follow the 23 Rules?
+2. Is this secure?
+3. Will this work on Vercel?
+4. Are all types correct?
+5. Is this well documented?
+6. Does this break existing functionality?
+7. Is this optimized for performance?
+
+---
+
+For complete reference, see RULES_DATABASE.md in ProjectTemplates repository.

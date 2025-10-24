@@ -18,7 +18,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime, date, timedelta
 from dataclasses import dataclass
 
-from core.project_context_db import initialize_schema, verify_schema
+from core.project_context_db import initialize_schema, verify_schema, migrate_add_metadata_column, migrate_link_ideas_to_projects
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +71,9 @@ class ProjectContext:
 
         try:
             initialize_schema(self.db_path)
+            # Run migrations to add new columns if needed
+            migrate_add_metadata_column(self.db_path)
+            migrate_link_ideas_to_projects(self.db_path)
         except Exception as e:
             logger.error(f"Failed to initialize schema: {e}")
             raise
@@ -356,6 +359,7 @@ class ProjectContext:
         project_id: str,
         session_id: str,
         milestone_name: str,
+        description: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None
     ) -> bool:
         """
@@ -368,13 +372,15 @@ class ProjectContext:
             project_id: Project ID
             session_id: Session ID (for context)
             milestone_name: Name of milestone
+            description: Optional description (if not provided, builds from session_id)
             metadata: Optional metadata about the milestone
 
         Returns:
             True if successful, False otherwise
         """
         try:
-            description = f"Session: {session_id}"
+            if not description:
+                description = f"Session: {session_id}"
             if metadata:
                 description += f" | {json.dumps(metadata)}"
 
@@ -1126,3 +1132,184 @@ class ProjectContext:
         except Exception as e:
             logger.error(f"Failed to update metadata: {e}")
             return False
+
+    def get_workflow_data(self, project_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get workflow state data for a project.
+
+        WHY: Retrieve full conversation history and workflow progress for a project.
+             Enables resuming projects with complete context.
+
+        Args:
+            project_id: Project ID
+
+        Returns:
+            Workflow state dictionary containing:
+            - current_step
+            - completed_steps
+            - collected_data (all conversation fields)
+            - step_scores
+            - timestamps
+            Or None if not found
+        """
+        try:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT metadata FROM projects WHERE id = ?", (project_id,))
+            row = cursor.fetchone()
+            conn.close()
+
+            if not row or not row['metadata']:
+                return None
+
+            metadata = json.loads(row['metadata'])
+            return metadata.get('workflow_state')
+
+        except Exception as e:
+            logger.error(f"Failed to get workflow data: {e}")
+            return None
+
+    def get_collected_data(self, project_id: str) -> Dict[str, Any]:
+        """
+        Get just the collected conversation data for a project.
+
+        WHY: Quick access to idea validation fields (core_idea, target_customer, etc.)
+             without loading full workflow state.
+
+        Args:
+            project_id: Project ID
+
+        Returns:
+            Dictionary of field_name: value, or empty dict if not found
+        """
+        workflow_data = self.get_workflow_data(project_id)
+        if workflow_data:
+            return workflow_data.get('collected_data', {})
+        return {}
+
+    def list_projects_by_field(
+        self,
+        field_name: str,
+        field_value: str,
+        partial_match: bool = True
+    ) -> List[Dict[str, Any]]:
+        """
+        Find all projects where a conversation field matches a value.
+
+        WHY: Enable queries like "show me all SaaS ideas" or
+             "all projects targeting small businesses"
+
+        Args:
+            field_name: Name of conversation field (e.g., 'target_customer')
+            field_value: Value to search for
+            partial_match: If True, use LIKE search (default), else exact match
+
+        Returns:
+            List of project summaries with matching field values
+
+        Example:
+            # Find all SaaS ideas
+            saas_projects = context.list_projects_by_field('industry', 'SaaS')
+
+            # Find projects targeting developers
+            dev_projects = context.list_projects_by_field('target_customer', 'developers')
+        """
+        try:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT id, name, description, metadata FROM projects")
+            all_projects = cursor.fetchall()
+            conn.close()
+
+            matching_projects = []
+
+            for row in all_projects:
+                if not row['metadata']:
+                    continue
+
+                try:
+                    metadata = json.loads(row['metadata'])
+                    workflow_state = metadata.get('workflow_state', {})
+                    collected_data = workflow_state.get('collected_data', {})
+
+                    if field_name in collected_data:
+                        stored_value = str(collected_data[field_name]).lower()
+                        search_value = field_value.lower()
+
+                        if partial_match:
+                            if search_value in stored_value:
+                                matching_projects.append({
+                                    'id': row['id'],
+                                    'name': row['name'],
+                                    'description': row['description'],
+                                    'matched_field': field_name,
+                                    'matched_value': collected_data[field_name]
+                                })
+                        else:
+                            if stored_value == search_value:
+                                matching_projects.append({
+                                    'id': row['id'],
+                                    'name': row['name'],
+                                    'description': row['description'],
+                                    'matched_field': field_name,
+                                    'matched_value': collected_data[field_name]
+                                })
+
+                except json.JSONDecodeError:
+                    continue
+
+            return matching_projects
+
+        except Exception as e:
+            logger.error(f"Failed to list projects by field: {e}")
+            return []
+
+    def get_project_conversation_summary(self, project_id: str) -> Optional[str]:
+        """
+        Get a human-readable summary of the project's conversation data.
+
+        WHY: Display project context when resuming or reviewing past work.
+
+        Args:
+            project_id: Project ID
+
+        Returns:
+            Formatted string summarizing conversation, or None if not found
+        """
+        collected_data = self.get_collected_data(project_id)
+
+        if not collected_data:
+            return None
+
+        summary_lines = []
+        summary_lines.append("📋 Project Conversation Summary:")
+        summary_lines.append("=" * 50)
+
+        # Display in a logical order
+        field_order = [
+            'core_idea',
+            'target_customer',
+            'value_proposition',
+            'timeline',
+            'known_competitors',
+            'budget_range'
+        ]
+
+        for field in field_order:
+            if field in collected_data:
+                # Format field name nicely
+                display_name = field.replace('_', ' ').title()
+                value = collected_data[field]
+                summary_lines.append(f"\n{display_name}:")
+                summary_lines.append(f"  {value}")
+
+        # Add any other fields not in the standard order
+        for field, value in collected_data.items():
+            if field not in field_order:
+                display_name = field.replace('_', ' ').title()
+                summary_lines.append(f"\n{display_name}:")
+                summary_lines.append(f"  {value}")
+
+        return "\n".join(summary_lines)

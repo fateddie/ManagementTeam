@@ -52,6 +52,7 @@ class MetadataWriter:
             refined_summary TEXT,
             industry TEXT,
             tags TEXT,
+            project_id TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """)
