@@ -1,6 +1,19 @@
-# Claude Code — Subagent Orchestration Rules (Minimal, Self‑Managing)
+# Claude Code — Subagent Orchestration Rules (Cursor-Specific)
 
-> **Goal:** Enable Claude Code to **automatically decide** when to invoke helpful subagents during project creation and task execution in Cursor—**without** Rob manually choosing. Keep it simple; prefer reuse of existing tools and data. No over‑engineering.
+> **⚠️ NOTE:** This document contains the original Cursor-specific sub-agent rules. For **Claude Code** usage, see the comprehensive sub-agent system documentation in `.claude/rules.md` (v4.0) which includes the fully-implemented Phase 1-5 system with ExplorerAgent, HistorianAgent, CriticAgent, and ResearchDocumenter.
+>
+> **This file is kept for:**
+> - Reference for Cursor-based workflows
+> - Historical context on original design
+> - Alternative implementation approaches
+>
+> **For current Claude Code usage:** See `.claude/rules.md` → Section "🤖 SUB-AGENT SYSTEM"
+
+---
+
+## Original Goal (Cursor Context)
+
+Enable Claude Code to **automatically decide** when to invoke helpful subagents during project creation and task execution in Cursor—**without** Rob manually choosing. Keep it simple; prefer reuse of existing tools and data. No over‑engineering.
 
 ---
 

@@ -602,6 +602,118 @@ def process_user_input(data: str) -> str:
 
 ---
 
+## 🤖 SUB-AGENT SYSTEM (Phase 1-5 Complete)
+
+**WHY:** Intelligent helper agents provide proactive assistance during development - mapping code, creating snapshots, reviewing security, and researching APIs - without manual invocation.
+
+### Available Sub-Agents
+
+**ExplorerAgent** (Silent Mode)
+- **Purpose:** Map relevant files/code when working across multiple files
+- **Auto-triggers:** Task affects >2 files OR >150 LOC OR high complexity
+- **Output:** Compact file map with paths and symbols
+- **Usage:** Runs automatically in background, shows brief completion message
+
+**HistorianAgent** (Silent Mode)
+- **Purpose:** Create project snapshots for crash recovery and context
+- **Auto-triggers:** End of work block OR >150 LOC modified OR PRD changes OR milestones
+- **Output:** Updates `PROJECT_SNAPSHOT.md` with what changed, why, and next steps
+- **Usage:** Runs automatically in background, saves checkpoint
+
+**CriticAgent** (Interactive Mode)
+- **Purpose:** Adversarial security/risk review before risky changes
+- **Auto-triggers:** Security impact OR auth/payment changes OR high complexity OR low confidence (<0.7)
+- **Output:** Top 10 risks ranked by severity with fixes + proceed/revise/stop recommendation
+- **Usage:** Explains plan, asks for approval before executing
+
+**ResearchDocumenter** (Interactive Mode)
+- **Purpose:** Deep documentation research for external libraries/APIs
+- **Auto-triggers:** External API integration OR low confidence (<0.6) OR unfamiliar tech OR major version bump
+- **Output:** Implementation brief with capabilities, pitfalls, minimal example, 5-step plan with citations
+- **Usage:** Explains research plan, asks for approval before executing
+
+### When Claude Should Use Sub-Agents
+
+**Automatically Invoked (via InteractiveOrchestrator):**
+- Sub-agents are automatically evaluated after each workflow step completion
+- Trigger conditions checked against `config/subagents.yml` configuration
+- Silent agents (Explorer, Historian) run without interruption
+- Interactive agents (Critic, Research) ask for approval before running
+
+**Manual Invocation (when outside workflow):**
+When working on tasks outside the InteractiveOrchestrator workflow, Claude should:
+
+1. **Use ExplorerAgent when:**
+   - Refactoring across multiple files
+   - Debugging issues in unfamiliar codebase areas
+   - Implementing features spanning >2 files
+   - Need to map symbols/dependencies before coding
+
+2. **Use HistorianAgent when:**
+   - Completing major feature implementation
+   - Before/after significant refactoring
+   - Creating session summaries
+   - User explicitly asks for snapshot
+
+3. **Use CriticAgent when:**
+   - Implementing auth/security features
+   - Modifying payment/billing code
+   - Working with credentials/secrets
+   - Low confidence in security implications
+   - User explicitly requests review
+
+4. **Use ResearchDocumenter when:**
+   - Integrating new external library/SDK
+   - Working with unfamiliar API
+   - Major dependency version upgrades
+   - User explicitly asks for research
+   - Uncertain about best practices
+
+### Configuration
+
+**Location:** `config/subagents.yml`
+
+**Master Switch:**
+```yaml
+defaults:
+  auto_trigger_enabled: true  # Set false to disable all auto-triggering
+```
+
+**Per-Agent Control:**
+```yaml
+triggers:
+  explorer:
+    enabled: true  # Set false to disable Explorer auto-triggering
+    files_threshold: 2
+    loc_threshold: 150
+```
+
+### Accessing Sub-Agent Artifacts
+
+**ExplorerAgent outputs:** Returned in-memory during execution
+**HistorianAgent outputs:** `PROJECT_SNAPSHOT.md` (always current)
+**CriticAgent outputs:** Returned in-memory with risk analysis
+**ResearchDocumenter outputs:** Returned in-memory with implementation brief
+
+All artifacts also stored in ProjectContext database for dashboard viewing.
+
+### Integration with Workflow
+
+The sub-agent system is integrated into `core/interactive_orchestrator.py`:
+- Automatically evaluates triggers after each step via `_check_and_invoke_subagents()`
+- Uses `SubAgentTriggerEngine` for intelligent context-based decisions
+- Tracks metrics and performance for continuous improvement
+
+### Best Practices
+
+1. **Trust the auto-triggering** - System has been tested and tuned
+2. **Don't manually invoke if workflow will** - Avoid duplication
+3. **Review configuration** - Adjust thresholds in `config/subagents.yml` if triggers too often/rarely
+4. **Respect user preferences** - If user disables triggers, honor their choice
+5. **Explain reasoning** - When suggesting manual invocation, explain why agent would help
+
+---
+
 ## 📖 REFERENCE DOCUMENTATION
 - **Setup Guide**: `PROJECT_SETUP_TEMPLATE.md`
 - **Async Testing**: `tests/test_async_orchestration.py`
@@ -609,6 +721,8 @@ def process_user_input(data: str) -> str:
 - **Config Management**: `config/env_manager.py` pattern (see template)
 - **Conversational Workflow**: `CONVERSATIONAL_WORKFLOW_GUIDE.md`
 - **Workflow Implementation**: `core/interactive_orchestrator.py`
+- **Sub-Agent System**: `docs/SUB_AGENT_SYSTEM_SUMMARY.md`
+- **Sub-Agent Plan**: `docs/planning/SUB_AGENT_UNIFICATION_PLAN.md`
 - **Anthropic Docs**: https://docs.claude.com/en/docs/claude-code/
 
 ---
@@ -619,4 +733,5 @@ def process_user_input(data: str) -> str:
 | 1.0 | 2025-10-08 | Founder | Initial rules definition for Claude operation |
 | 2.0 | 2025-10-17 | Founder | Added error handling, MCP tools, async patterns (Phase 16-17), BaseAgent standards |
 | 3.0 | 2025-10-18 | Founder | Added PURPOSE & PHILOSOPHY, conversational workflow principles, "WHY" explanations throughout |
+| 4.0 | 2025-10-19 | Founder | Added SUB-AGENT SYSTEM documentation (Phases 1-5 complete: Explorer, Historian, Critic, ResearchDocumenter) |
 
