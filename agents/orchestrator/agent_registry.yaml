@@ -64,3 +64,9 @@ agents:
     active: true # ✅ Interactive execution - adversarial review
     stage: -3 # Meta utility - not a workflow stage
     execution_mode: interactive
+
+  - name: ResearchDocumenter
+    path: "agents.research_documenter.research_documenter:ResearchDocumenter"
+    active: true # ✅ Interactive execution - deep documentation research
+    stage: -4 # Meta utility - not a workflow stage
+    execution_mode: interactive
