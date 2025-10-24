@@ -2,10 +2,16 @@
 Workflow State - Persistent state management for gated workflow.
 
 Handles auto-save, resume capability, and integration with ProjectContext.
+
+PHASE 3 ENHANCEMENTS:
+- Checkpoint integration for crash recovery
+- Auto-checkpoint after each step completion
+- Resume from checkpoint capability
+- Version tracking for state format changes
 """
 
 import json
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime
 from pathlib import Path
 
@@ -24,7 +30,13 @@ class WorkflowState:
     - Timestamps
     """
 
-    def __init__(self, project_id: str, session_id: str, auto_save: bool = True):
+    def __init__(
+        self,
+        project_id: str,
+        session_id: str,
+        auto_save: bool = True,
+        enable_checkpoints: bool = True
+    ):
         """
         Initialize workflow state.
 
@@ -32,10 +44,14 @@ class WorkflowState:
             project_id: Project ID
             session_id: Current session ID
             auto_save: Enable auto-save after each field (default: True)
+            enable_checkpoints: Enable checkpoint creation (default: True)
+
+        PHASE 3: Added checkpoint support for crash recovery
         """
         self.project_id = project_id
         self.session_id = session_id
         self.auto_save = auto_save
+        self.enable_checkpoints = enable_checkpoints
         self.context = ProjectContext()
 
         # State data
@@ -45,6 +61,9 @@ class WorkflowState:
         self.step_scores = {}
         self.started_at = None
         self.updated_at = None
+
+        # Checkpoint manager (lazy-loaded to avoid circular imports)
+        self._checkpoint_manager = None
 
         # Load existing state if available
         self._load_state()
@@ -128,6 +147,8 @@ class WorkflowState:
             step_name: Step that was completed
             score: Completion score (0.0-1.0)
             summary: Optional summary of what was collected
+
+        PHASE 3: Auto-creates checkpoint after step completion
         """
         if step_name not in self.completed_steps:
             self.completed_steps.append(step_name)
@@ -152,6 +173,13 @@ class WorkflowState:
             )
         except Exception as e:
             print(f"⚠️ Could not record milestone: {e}")
+
+        # PHASE 3: Auto-checkpoint after step completion
+        if self.enable_checkpoints:
+            self.create_checkpoint(
+                checkpoint_type="step_complete",
+                metadata={'step': step_name, 'score': score}
+            )
 
     def is_step_completed(self, step_name: str) -> bool:
         """Check if a step is completed."""
@@ -237,6 +265,114 @@ class WorkflowState:
         self.started_at = None
         self.updated_at = None
         self._persist()
+
+    # ==================================================
+    # PHASE 3: Checkpoint Integration Methods
+    # ==================================================
+
+    @property
+    def checkpoint_manager(self):
+        """Lazy-load checkpoint manager to avoid circular imports."""
+        if self._checkpoint_manager is None and self.enable_checkpoints:
+            from core.checkpoint_manager import CheckpointManager
+            self._checkpoint_manager = CheckpointManager(self.project_id)
+        return self._checkpoint_manager
+
+    def create_checkpoint(
+        self,
+        checkpoint_type: str = "manual",
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Optional[str]:
+        """
+        Create a checkpoint of current state.
+
+        Args:
+            checkpoint_type: Type of checkpoint ("manual", "auto", "step_complete")
+            metadata: Additional metadata to store
+
+        Returns:
+            Checkpoint ID, or None if checkpoints disabled
+
+        WHY: Enables manual checkpointing and auto-checkpoint after steps
+
+        USAGE:
+            # Manual checkpoint
+            state.create_checkpoint(checkpoint_type="manual")
+
+            # Auto-checkpoint (called by complete_step)
+            state.create_checkpoint(checkpoint_type="step_complete", metadata={'step': 'Market Sizing'})
+        """
+        if not self.enable_checkpoints or not self.checkpoint_manager:
+            return None
+
+        try:
+            checkpoint_id = self.checkpoint_manager.save_checkpoint(
+                workflow_state=self,
+                checkpoint_type=checkpoint_type,
+                metadata=metadata
+            )
+            return checkpoint_id
+        except Exception as e:
+            print(f"⚠️ Checkpoint creation failed: {e}")
+            return None
+
+    @classmethod
+    def from_checkpoint(
+        cls,
+        project_id: str,
+        checkpoint_id: Optional[str] = None
+    ) -> Optional['WorkflowState']:
+        """
+        Create WorkflowState by resuming from a checkpoint.
+
+        Args:
+            project_id: Project ID
+            checkpoint_id: Specific checkpoint to resume from (None = latest)
+
+        Returns:
+            Restored WorkflowState, or None if resume failed
+
+        WHY: Primary recovery method for crash scenarios
+
+        USAGE:
+            # Resume from latest checkpoint
+            state = WorkflowState.from_checkpoint("proj_123")
+
+            # Resume from specific checkpoint
+            state = WorkflowState.from_checkpoint("proj_123", "ckpt_abc")
+        """
+        from core.checkpoint_manager import CheckpointManager
+
+        manager = CheckpointManager(project_id)
+        return manager.resume_workflow(checkpoint_id)
+
+    def list_checkpoints(self) -> List[Dict[str, Any]]:
+        """
+        List all available checkpoints for this project.
+
+        Returns:
+            List of checkpoint summaries
+
+        WHY: Users need to see available recovery points
+        """
+        if not self.checkpoint_manager:
+            return []
+
+        return self.checkpoint_manager.list_checkpoints()
+
+    def detect_crash(self) -> Optional[Dict[str, Any]]:
+        """
+        Detect if there's an incomplete/crashed session.
+
+        Returns:
+            Crash info if detected, None otherwise
+
+        WHY: Auto-detect crashes on startup to offer recovery
+        """
+        if not self.checkpoint_manager:
+            return None
+
+        return self.checkpoint_manager.detect_incomplete_session()
 
     def __repr__(self):
         return f"<WorkflowState project={self.project_id} step={self.current_step} completed={len(self.completed_steps)}>"

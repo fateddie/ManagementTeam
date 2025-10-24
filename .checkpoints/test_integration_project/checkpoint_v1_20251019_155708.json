@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "project_id": "test_integration_project",
+  "session_id": "test_session_001",
+  "checkpoint_id": "ckpt_3ba55fb324b8",
+  "checkpoint_type": "integration_test",
+  "created_at": "2025-10-19T15:57:08.635218",
+  "workflow_state": {
+    "current_step": "implement_feature",
+    "completed_steps": [
+      "implement_feature"
+    ],
+    "collected_data": {},
+    "step_scores": {
+      "implement_feature": {
+        "score": 0.85,
+        "completed_at": "2025-10-19T15:57:08.634740",
+        "summary": "Triggered 4 agents: ExplorerAgent, HistorianAgent, CriticAgent, ResearchDocumenter"
+      }
+    },
+    "started_at": "2025-10-19T15:57:08.634723",
+    "updated_at": "2025-10-19T15:57:08.634741"
+  },
+  "metadata": {}
+}
