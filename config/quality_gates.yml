@@ -1,0 +1,80 @@
+# Quality Gates Configuration
+# Defines success metrics and quality thresholds for workflow steps
+
+step_1_refinement:
+  # Three-gate quality system
+  gate_1_completeness:
+    name: "Completeness"
+    weight: 50  # percentage
+    description: "All required fields answered with minimum length"
+    criteria:
+      - all_required_fields_answered
+      - min_char_counts_met
+      - no_empty_responses
+    blocking_conditions:
+      - missing_required_field: "Cannot proceed without required information"
+      - detected_meta_response: "Please answer the question directly"
+
+  gate_2_specificity:
+    name: "Specificity"
+    weight: 30  # percentage
+    description: "Answers are specific and detailed, not vague"
+    criteria:
+      - max_vague_words: 2  # Allow max 2 vague terms across all answers
+      - min_confidence_factors_per_field: 2  # Each answer should hit 2+ confidence factors
+      - specific_persona_mentioned: true  # For target_customer
+    scoring:
+      - no_vague_words: 100
+      - 1_vague_word: 85
+      - 2_vague_words: 70
+      - 3_plus_vague_words: 50
+
+  gate_3_coherence:
+    name: "Coherence"
+    weight: 20  # percentage
+    description: "Answers align with each other logically"
+    criteria:
+      - problem_solution_aligned: "Does solution actually solve stated problem?"
+      - customer_problem_aligned: "Does target customer have stated problem?"
+      - value_prop_addresses_problem: "Does value prop address the problem?"
+    blocking_conditions:
+      - major_contradiction: "Detected logical inconsistency"
+
+  # Overall thresholds (0-100)
+  thresholds:
+    ready: 80         # 🟢 Green light - excellent quality
+    acceptable: 60    # 🟡 Yellow - proceed with warnings
+    needs_work: 60    # 🔴 Red - must improve (< 60)
+
+  # Messaging for different quality levels
+  messages:
+    ready: "✅ Excellent! Your idea is well-defined. Ready to proceed to research."
+    acceptable: "⚠️ Good enough to proceed, but some details could be more specific."
+    needs_work: "❌ Needs more detail. Let's refine a few things before moving forward."
+
+  # What happens at each level
+  actions:
+    ready:
+      - auto_proceed: true
+      - show_summary: true
+    acceptable:
+      - show_warnings: true
+      - ask_to_refine: true
+      - allow_proceed: true
+    needs_work:
+      - block_proceed: true
+      - show_specific_gaps: true
+      - offer_help: true
+
+# Step 2 and beyond (future expansion)
+step_2_pain_discovery:
+  thresholds:
+    ready: 70
+    acceptable: 50
+    needs_work: 50
+
+step_3_market_sizing:
+  thresholds:
+    ready: 70
+    acceptable: 50
+    needs_work: 50

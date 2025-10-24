@@ -351,6 +351,45 @@ class ProjectContext:
             logger.error(f"Failed to get milestones: {e}")
             return []
 
+    def record_milestone(
+        self,
+        project_id: str,
+        session_id: str,
+        milestone_name: str,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> bool:
+        """
+        Record a milestone completion.
+
+        WHY: Fixes missing method error - was being called by workflow
+        state but didn't exist. Wrapper around add_milestone.
+
+        Args:
+            project_id: Project ID
+            session_id: Session ID (for context)
+            milestone_name: Name of milestone
+            metadata: Optional metadata about the milestone
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            description = f"Session: {session_id}"
+            if metadata:
+                description += f" | {json.dumps(metadata)}"
+
+            milestone_id = self.add_milestone(
+                project_id=project_id,
+                name=milestone_name,
+                description=description
+            )
+
+            return milestone_id is not None
+
+        except Exception as e:
+            logger.error(f"Failed to record milestone: {e}")
+            return False
+
     # ============================================================================
     # Action Point Operations
     # ============================================================================
@@ -1031,3 +1070,59 @@ class ProjectContext:
         except Exception as e:
             logger.error(f"Failed to get sub-agent metrics: {e}")
             return {}
+
+    def update_metadata(
+        self,
+        project_id: str,
+        session_id: str,
+        metadata: Dict[str, Any]
+    ) -> bool:
+        """
+        Update project metadata.
+
+        WHY: Fixes missing method error - was being called by sub-agent
+        coordinator but didn't exist.
+
+        Args:
+            project_id: Project ID
+            session_id: Session ID (for context, currently unused)
+            metadata: Dictionary of metadata key-value pairs to update
+
+        Returns:
+            True if successful, False otherwise
+        """
+        try:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+
+            # Get existing metadata
+            cursor.execute("SELECT metadata FROM projects WHERE id = ?", (project_id,))
+            row = cursor.fetchone()
+
+            if not row:
+                logger.warning(f"Project {project_id} not found")
+                conn.close()
+                return False
+
+            # Parse existing metadata
+            existing_metadata = json.loads(row['metadata']) if row['metadata'] else {}
+
+            # Update with new metadata
+            existing_metadata.update(metadata)
+
+            # Save back to database
+            cursor.execute("""
+                UPDATE projects
+                SET metadata = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            """, (json.dumps(existing_metadata), project_id))
+
+            conn.commit()
+            conn.close()
+
+            logger.debug(f"✅ Updated metadata for project {project_id}")
+            return True
+
+        except Exception as e:
+            logger.error(f"Failed to update metadata: {e}")
+            return False

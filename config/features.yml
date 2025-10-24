@@ -1,0 +1,38 @@
+# Feature Flags Configuration
+# Control system features and capabilities
+
+ai_conversations:
+  enabled: true
+  description: "Use AI (OpenAI) for intelligent conversation analysis"
+  fallback_mode: "graceful"  # Silent fallback to script-based if AI unavailable
+  model: "gpt-4o-mini"  # Cost-effective, fast, good quality
+  temperature: 0.7
+  max_tokens: 300
+  timeout: 10
+
+enhanced_validation:
+  enabled: true
+  description: "Use 3-gate quality system (completeness, specificity, coherence)"
+  use_quality_gates: true
+  min_threshold_to_proceed: 60  # Must score >= 60% to move forward
+  optimal_threshold: 80         # >= 80% = ready immediately
+
+meta_response_detection:
+  enabled: true
+  description: "Detect when user asks for help vs answering questions"
+  auto_redirect: true  # Automatically guide back to answering
+
+coherence_checking:
+  enabled: true
+  description: "Check answers align with each other logically"
+  block_on_major_contradiction: false  # Warn but don't block (for now)
+
+conversation_history:
+  enabled: true
+  description: "Track conversation history for context"
+  max_history_items: 50  # Per session
+
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  log_ai_analysis: true
+  log_validation_scores: true

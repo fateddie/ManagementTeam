@@ -7,9 +7,12 @@ users through research phases with educational context and soft validation.
 
 import sys
 import asyncio
+import logging
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 # Import base orchestrator
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -27,6 +30,7 @@ from core.workflow_gates import (
 from core.workflow_state import WorkflowState
 from core.subagent_coordinator import SubAgentCoordinator
 from core.subagent_triggers import SubAgentTriggerEngine  # Phase 4
+from core.ai_conversation_handler import AIConversationHandler  # AI Conversations
 
 
 class InteractiveOrchestrator(Orchestrator):
@@ -66,6 +70,14 @@ class InteractiveOrchestrator(Orchestrator):
 
         # Phase 4: Initialize TriggerEngine for auto-invocation
         self.trigger_engine = SubAgentTriggerEngine(enabled=True)
+
+        # AI Conversations: Initialize AI handler with graceful fallback
+        self.ai_handler = AIConversationHandler()
+        self.use_ai = self.ai_handler.is_available()
+        if self.use_ai:
+            logger.info("✅ AI-powered conversations enabled")
+        else:
+            logger.info("ℹ️  Using script-based conversations (AI unavailable)")
 
         print(f"\n{'='*60}")
         print(f"🚀 Interactive Workflow - {mode.upper()} MODE")
@@ -186,10 +198,87 @@ class InteractiveOrchestrator(Orchestrator):
 
     def _ask_conversational(self, field_name: str, field_config: Dict[str, Any], context: Dict[str, Any]) -> str:
         """
-        Ask a question conversationally with optional suggestions.
+        Ask a question conversationally - routes to AI or script-based.
 
         Returns:
             User's answer
+        """
+        # Try AI-powered conversation first (if available)
+        if self.use_ai:
+            try:
+                return self._ask_conversational_ai(field_name, field_config, context)
+            except Exception as e:
+                logger.warning(f"AI conversation failed, falling back: {e}")
+                # Fall through to script-based
+
+        # Fallback: Script-based conversation
+        return self._ask_conversational_scripted(field_name, field_config, context)
+
+    def _ask_conversational_ai(self, field_name: str, field_config: Dict[str, Any], context: Dict[str, Any]) -> str:
+        """
+        AI-powered conversational question asking.
+
+        Uses OpenAI to:
+        - Detect meta-responses
+        - Generate contextual follow-ups
+        - Provide intelligent suggestions
+        """
+        # Get question
+        starters = field_config.get('conversation_starters', [])
+        prompt = field_config.get('prompt')
+        question = starters[0] if starters else prompt
+
+        print(f"\n{question}")
+
+        # Get user input
+        user_answer = input("→ ").strip()
+
+        # AI analyzes response
+        analysis = self.ai_handler.analyze_response(
+            question=question,
+            user_answer=user_answer,
+            field_name=field_name,
+            context=context
+        )
+
+        # Handle meta-response (user asking for help vs answering)
+        if analysis.get('is_meta_response', False):
+            print(f"\n{analysis.get('acknowledgment', 'I understand.')}")
+            print("\nLet's start with the basics. What problem are you trying to solve?")
+            user_answer = input("→ ").strip()
+
+            # Re-analyze the actual answer
+            analysis = self.ai_handler.analyze_response(
+                question="What problem are you trying to solve?",
+                user_answer=user_answer,
+                field_name=field_name,
+                context=context
+            )
+
+        # If quality is low, offer intelligent follow-up
+        quality_score = analysis.get('quality_score', 50)
+        if quality_score < 70:
+            suggested_followup = analysis.get('suggested_follow_up', '')
+            if suggested_followup:
+                print(f"\n💡 {suggested_followup}")
+                refine = input("Want to add more detail? (y/N): ").strip().lower()
+                if refine == 'y':
+                    additional = input("→ ").strip()
+                    user_answer = f"{user_answer} {additional}"
+
+        # Warn about contradictions
+        coherence = analysis.get('coherence_check', {})
+        if coherence.get('contradictions'):
+            print(f"\n⚠️ I noticed: {coherence['contradictions'][0]}")
+            print("Would you like to clarify?")
+
+        return user_answer
+
+    def _ask_conversational_scripted(self, field_name: str, field_config: Dict[str, Any], context: Dict[str, Any]) -> str:
+        """
+        Script-based conversational question asking (fallback).
+
+        Original implementation - uses pre-defined prompts and simple validation.
         """
         # Use conversation starters if available
         starters = field_config.get('conversation_starters', [])

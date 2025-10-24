@@ -1,0 +1,71 @@
+# Field Requirements Configuration
+# Defines required vs optional fields and quality standards
+# Used by enhanced validation system
+
+step_1_refinement:
+  required_fields:
+    core_idea:
+      required: true
+      min_quality: 80
+      min_length: 30
+      must_have:
+        - problem_statement
+        - target_user_mentioned
+      cannot_have:
+        - meta_responses: ["I want to", "Can you help", "I need help"]
+        - vague_terms: ["something", "stuff", "things"]
+      confidence_factors:
+        - problem_mentioned
+        - solution_mentioned
+        - user_mentioned
+
+    target_customer:
+      required: true
+      min_quality: 75
+      min_length: 20
+      must_have:
+        - specific_persona  # not "everyone", "people", "users"
+        - industry_or_role
+      cannot_have:
+        - vague_customers: ["everyone", "anyone", "people", "users"]
+      confidence_factors:
+        - industry_mentioned
+        - role_mentioned
+        - company_size_mentioned
+
+    value_proposition:
+      required: true
+      min_quality: 70
+      min_length: 25
+      must_have:
+        - comparative_statement  # "better than", "unlike", "instead of"
+        - specific_benefit  # quantifiable or measurable
+      cannot_have:
+        - vague_benefits: ["better", "easier", "faster"]  # without context
+      confidence_factors:
+        - specific_benefit
+        - comparison_mentioned
+        - metric_mentioned
+
+  optional_fields:
+    timeline:
+      required: false
+      adds_confidence: 10  # percentage points
+      confidence_factors:
+        - stage_mentioned
+        - timeframe_mentioned
+
+    known_competitors:
+      required: false
+      adds_confidence: 5
+      helpful_for: "Speeds up competitive analysis"
+
+    budget_range:
+      required: false
+      adds_confidence: 5
+      helpful_for: "Helps assess feasibility"
+
+  step_success_criteria:
+    min_overall_quality: 60  # Must exceed to proceed
+    optimal_quality: 80      # Ready to proceed immediately
+    all_required_complete: true  # Cannot proceed without required fields
