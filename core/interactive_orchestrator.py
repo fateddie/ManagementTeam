@@ -26,6 +26,7 @@ from core.workflow_gates import (
 )
 from core.workflow_state import WorkflowState
 from core.subagent_coordinator import SubAgentCoordinator
+from core.subagent_triggers import SubAgentTriggerEngine  # Phase 4
 
 
 class InteractiveOrchestrator(Orchestrator):
@@ -62,6 +63,9 @@ class InteractiveOrchestrator(Orchestrator):
             session_id=self.session_id,
             verbose=True
         )
+
+        # Phase 4: Initialize TriggerEngine for auto-invocation
+        self.trigger_engine = SubAgentTriggerEngine(enabled=True)
 
         print(f"\n{'='*60}")
         print(f"🚀 Interactive Workflow - {mode.upper()} MODE")
@@ -115,6 +119,9 @@ class InteractiveOrchestrator(Orchestrator):
             # Complete step
             summary = self._format_summary(step_config, collected)
             self.workflow_state.complete_step(step_name, completion['score'], summary)
+
+            # Phase 4: Check for auto-trigger conditions after step completion
+            self._check_and_invoke_subagents(step_name, collected, completion)
 
             # Auto-trigger research if configured
             if step_config.get('auto_trigger'):
@@ -602,6 +609,93 @@ class InteractiveOrchestrator(Orchestrator):
             parts.append(f"- {collected['value_proposition']}")
 
         return " ".join(parts)
+
+    def _check_and_invoke_subagents(self, step_name: str, collected: Dict[str, Any], completion: Dict[str, Any]):
+        """
+        Phase 4: Check trigger conditions and auto-invoke sub-agents.
+
+        Args:
+            step_name: Current workflow step
+            collected: Collected requirements
+            completion: Step completion data
+
+        WHY: Proactively assist without blocking flow
+        """
+        # Build context for trigger evaluation
+        trigger_context = {
+            # General context
+            'step_name': step_name,
+            'completion_score': completion.get('score', 0.8),
+            'confidence': completion.get('score', 0.8),
+
+            # Explorer triggers
+            'files_to_modify': [],  # Would be populated in real workflow
+            'estimated_loc': len(str(collected)) // 5,  # Rough estimate
+            'complexity': 'medium',
+
+            # Historian triggers
+            'at_end_of_block': False,  # Set True at natural breakpoints
+            'prd_changed': False,
+            'milestone_reached': step_name == 'step_4_competitive_landscape',  # Last step
+            'modified_loc': 0,
+
+            # Critic triggers
+            'change_type': 'workflow_step',
+            'security_impact': False,
+            'affects_auth': False,
+            'affects_payments': False,
+
+            # Research triggers
+            'library_name': None,
+            'api_name': None,
+            'unfamiliar_tech': False
+        }
+
+        # Evaluate triggers
+        triggered_agents = self.trigger_engine.get_triggered_agents(trigger_context)
+
+        if not triggered_agents:
+            return  # No triggers
+
+        # Show which agents were triggered
+        print(f"\n{'─'*60}")
+        print("🤖 Auto-Trigger: Sub-agents detected helpful opportunities")
+        print(f"{'─'*60}\n")
+
+        for agent_name in triggered_agents:
+            decision = self.trigger_engine.evaluate_all_triggers(trigger_context)[agent_name]
+
+            # Log the decision
+            print(f"✓ {agent_name}: {decision.reason}")
+
+        # Invoke triggered agents based on mode
+        for agent_name in triggered_agents:
+            # Silent agents run automatically
+            if agent_name in self.subagent_coordinator.SILENT_AGENTS:
+                print(f"\n🔄 Running {agent_name} silently...")
+                try:
+                    self.subagent_coordinator.execute_agent(agent_name, trigger_context)
+                except Exception as e:
+                    print(f"⚠️ {agent_name} execution failed: {e}")
+
+            # Interactive agents require approval
+            elif agent_name in self.subagent_coordinator.INTERACTIVE_AGENTS:
+                decision = self.trigger_engine.evaluate_all_triggers(trigger_context)[agent_name]
+                print(f"\n💡 Suggestion: Run {agent_name}")
+                print(f"   Reason: {decision.reason}")
+                print(f"   Confidence: {decision.confidence:.0%}")
+
+                choice = input(f"\nRun {agent_name}? (y/N): ").strip().lower()
+                if choice == 'y':
+                    print(f"🚀 Executing {agent_name}...")
+                    try:
+                        self.subagent_coordinator.execute_agent(agent_name, trigger_context)
+                    except Exception as e:
+                        print(f"⚠️ {agent_name} execution failed: {e}")
+                else:
+                    print(f"✓ Skipped {agent_name}")
+
+        print()  # Spacing
 
     def _offer_critic_review(self, step_name: str, research_result: Any, collected: Dict[str, Any]):
         """

@@ -1,32 +1,207 @@
-# Cursor / Claude Subagents Configuration (Starter)
-# Minimal defaults — keep lightweight and human-readable.
+# ==============================================================================
+# Sub-Agent Auto-Triggering Configuration
+# Phase 4 - Intelligent sub-agent invocation
+# ==============================================================================
+#
+# This file controls when sub-agents are automatically invoked during workflow.
+#
+# PHILOSOPHY:
+# - Conservative defaults (better to under-trigger than over-trigger)
+# - Clear, measurable conditions (not vague heuristics)
+# - User can override/disable any trigger
+# - All decisions logged with reasoning
+#
+# USAGE:
+# - Modify thresholds to tune sensitivity
+# - Set enabled: false to disable specific triggers
+# - Add custom rules as needed
+#
+# ==============================================================================
 
+# ------------------------------------------------------------------------------
+# Global Defaults
+# ------------------------------------------------------------------------------
 defaults:
+  # Maximum parallel research agents to run
   max_parallel_research: 3
-  historian_snapshot_loc_threshold: 150
-  ask_before_overwrite: true
-  doc_domains_priority:
-    - official
-    - github
-    - trusted-blogs
 
+  # Lines of code threshold for Historian snapshots
+  historian_snapshot_loc_threshold: 150
+
+  # Ask before overwriting existing files
+  ask_before_overwrite: true
+
+  # Documentation source priority
+  doc_domains_priority:
+    - official       # Official docs first
+    - github         # GitHub issues/examples second
+    - trusted-blogs  # Trusted community blogs third
+
+  # Auto-triggering master switch (set false to disable all auto-triggers)
+  auto_trigger_enabled: true
+
+# ------------------------------------------------------------------------------
+# Explorer Agent Triggers
+# ------------------------------------------------------------------------------
+# WHY: Maps relevant files/code when complexity warrants upfront investigation
+#
+# RUNS: Silently in background
+# OUTPUT: File map with symbols and relevant paths
+# ------------------------------------------------------------------------------
 triggers:
   explorer:
+    # Enable/disable Explorer auto-triggering
+    enabled: true
+
+    # Trigger if task affects N or more files
     files_threshold: 2
+
+    # Trigger if task involves ~N or more lines of code
     loc_threshold: 150
-  research_documenter:
-    require_for_external_api: true
-    require_for_major_version_bump: true
+
+    # Trigger on high/very_high complexity tasks
+    on_high_complexity: true
+
+    # Trigger when working in unfamiliar codebase areas
+    on_unfamiliar_area: false  # Conservative: off by default
+
+  # ------------------------------------------------------------------------------
+  # Historian Agent Triggers
+  # ------------------------------------------------------------------------------
+  # WHY: Creates snapshots at critical moments for crash recovery and context
+  #
+  # RUNS: Silently in background
+  # OUTPUT: PROJECT_SNAPSHOT.md with changes, risks, next steps
+  # ------------------------------------------------------------------------------
   historian:
+    # Enable/disable Historian auto-triggering
+    enabled: true
+
+    # Trigger at end of focused work block
     on_end_of_block: true
+
+    # Trigger when PRD or architecture documents change
     on_prd_change: true
 
+    # Trigger after modifying N or more LOC
+    modified_loc_threshold: 150
+
+    # Trigger when major milestone is reached
+    on_milestone_reached: true
+
+    # Auto-cleanup old snapshots (keep N most recent)
+    auto_cleanup_snapshots: true
+    keep_snapshot_count: 10
+
+  # ------------------------------------------------------------------------------
+  # Critic Agent Triggers
+  # ------------------------------------------------------------------------------
+  # WHY: Adversarial review catches risks before they become production issues
+  #
+  # RUNS: Interactively (explains plan, gets user approval)
+  # OUTPUT: Top 10 risks with fixes, proceed/revise/stop recommendation
+  # ------------------------------------------------------------------------------
+  critic:
+    # Enable/disable Critic auto-triggering
+    enabled: true
+
+    # Trigger on any security-impacting changes
+    on_security_impact: true
+
+    # Trigger when touching authentication code
+    on_auth_changes: true
+
+    # Trigger when touching payment/billing code
+    on_payment_changes: true
+
+    # Trigger on risky operations (DB schema, API contracts, etc.)
+    on_risky_changes: true
+
+    # Trigger on high/very_high complexity tasks
+    on_high_complexity: true
+
+    # Trigger when confidence is below threshold
+    low_confidence_threshold: 0.7
+
+    # Risk keywords that trigger Critic (case-insensitive)
+    risk_keywords:
+      - "sql"
+      - "execute"
+      - "eval"
+      - "exec"
+      - "password"
+      - "token"
+      - "api_key"
+      - "secret"
+
+  # ------------------------------------------------------------------------------
+  # Research Documenter Triggers
+  # ------------------------------------------------------------------------------
+  # WHY: Deep research prevents implementation delays and gotchas
+  #
+  # RUNS: Interactively (explains research plan, gets user approval)
+  # OUTPUT: Implementation brief with capabilities, pitfalls, 5-step plan
+  # ------------------------------------------------------------------------------
+  research_documenter:
+    # Enable/disable ResearchDocumenter auto-triggering
+    enabled: true
+
+    # Trigger when integrating external libraries/APIs
+    require_for_external_api: true
+
+    # Trigger on major version bumps of dependencies
+    require_for_major_version_bump: true
+
+    # Trigger when confidence is below threshold
+    confidence_threshold: 0.6
+
+    # Trigger for unfamiliar technologies
+    on_unfamiliar_tech: true
+
+    # Libraries that always require research (case-insensitive)
+    always_research:
+      - "oauth"
+      - "jwt"
+      - "stripe"
+      - "sendgrid"
+      - "twilio"
+
+# ------------------------------------------------------------------------------
+# User Preferences
+# ------------------------------------------------------------------------------
+# These affect how sub-agents present information and interact with user
+# ------------------------------------------------------------------------------
 preferences:
-  planning_style: "sequential-modular"
-  documentation_level: "brief-but-consistent"
+  # Planning style for complex tasks
+  planning_style: "sequential-modular"  # or "parallel-experimental"
+
+  # Documentation verbosity level
+  documentation_level: "brief-but-consistent"  # or "minimal" or "comprehensive"
+
+  # Communication tone
   tone: "conversational, educational, data-backed"
+
+  # Always explain reasoning behind decisions
   explain_reasoning: true
+
+  # Show progress indicators during execution
   show_progress: true
 
-# Claude should load this config automatically on startup
-# and adapt behaviour of subagents based on these preferences.
+  # Pause for approval before triggering interactive agents
+  interactive_approval_required: true
+
+  # Silent agents can run without user confirmation
+  silent_agents_auto_run: true
+
+# ==============================================================================
+# END OF CONFIGURATION
+# ==============================================================================
+#
+# REMINDER: This config is loaded by SubAgentTriggerEngine
+# Changes take effect immediately (no restart required)
+#
+# To disable all auto-triggering: Set defaults.auto_trigger_enabled: false
+# To disable specific agent: Set triggers.{agent}.enabled: false
+#
+# For questions or issues, see: docs/SUB_AGENT_SYSTEM_SUMMARY.md
+# ==============================================================================
