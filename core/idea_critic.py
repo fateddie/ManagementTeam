@@ -21,6 +21,15 @@ try:
 except ImportError:
     OPENAI_AVAILABLE = False
 
+# HuggingFace for local grammar correction
+try:
+    from transformers import pipeline
+    import torch
+    TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    TRANSFORMERS_AVAILABLE = False
+    logger.warning("Transformers not available - grammar correction will use OpenAI only")
+
 
 class IdeaCritic:
     """
@@ -38,14 +47,18 @@ class IdeaCritic:
         self,
         model: str = "gpt-4o-mini",
         temperature: float = 0.7,
-        max_tokens: int = 800
+        max_tokens: int = 800,
+        use_local_grammar: bool = True
     ):
         self.model = model
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.client = None
         self.available = False
+        self.grammar_pipeline = None
+        self.use_local_grammar = use_local_grammar
 
+        # Initialize OpenAI
         if OPENAI_AVAILABLE:
             load_env()
             api_key = get_env("OPENAI_API_KEY")
@@ -53,13 +66,73 @@ class IdeaCritic:
                 try:
                     self.client = OpenAI(api_key=api_key)
                     self.available = True
-                    logger.info("✅ Idea Critic initialized")
+                    logger.info("✅ Idea Critic initialized with OpenAI")
                 except Exception as e:
-                    logger.warning(f"Failed to initialize IdeaCritic: {e}")
+                    logger.warning(f"Failed to initialize IdeaCritic OpenAI: {e}")
+
+        # Initialize local grammar correction (HuggingFace T5)
+        if TRANSFORMERS_AVAILABLE and use_local_grammar:
+            try:
+                device = 0 if torch.cuda.is_available() else -1
+                self.grammar_pipeline = pipeline(
+                    "text2text-generation",
+                    model="vennify/t5-base-grammar-correction",
+                    device=device
+                )
+                logger.info("✅ T5 grammar correction initialized (local, $0 cost)")
+            except Exception as e:
+                logger.warning(f"Failed to initialize T5 grammar correction: {e}")
+                self.grammar_pipeline = None
 
     def is_available(self) -> bool:
         """Check if AI critic is available."""
         return self.available and self.client is not None
+
+    def _correct_grammar_local(self, text: str) -> str:
+        """
+        Local grammar correction using T5 (HuggingFace).
+
+        Zero cost alternative to OpenAI grammar correction.
+        Falls back to original text if T5 not available.
+
+        Args:
+            text: Text to correct
+
+        Returns:
+            Grammar-corrected text
+        """
+        if not self.grammar_pipeline or not text:
+            return text
+
+        try:
+            # T5 works best with shorter texts
+            if len(text) > 500:
+                # Split into sentences and correct each
+                sentences = text.split('. ')
+                corrected = []
+                for sentence in sentences:
+                    if len(sentence) > 10:  # Skip very short fragments
+                        result = self.grammar_pipeline(
+                            sentence,
+                            max_length=min(len(sentence) * 2, 512),
+                            num_beams=3  # Faster than 5
+                        )[0]['generated_text']
+                        corrected.append(result)
+                    else:
+                        corrected.append(sentence)
+                return '. '.join(corrected)
+            else:
+                # Correct short text directly
+                result = self.grammar_pipeline(
+                    text,
+                    max_length=min(len(text) * 2, 512),
+                    num_beams=3
+                )[0]['generated_text']
+                return result
+
+        except Exception as e:
+            logger.warning(f"Local grammar correction failed: {e}")
+            return text  # Fallback to original
 
     def critique_idea(
         self,
@@ -87,8 +160,23 @@ class IdeaCritic:
             return self._fallback_critique(collected_data, quality_score)
 
         try:
-            prompt = self._build_critique_prompt(collected_data, quality_score)
+            # STEP 1: Apply local grammar correction (T5) - ZERO COST!
+            corrected_summary = {}
+            if self.grammar_pipeline:
+                logger.info("🔧 Applying local T5 grammar correction...")
+                for field, value in collected_data.items():
+                    if isinstance(value, str) and value.strip():
+                        corrected_summary[field] = self._correct_grammar_local(value)
+                    else:
+                        corrected_summary[field] = value
+            else:
+                # No local correction available, OpenAI will do it
+                corrected_summary = collected_data.copy()
 
+            # STEP 2: Build prompt with corrected text
+            prompt = self._build_critique_prompt(corrected_summary, quality_score)
+
+            # STEP 3: Get critique from OpenAI (no grammar correction needed!)
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -102,7 +190,14 @@ class IdeaCritic:
             )
 
             critique = json.loads(response.choices[0].message.content)
-            logger.info(f"✅ Idea critique generated (score: {quality_score*100:.0f}%)")
+
+            # Use our local T5-corrected summary (already done!)
+            critique['corrected_summary'] = corrected_summary
+
+            if self.grammar_pipeline:
+                logger.info(f"✅ Idea critique generated (T5 grammar + GPT critique, score: {quality_score*100:.0f}%)")
+            else:
+                logger.info(f"✅ Idea critique generated (GPT only, score: {quality_score*100:.0f}%)")
 
             return critique
 
@@ -112,15 +207,16 @@ class IdeaCritic:
 
     def _get_system_prompt(self) -> str:
         """System prompt for AI critic."""
-        return """You are an experienced startup advisor providing honest, constructive feedback on business ideas.
+        grammar_note = ""
+        if self.grammar_pipeline:
+            grammar_note = "\n\nNOTE: Grammar/spelling has already been corrected. Skip the corrected_summary field and focus on critique."
 
-Your job: Analyze the idea, correct grammar/spelling, and provide balanced critique.
+        return f"""You are an experienced startup advisor providing honest, constructive feedback on business ideas.
+
+Your job: Analyze the idea and provide balanced critique.{grammar_note}
 
 Response format (JSON):
-{
-  "corrected_summary": {
-    "field_name": "corrected text (fix spelling/grammar but keep meaning)"
-  },
+{{
   "strengths": [
     "What's good about this idea (2-3 points)"
   ],
@@ -132,7 +228,7 @@ Response format (JSON):
   ],
   "quality_explanation": "Explain what the quality score means and why",
   "recommendation": "PROCEED / REFINE / RETHINK"
-}
+}}
 
 Be encouraging but honest. Focus on actionable feedback."""
 

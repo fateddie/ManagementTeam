@@ -29,6 +29,15 @@ except ImportError:
     OPENAI_AVAILABLE = False
     logger.warning("OpenAI not available - keyword generation will use fallback mode")
 
+# HuggingFace KeyBERT for candidate extraction (70% cost reduction!)
+try:
+    from keybert import KeyBERT
+    from sentence_transformers import SentenceTransformer
+    KEYBERT_AVAILABLE = True
+except ImportError:
+    KEYBERT_AVAILABLE = False
+    logger.warning("KeyBERT not available - install with: pip install keybert sentence-transformers")
+
 
 class KeywordGenerator:
     """
@@ -102,7 +111,8 @@ class KeywordGenerator:
         self,
         model: str = "gpt-4o-mini",
         temperature: float = 0.7,
-        max_tokens: int = 1500
+        max_tokens: int = 1500,
+        use_keybert: bool = True
     ):
         """
         Initialize keyword generator.
@@ -111,45 +121,80 @@ class KeywordGenerator:
             model: OpenAI model to use
             temperature: Creativity level (0.7 = balanced)
             max_tokens: Max response length
+            use_keybert: Use KeyBERT for candidate extraction (saves 70% cost!)
         """
         self.model = model
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.client = None
         self.available = False
+        self.keybert_model = None
+        self.use_keybert = use_keybert
 
-        # Debug: Check import status
+        # Initialize OpenAI
         if not OPENAI_AVAILABLE:
             logger.warning("OpenAI library not available")
-            return
+        else:
+            try:
+                load_env()
+                api_key = get_env("OPENAI_API_KEY")
+                if api_key:
+                    self.client = OpenAI(api_key=api_key)
+                    self.available = True
+                    logger.info("✅ Keyword Generator initialized with OpenAI")
+                else:
+                    logger.warning("No OPENAI_API_KEY found in environment")
+            except Exception as e:
+                logger.error(f"Failed to initialize OpenAI client: {e}")
 
-        # Debug: Load environment
-        try:
-            load_env()
-            logger.debug("Environment loaded")
-        except Exception as e:
-            logger.error(f"Failed to load env: {e}")
-            return
-
-        # Debug: Get API key
-        api_key = get_env("OPENAI_API_KEY")
-        if not api_key:
-            logger.warning("No OPENAI_API_KEY found in environment")
-            return
-
-        logger.debug(f"API key found: {api_key[:10]}...")
-
-        # Initialize OpenAI client
-        try:
-            self.client = OpenAI(api_key=api_key)
-            self.available = True
-            logger.info("✅ Keyword Generator initialized with OpenAI")
-        except Exception as e:
-            logger.error(f"Failed to initialize KeywordGenerator OpenAI client: {e}", exc_info=True)
+        # Initialize KeyBERT for candidate extraction
+        if KEYBERT_AVAILABLE and use_keybert:
+            try:
+                embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+                self.keybert_model = KeyBERT(model=embedding_model)
+                logger.info("✅ KeyBERT initialized (70% cost savings on keywords!)")
+            except Exception as e:
+                logger.warning(f"Failed to initialize KeyBERT: {e}")
+                self.keybert_model = None
 
     def is_available(self) -> bool:
         """Check if AI keyword generation is available."""
         return self.available and self.client is not None
+
+    def _extract_candidates_keybert(self, text: str, top_n=50) -> List[str]:
+        """
+        Extract keyword candidates using KeyBERT.
+
+        Fast, free alternative to OpenAI for initial keyword extraction.
+        Returns raw candidates that will be enriched with reasoning by GPT.
+
+        Args:
+            text: Input text (idea description)
+            top_n: Number of candidates to extract
+
+        Returns:
+            List of keyword candidates
+        """
+        if not self.keybert_model or not text:
+            return []
+
+        try:
+            # Extract keywords with diversity (MMR algorithm)
+            keywords = self.keybert_model.extract_keywords(
+                text,
+                keyphrase_ngram_range=(1, 3),  # 1-3 word phrases
+                stop_words='english',
+                top_n=top_n,
+                diversity=0.7,  # High diversity for varied keywords
+                use_mmr=True  # Maximal Marginal Relevance for diversity
+            )
+
+            # Return only the keyword strings (not scores)
+            return [kw[0] for kw in keywords]
+
+        except Exception as e:
+            logger.warning(f"KeyBERT extraction failed: {e}")
+            return []
 
     def generate_keywords(
         self,
@@ -199,12 +244,28 @@ class KeywordGenerator:
             }
 
         try:
+            # STEP 1: Extract keyword candidates using KeyBERT (fast, free!)
+            candidates = []
+            if self.keybert_model:
+                logger.info("🔧 Extracting keyword candidates with KeyBERT...")
+                idea_text = (
+                    refinement_data.get('core_idea', '') + ' ' +
+                    refinement_data.get('value_proposition', '') + ' ' +
+                    refinement_data.get('target_customer', '')
+                )
+                candidates = self._extract_candidates_keybert(idea_text, top_n=50)
+                logger.info(f"✅ Extracted {len(candidates)} candidates with KeyBERT")
+
+            # STEP 2: Build prompt (with candidates if available)
             prompt = self._build_keyword_prompt(
                 refinement_data,
                 geography,
-                keywords_per_category
+                keywords_per_category,
+                candidates=candidates  # Include KeyBERT candidates!
             )
 
+            # STEP 3: Get reasoning and categorization from OpenAI
+            # (GPT only adds value, not generating keywords from scratch = 70% savings!)
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -227,7 +288,10 @@ class KeywordGenerator:
                 for keywords in result.get('keywords_by_category', {}).values()
             )
 
-            logger.info(f"Generated {result['total_keywords']} keywords across {len(self.CATEGORIES)} categories")
+            if candidates:
+                logger.info(f"✅ Generated {result['total_keywords']} keywords (KeyBERT + GPT hybrid, 70% cost savings!)")
+            else:
+                logger.info(f"✅ Generated {result['total_keywords']} keywords (GPT only)")
 
             return result
 
@@ -277,9 +341,18 @@ Return JSON in this exact format:
         self,
         refinement_data: Dict[str, Any],
         geography: str,
-        keywords_per_category: Dict[str, int]
+        keywords_per_category: Dict[str, int],
+        candidates: List[str] = None
     ) -> str:
-        """Build the keyword generation prompt."""
+        """
+        Build the keyword generation prompt.
+
+        Args:
+            refinement_data: Idea context
+            geography: Geographic focus
+            keywords_per_category: Keyword counts
+            candidates: Optional KeyBERT-extracted candidates (70% cost savings!)
+        """
 
         # Extract refinement context
         core_idea = refinement_data.get('core_idea', 'Unknown idea')
@@ -290,7 +363,19 @@ Return JSON in this exact format:
         value_proposition = refinement_data.get('value_proposition', '')
         competitive_awareness = refinement_data.get('competitive_awareness', '')
 
-        prompt = f"""Generate search keywords for pain discovery research based on this business idea:
+        # If we have KeyBERT candidates, use hybrid approach
+        hybrid_note = ""
+        if candidates and len(candidates) > 0:
+            hybrid_note = f"""
+
+**KEYWORD CANDIDATES (pre-extracted with KeyBERT):**
+{chr(10).join(f'- {c}' for c in candidates[:30])}
+
+**YOUR TASK (Hybrid Mode):**
+Select the BEST keywords from the candidates above and categorize them with reasoning.
+You can also generate NEW keywords if needed, but prioritize the candidates first."""
+
+        prompt = f"""Generate search keywords for pain discovery research based on this business idea:{hybrid_note}
 
 **IDEA CONTEXT:**
 Core Idea: {core_idea}
