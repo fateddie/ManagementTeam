@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "project_id": "project_20251025_155513",
+  "project_name": "AI Receptionist Test",
+  "session_id": "20251025_155513",
+  "checkpoint_id": "ckpt_e3a769af5c85",
+  "checkpoint_type": "step_complete",
+  "created_at": "2025-10-25T16:55:33.714422",
+  "workflow_state": {
+    "current_step": "step_2_pain_discovery",
+    "completed_steps": [
+      "step_1_refinement",
+      "step_2_pain_discovery"
+    ],
+    "collected_data": {
+      "core_idea": "",
+      "target_customer": "Small businesses with high call volume",
+      "value_proposition": "",
+      "timeline": "I want to test the project naming feature",
+      "research_confirmation": "It's AI-powered and GDPR compliant"
+    },
+    "step_scores": {
+      "step_1_refinement": {
+        "score": 0.4375,
+        "completed_at": "2025-10-25T16:55:24.133014",
+        "summary": "core_idea: ; target_customer: Small businesses with high call volume; value_proposition: ; timeline: I want to test the project naming feature"
+      },
+      "step_2_pain_discovery": {
+        "score": 0.5,
+        "completed_at": "2025-10-25T16:55:33.710789",
+        "summary": "research_confirmation: It's AI-powered and GDPR compliant"
+      }
+    },
+    "started_at": "2025-10-25T16:55:16.315981",
+    "updated_at": "2025-10-25T16:55:33.710796",
+    "progress_percentage": 50
+  },
+  "metadata": {
+    "step": "step_2_pain_discovery",
+    "score": 0.5
+  }
+}

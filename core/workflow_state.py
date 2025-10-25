@@ -35,7 +35,8 @@ class WorkflowState:
         project_id: str,
         session_id: str,
         auto_save: bool = True,
-        enable_checkpoints: bool = True
+        enable_checkpoints: bool = True,
+        project_name: str = None
     ):
         """
         Initialize workflow state.
@@ -45,6 +46,7 @@ class WorkflowState:
             session_id: Current session ID
             auto_save: Enable auto-save after each field (default: True)
             enable_checkpoints: Enable checkpoint creation (default: True)
+            project_name: Optional human-readable project name
 
         PHASE 3: Added checkpoint support for crash recovery
         """
@@ -52,6 +54,7 @@ class WorkflowState:
         self.session_id = session_id
         self.auto_save = auto_save
         self.enable_checkpoints = enable_checkpoints
+        self.project_name = project_name
         self.context = ProjectContext()
 
         # State data
@@ -311,6 +314,24 @@ class WorkflowState:
                 checkpoint_type=checkpoint_type,
                 metadata=metadata
             )
+
+            # Enhanced checkpoint display
+            if checkpoint_id:
+                # Calculate progress
+                from core.workflow_gates import get_step_order
+                total_steps = len(get_step_order())
+                completed_count = len(self.completed_steps)
+                progress_pct = int((completed_count / total_steps * 100)) if total_steps > 0 else 0
+
+                # Format checkpoint message
+                project_display = f'"{self.project_name}"' if self.project_name else self.project_id
+                step_display = metadata.get('step', self.current_step) if metadata else self.current_step
+
+                print(f"💾 Checkpoint saved: {project_display}")
+                print(f"   Progress: {progress_pct}% ({completed_count}/{total_steps} steps)")
+                if step_display:
+                    print(f"   Current step: {step_display}")
+
             return checkpoint_id
         except Exception as e:
             print(f"⚠️ Checkpoint creation failed: {e}")

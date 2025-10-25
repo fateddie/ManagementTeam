@@ -1,6 +1,7 @@
 {
   "version": 1,
   "project_id": "test_crash_project",
+  "project_name": "AI Receptionist",
   "session_id": "session_before_crash",
   "checkpoint_id": "ckpt_75278b0e8a42",
   "checkpoint_type": "step_complete",

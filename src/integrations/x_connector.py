@@ -37,6 +37,13 @@ try:
 except ImportError:
     TEXTBLOB_AVAILABLE = False
 
+try:
+    from src.utils.config_loader import load_env, get_env
+    CONFIG_LOADER_AVAILABLE = True
+except ImportError:
+    CONFIG_LOADER_AVAILABLE = False
+    print("⚠️  Warning: config_loader not available. Using os.getenv fallback")
+
 
 class XConnector:
     """Connect to X (Twitter) API for social signal analysis"""
@@ -59,13 +66,25 @@ class XConnector:
 
     def _load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration from file or environment"""
-        config = {
-            "bearer_token": os.getenv("X_BEARER_TOKEN"),
-            "api_key": os.getenv("X_API_KEY"),
-            "api_secret": os.getenv("X_API_SECRET"),
-            "access_token": os.getenv("X_ACCESS_TOKEN"),
-            "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET")
-        }
+        # Load environment variables from config/.env
+        if CONFIG_LOADER_AVAILABLE:
+            load_env()
+            config = {
+                "bearer_token": get_env("X_BEARER_TOKEN"),
+                "api_key": get_env("X_API_KEY"),
+                "api_secret": get_env("X_API_SECRET"),
+                "access_token": get_env("X_ACCESS_TOKEN"),
+                "access_token_secret": get_env("X_ACCESS_TOKEN_SECRET")
+            }
+        else:
+            # Fallback to os.getenv
+            config = {
+                "bearer_token": os.getenv("X_BEARER_TOKEN"),
+                "api_key": os.getenv("X_API_KEY"),
+                "api_secret": os.getenv("X_API_SECRET"),
+                "access_token": os.getenv("X_ACCESS_TOKEN"),
+                "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET")
+            }
 
         if config_path and Path(config_path).exists():
             with open(config_path, 'r') as f:

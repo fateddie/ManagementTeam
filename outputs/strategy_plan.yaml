@@ -1,7 +1,7 @@
 project_summary: "The Trading Strategy Reference System defines the methodology, technical\
   \ analysis framework, and risk-management logic for Rob Freyne\u2019s discretionary\
   \ swing-trading system. It serves as a foundational document for Claude and management-layer\
-  \ AI agents to ensure consistency and adherence to the trader's philosophy."
+  \ AI agents to ensure consistent trading practices."
 goals:
 - Encode trading philosophy, structure, and decision-making logic into standardized
   layers.
@@ -9,7 +9,7 @@ goals:
   or Pine/Python modules.
 - Guarantee consistency across strategy documentation, execution scripts, and dashboards.
 - Facilitate future integration of journaling, macro dashboards, and real-time automation.
-- Establish a clear risk management framework to protect capital and monitor exposure.
+- Ensure robust risk management through monitoring drawdown and exposure.
 constraints:
   technical:
   - Dependence on Interactive Brokers API for trading execution.
@@ -17,7 +17,7 @@ constraints:
   business:
   - Alignment with Rob Freyne's trading philosophy and strategies.
   timeline:
-  - Completion of the project by the end of Q4 2025.
+  - Completion of the initial system by the end of Q4 2025.
 milestones:
 - id: M1
   name: Interactive Brokers Integration
@@ -47,15 +47,15 @@ risks:
   mitigation: Add time-window validation and feed prioritization rules.
 priorities:
   Must-have:
-  - Encode trading philosophy and decision-making logic.
-  - Develop risk management framework.
+  - Complete initial methodology documentation.
+  - Develop technical analysis framework.
+  - Implement risk management logic.
   Should-have:
-  - Enable Claude to generate trading plans and checklists.
-  - Integrate external data feeds.
+  - Integrate with external data feeds.
   Could-have:
-  - Future integration of journaling and macro dashboards.
+  - Facilitate future integration of journaling and macro dashboards.
   Won't-have:
-  - Real-time automation features in the initial release.
+  - Real-time automation in the initial version.
 phases:
 - id: P1
   name: Core Trading System

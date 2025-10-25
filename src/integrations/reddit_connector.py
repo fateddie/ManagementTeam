@@ -37,6 +37,13 @@ except ImportError:
     TEXTBLOB_AVAILABLE = False
     print("⚠️  Warning: textblob not installed. Install with: pip install textblob")
 
+try:
+    from src.utils.config_loader import load_env, get_env
+    CONFIG_LOADER_AVAILABLE = True
+except ImportError:
+    CONFIG_LOADER_AVAILABLE = False
+    print("⚠️  Warning: config_loader not available. Using os.getenv fallback")
+
 
 class RedditConnector:
     """Connect to Reddit API for market research and pain validation"""
@@ -59,11 +66,21 @@ class RedditConnector:
 
     def _load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration from file or environment"""
-        config = {
-            "client_id": os.getenv("REDDIT_CLIENT_ID"),
-            "client_secret": os.getenv("REDDIT_CLIENT_SECRET"),
-            "user_agent": os.getenv("REDDIT_USER_AGENT", "VES Market Research Bot v1.0")
-        }
+        # Load environment variables from config/.env
+        if CONFIG_LOADER_AVAILABLE:
+            load_env()
+            config = {
+                "client_id": get_env("REDDIT_CLIENT_ID"),
+                "client_secret": get_env("REDDIT_CLIENT_SECRET"),
+                "user_agent": get_env("REDDIT_USER_AGENT", "VES Market Research Bot v1.0")
+            }
+        else:
+            # Fallback to os.getenv
+            config = {
+                "client_id": os.getenv("REDDIT_CLIENT_ID"),
+                "client_secret": os.getenv("REDDIT_CLIENT_SECRET"),
+                "user_agent": os.getenv("REDDIT_USER_AGENT", "VES Market Research Bot v1.0")
+            }
 
         if config_path and Path(config_path).exists():
             with open(config_path, 'r') as f:

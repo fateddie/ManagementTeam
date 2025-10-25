@@ -173,47 +173,34 @@ Does this capture your idea? Would you like to refine anything, or shall we move
         "education": """
 🔍 **Why This Matters**
 Before building anything, we need to confirm people actually have this problem and care enough to pay for a solution.
-This research will show us real conversations, pain points, and whether there's genuine demand.
+
+**What You'll Get:**
+• AI-generated research keywords (with reasoning)
+• Real pain point quotes from Reddit, Twitter/X, Google Trends
+• Willingness-to-pay signals (pricing discussions)
+• Urgency indicators (how badly people need this)
+• Validation confidence score (0-100%)
         """,
         "priority": "CRITICAL",
-        "auto_trigger": True,  # Automatically runs research agents
-        "requirements": {
-            "research_sources": {
-                "prompt": "Where should I look for people talking about this problem?",
-                "conversation_starters": [
-                    "I can search Reddit communities, X/Twitter, YouTube, or Google Trends. Which would be most relevant?",
-                    "Where does your target customer hang out online?",
-                    "What communities or forums discuss this topic?"
-                ],
-                "options": [
-                    "Reddit (specific subreddits)",
-                    "X/Twitter conversations",
-                    "YouTube videos/comments",
-                    "All of the above"
-                ],
-                "follow_ups": {
-                    "specific_subreddits": {
-                        "prompt": "Which subreddits should I check?",
-                        "triggers": ["selected_reddit"],
-                        "gentle_suggestions": ["Not sure? I can suggest based on your target customer."]
-                    },
-                    "keywords": {
-                        "prompt": "What keywords or phrases would people use when talking about this problem?",
-                        "triggers": ["always"],
-                    }
-                }
-            }
-        },
+        "auto_trigger": True,  # Automatically runs enhanced research
+        "requirements": {},  # No fields to collect - just approve to proceed
         "completion_threshold": 0.3,  # Very soft - mainly automatic
         "summary_template": """
-🔍 **Pain Discovery Research**
+🔍 **PAIN DISCOVERY - READY TO RESEARCH**
 
-**Sources:** {research_sources}
-**Keywords:** {keywords}
+Based on your idea, I'll automatically:
 
-I'll now search these sources for real pain points and conversations. This usually takes 2-3 minutes.
+1. Generate AI-powered keywords (problem-focused, solution-focused, etc.)
+2. Search Reddit, Twitter/X, and Google Trends for real conversations
+3. Extract pain points, complaints, and feature requests
+4. Analyze willingness-to-pay signals (pricing discussions)
+5. Measure urgency indicators (how badly people need this)
+6. Provide validation confidence score (0-100%)
 
-Ready to start the research?
+⏱️  This will take 2-3 minutes to complete.
+
+🎯 **What happens next:**
+   Choose option 1 below to start the research, or option 3 to skip.
         """
     },
 
@@ -229,7 +216,10 @@ It also reveals trends - is this market growing, stable, or shrinking?
         "auto_trigger": True,
         "requirements": {
             "geography": {
-                "prompt": "Where are you targeting? Local, national, or global?",
+                "prompt": "Which geographic market are you targeting?",
+                "conversation_starters": [
+                    "This helps me find relevant market data and sizing estimates for your target region."
+                ],
                 "options": [
                     "United States",
                     "North America",
@@ -241,14 +231,22 @@ It also reveals trends - is this market growing, stable, or shrinking?
         },
         "completion_threshold": 0.3,
         "summary_template": """
-📊 **Market Sizing Research**
+📊 **MARKET SIZING - READY TO RESEARCH**
 
-**Geography:** {geography}
-**Target Customer:** {target_customer}
+**Your Target Market:**
+• Geography: {geography}
+• Customer: {target_customer}
 
-I'll research market size, trends, and growth data.
+I'll research:
+1. Total addressable market (TAM) size
+2. Market growth trends and projections
+3. Industry maturity and saturation levels
+4. Emerging opportunities
 
-Ready to proceed?
+⏱️  This will take 2-3 minutes to complete.
+
+🎯 **What happens next:**
+   Choose option 1 below to start the research, or option 3 to skip.
         """
     },
 
@@ -259,29 +257,44 @@ Ready to proceed?
 ⚔️ **Why This Matters**
 Understanding competitors helps you position better, find gaps, and learn from what's working.
 Competition is usually a good sign - it means there's a real market.
+
+**What You'll Get:**
+• AI-identified competitors (direct + indirect)
+• Feature extraction (what they offer)
+• Pricing analysis (tiers and models)
+• Customer complaints (what users hate)
+• Market gaps (positioning opportunities)
+• Competitive recommendations
         """,
         "priority": "HIGH",
-        "auto_trigger": True,
+        "auto_trigger": True,  # Automatically runs enhanced analysis
         "requirements": {
             "known_competitors": {
-                "prompt": "Do you know of any competitors or alternatives?",
+                "prompt": "Do you know of any competitors? (Optional - I'll find them if you don't)",
                 "conversation_starters": [
-                    "What tools or solutions do people use today?",
-                    "Have you seen anyone else trying to solve this?",
-                    "It's okay if you don't know - I can find them."
+                    "If you already know some competitors, list them here.",
+                    "Otherwise, just press Enter and I'll discover them automatically."
                 ],
                 "optional": True
             }
         },
         "completion_threshold": 0.2,
         "summary_template": """
-⚔️ **Competitive Analysis**
+⚔️ **COMPETITIVE ANALYSIS - READY TO RESEARCH**
 
-**Known Competitors:** {known_competitors}
+I'll automatically research and analyze:
 
-I'll search for direct competitors, alternatives, and adjacent solutions.
+1. Direct competitors (same solution, same market)
+2. Indirect competitors (different solution, same problem)
+3. Feature analysis (what they offer vs what's missing)
+4. Pricing models and tiers
+5. Customer complaints and pain points
+6. Market positioning gaps and opportunities
 
-Ready to proceed?
+⏱️  This will take 2-3 minutes to complete.
+
+🎯 **What happens next:**
+   Choose option 1 below to start the research, or option 3 to skip.
         """
     }
 }

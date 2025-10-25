@@ -126,6 +126,7 @@ class CheckpointManager:
         checkpoint_data = {
             "version": self.CHECKPOINT_VERSION,
             "project_id": self.project_id,
+            "project_name": getattr(workflow_state, 'project_name', None),  # Human-readable name
             "session_id": workflow_state.session_id,
             "checkpoint_id": checkpoint_id,
             "checkpoint_type": checkpoint_type,
@@ -136,7 +137,8 @@ class CheckpointManager:
                 "collected_data": workflow_state.collected_data,
                 "step_scores": workflow_state.step_scores,
                 "started_at": workflow_state.started_at,
-                "updated_at": workflow_state.updated_at
+                "updated_at": workflow_state.updated_at,
+                "progress_percentage": self._calculate_progress(workflow_state)
             },
             "metadata": metadata or {}
         }
@@ -298,11 +300,12 @@ class CheckpointManager:
             return None
 
         try:
-            # Create new WorkflowState instance
+            # Create new WorkflowState instance with project_name
             workflow_state = WorkflowState(
                 project_id=checkpoint_data['project_id'],
                 session_id=checkpoint_data['session_id'],
-                auto_save=True
+                auto_save=True,
+                project_name=checkpoint_data.get('project_name')
             )
 
             # Restore state from checkpoint
@@ -316,7 +319,7 @@ class CheckpointManager:
 
             logger.info(
                 f"Resumed workflow from checkpoint {checkpoint_data['checkpoint_id']} "
-                f"(step: {workflow_state.current_step})"
+                f"(step: {workflow_state.current_step}, completed: {len(workflow_state.completed_steps)})"
             )
 
             return workflow_state
@@ -424,6 +427,21 @@ class CheckpointManager:
 
     # Private helper methods
 
+    def _calculate_progress(self, workflow_state: WorkflowState) -> int:
+        """
+        Calculate workflow progress percentage.
+
+        Args:
+            workflow_state: Current workflow state
+
+        Returns:
+            Progress percentage (0-100)
+        """
+        # Assuming 4 main steps in workflow
+        total_steps = 4
+        completed = len(workflow_state.completed_steps)
+        return int((completed / total_steps) * 100)
+
     def _generate_checkpoint_id(self) -> str:
         """Generate unique checkpoint ID."""
         timestamp = datetime.now().isoformat()
@@ -446,6 +464,57 @@ class CheckpointManager:
     def __repr__(self):
         checkpoint_count = len(list(self.project_checkpoint_dir.glob("checkpoint_v*.json")))
         return f"<CheckpointManager project={self.project_id} checkpoints={checkpoint_count}>"
+
+    @staticmethod
+    def list_all_projects(checkpoint_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
+        """
+        List all projects with their latest checkpoint info.
+
+        Args:
+            checkpoint_dir: Custom checkpoint directory (default: .checkpoints/)
+
+        Returns:
+            List of project summaries with metadata
+        """
+        checkpoint_dir = checkpoint_dir or CheckpointManager.CHECKPOINT_DIR
+        projects = []
+
+        if not checkpoint_dir.exists():
+            return projects
+
+        # Scan each project directory
+        for project_dir in checkpoint_dir.iterdir():
+            if not project_dir.is_dir():
+                continue
+
+            # Load latest checkpoint
+            latest_file = project_dir / "latest.json"
+            if not latest_file.exists():
+                continue
+
+            try:
+                with open(latest_file, 'r', encoding='utf-8') as f:
+                    checkpoint_data = json.load(f)
+
+                workflow_state = checkpoint_data.get('workflow_state', {})
+
+                projects.append({
+                    'project_id': checkpoint_data.get('project_id'),
+                    'project_name': checkpoint_data.get('project_name') or '[Unnamed Project]',
+                    'last_modified': checkpoint_data.get('created_at'),
+                    'current_step': workflow_state.get('current_step'),
+                    'completed_steps': workflow_state.get('completed_steps', []),
+                    'progress_percentage': workflow_state.get('progress_percentage', 0),
+                    'checkpoint_path': str(latest_file)
+                })
+            except Exception as e:
+                logger.warning(f"Failed to read checkpoint for {project_dir.name}: {e}")
+                continue
+
+        # Sort by last modified (most recent first)
+        projects.sort(key=lambda p: p['last_modified'], reverse=True)
+
+        return projects
 
 
 # Convenience function for quick checkpoint operations

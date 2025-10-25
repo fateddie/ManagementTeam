@@ -13,8 +13,9 @@ PHASE 3 ENHANCEMENTS: Crash Recovery Support
 Usage:
     python cli/interactive_workflow.py                           # New idea (guided mode)
     python cli/interactive_workflow.py --expert                  # New idea (expert mode)
+    python cli/interactive_workflow.py --list                    # List all saved projects
     python cli/interactive_workflow.py --resume PROJECT          # Resume existing project
-    python cli/interactive_workflow.py --list-checkpoints        # List all checkpoints
+    python cli/interactive_workflow.py --list-checkpoints        # List all checkpoints for a project
     python cli/interactive_workflow.py --resume-checkpoint ID    # Resume from specific checkpoint
 """
 
@@ -48,6 +49,12 @@ def main():
         '--expert',
         action='store_true',
         help='Shortcut for --mode=expert'
+    )
+
+    parser.add_argument(
+        '--list',
+        action='store_true',
+        help='List all saved projects'
     )
 
     parser.add_argument(
@@ -86,6 +93,10 @@ def main():
 
     args = parser.parse_args()
 
+    # Handle list command
+    if args.list:
+        return list_all_projects()
+
     # PHASE 3: Handle list-checkpoints command
     if args.list_checkpoints:
         return list_checkpoints(args.list_checkpoints)
@@ -104,18 +115,23 @@ def main():
         project_id = args.resume
         print(f"\n📂 Resuming project: {project_id}")
 
-        # Verify project exists
-        context = ProjectContext()
-        try:
-            project_data = context.get_project_summary(project_id)
-            if not project_data:
-                print(f"❌ Project '{project_id}' not found")
-                print("\nAvailable projects:")
-                # TODO: List available projects
-                return 1
-        except Exception as e:
-            print(f"❌ Error loading project: {e}")
+        # Verify checkpoint exists (primary check)
+        checkpoint_dir = Path(".checkpoints") / project_id
+        if not checkpoint_dir.exists() or not (checkpoint_dir / "latest.json").exists():
+            print(f"❌ Project '{project_id}' not found")
+            print("\nAvailable projects:")
+            list_all_projects()
             return 1
+
+        # Load checkpoint to get project name
+        try:
+            manager = CheckpointManager(project_id)
+            checkpoint_data = manager.load_latest_checkpoint()
+            if checkpoint_data:
+                project_name = checkpoint_data.get('project_name', '[Unnamed Project]')
+                print(f"✅ Found: {project_name}")
+        except Exception as e:
+            print(f"⚠️  Warning: Could not load checkpoint metadata: {e}")
     else:
         project_id = None
         print("\n🆕 Starting new idea workflow")
@@ -134,6 +150,19 @@ def main():
             mode=mode,
             auto_save=auto_save
         )
+
+        # If resuming, restore workflow state from checkpoint
+        if args.resume:
+            restored_state = WorkflowState.from_checkpoint(project_id)
+            if restored_state:
+                orchestrator.workflow_state = restored_state
+                print(f"✅ Restored progress: {len(restored_state.completed_steps)}/4 steps completed")
+                if restored_state.completed_steps:
+                    print(f"   Completed: {', '.join(restored_state.completed_steps)}")
+                print(f"   Current step: {restored_state.current_step}")
+                print(f"   Collected {len(restored_state.collected_data)} fields of data\n")
+            else:
+                print("⚠️  Could not restore checkpoint, starting fresh\n")
 
         orchestrator.run_workflow()
 
@@ -160,6 +189,52 @@ def main():
 # ==================================================
 # PHASE 3: Checkpoint Helper Functions
 # ==================================================
+
+def list_all_projects() -> int:
+    """
+    List all saved projects with their metadata.
+
+    Returns:
+        Exit code
+    """
+    projects = CheckpointManager.list_all_projects()
+
+    if not projects:
+        print("\n📋 No saved projects found")
+        print("\nStart a new project:")
+        print("  python cli/interactive_workflow.py")
+        print()
+        return 0
+
+    print("\n" + "="*70)
+    print("📋 ALL SAVED PROJECTS")
+    print("="*70)
+    print()
+
+    for i, project in enumerate(projects, 1):
+        project_name = project['project_name']
+        project_id = project['project_id']
+        progress = project['progress_percentage']
+        current_step = project['current_step']
+        completed = len(project['completed_steps'])
+        last_modified = project['last_modified']
+
+        print(f"{i}. {project_name}")
+        print(f"   ID: {project_id}")
+        print(f"   Progress: {progress}% ({completed}/4 steps completed)")
+        print(f"   Current step: {current_step}")
+        print(f"   Last modified: {last_modified}")
+        print()
+
+    print(f"Total: {len(projects)} project(s)")
+    print("="*70)
+    print()
+    print("To resume a project:")
+    print("  python cli/interactive_workflow.py --resume PROJECT_ID")
+    print()
+
+    return 0
+
 
 def detect_and_offer_recovery() -> bool:
     """
