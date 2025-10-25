@@ -1,0 +1,216 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "created": "2025-10-25",
+    "description": "Transparency and auditability configuration for the Management Team validation system",
+    "principles_ref": "PRINCIPLES.md"
+  },
+
+  "transparency_settings": {
+    "always_show_source_ids": true,
+    "always_show_confidence": true,
+    "always_show_audit_trail": true,
+    "always_show_uncertainty": true,
+    "enable_exports": true,
+    "export_formats": ["csv", "json", "markdown", "excel"],
+    "enable_annotations": true,
+    "enable_decision_tracking": true,
+    "preserve_raw_data": true,
+    "show_example_quotes": true,
+    "max_example_quotes": 3
+  },
+
+  "scoring_config": {
+    "weights": {
+      "signal_volume": 20,
+      "icp_clarity": 20,
+      "urgency_profile": 20,
+      "competition_signal": 20,
+      "feature_demand": 20
+    },
+    "thresholds": {
+      "minimum_posts": 30,
+      "excellent_posts": 100,
+      "critical_urgency_pct": 60,
+      "high_urgency_pct": 40,
+      "icp_confidence_pct": 60,
+      "feature_significance_pct": 15
+    },
+    "confidence_thresholds": {
+      "high_confidence_posts": 10,
+      "medium_confidence_posts": 5,
+      "low_confidence_posts": 2
+    },
+    "user_can_override": true,
+    "show_weight_impact": true,
+    "enable_real_time_recalculation": true
+  },
+
+  "validation_scoring": {
+    "signal_volume": {
+      "name": "Signal Volume",
+      "description": "Quantity and quality of data collected",
+      "max_points": 20,
+      "calculation": "Based on number of posts vs thresholds",
+      "breakpoints": {
+        "excellent": {"posts": 100, "points": 20},
+        "good": {"posts": 50, "points": 15},
+        "marginal": {"posts": 30, "points": 10},
+        "insufficient": {"posts": 0, "points": 0}
+      }
+    },
+    "icp_clarity": {
+      "name": "ICP Clarity",
+      "description": "Percentage of posts with identified industry/size/location",
+      "max_points": 20,
+      "calculation": "Percentage of posts with ICP attributes detected",
+      "breakpoints": {
+        "excellent": {"pct": 80, "points": 20},
+        "good": {"pct": 60, "points": 15},
+        "marginal": {"pct": 40, "points": 10},
+        "insufficient": {"pct": 0, "points": 0}
+      }
+    },
+    "urgency_profile": {
+      "name": "Urgency Profile",
+      "description": "Percentage of critical/high urgency posts",
+      "max_points": 20,
+      "calculation": "Percentage of posts marked critical or high urgency",
+      "breakpoints": {
+        "excellent": {"pct": 70, "points": 20},
+        "good": {"pct": 50, "points": 15},
+        "marginal": {"pct": 30, "points": 10},
+        "insufficient": {"pct": 0, "points": 0}
+      }
+    },
+    "competition_signal": {
+      "name": "Competition Signal",
+      "description": "Competitor mentions and pricing awareness",
+      "max_points": 20,
+      "calculation": "Based on competitor mentions + budget concerns",
+      "breakpoints": {
+        "excellent": {"competitors": 5, "budget_pct": 40, "points": 20},
+        "good": {"competitors": 3, "budget_pct": 30, "points": 15},
+        "marginal": {"competitors": 1, "budget_pct": 20, "points": 10},
+        "insufficient": {"competitors": 0, "budget_pct": 0, "points": 0}
+      }
+    },
+    "feature_demand": {
+      "name": "Feature Demand",
+      "description": "Number and clarity of feature requests",
+      "max_points": 20,
+      "calculation": "Distinct features mentioned in significant % of posts",
+      "breakpoints": {
+        "excellent": {"features": 5, "mention_pct": 50, "points": 20},
+        "good": {"features": 3, "mention_pct": 30, "points": 15},
+        "marginal": {"features": 2, "mention_pct": 15, "points": 10},
+        "insufficient": {"features": 0, "mention_pct": 0, "points": 0}
+      }
+    },
+    "interpretation": {
+      "80-100": {
+        "verdict": "STRONG GO",
+        "confidence": "High",
+        "action": "Proceed with confidence - strong demand signals",
+        "caution": "Validate pricing and positioning"
+      },
+      "60-79": {
+        "verdict": "PROCEED",
+        "confidence": "Medium",
+        "action": "Proceed with validation - promising signals",
+        "caution": "Refine ICP and collect more data in weak areas"
+      },
+      "40-59": {
+        "verdict": "PIVOT",
+        "confidence": "Low",
+        "action": "Refine positioning or pivot - mixed signals",
+        "caution": "Identify and address weak factors before committing"
+      },
+      "0-39": {
+        "verdict": "STOP",
+        "confidence": "Insufficient",
+        "action": "Do not proceed - insufficient demand signals",
+        "caution": "Collect significantly more data or explore different idea"
+      }
+    }
+  },
+
+  "icp_detection": {
+    "confidence_scoring": {
+      "high": "10+ posts with clear industry/size/location",
+      "medium": "5-9 posts with partial attributes",
+      "low": "2-4 posts with sparse attributes",
+      "insufficient": "<2 posts"
+    },
+    "require_multiple_attributes": false,
+    "prefer_explicit_mentions": true
+  },
+
+  "export_settings": {
+    "default_format": "json",
+    "include_metadata": true,
+    "include_audit_trail": true,
+    "include_config_snapshot": true,
+    "timestamp_exports": true,
+    "csv_delimiter": ",",
+    "csv_quoting": "minimal",
+    "json_indent": 2,
+    "markdown_include_toc": true
+  },
+
+  "annotation_settings": {
+    "enabled": true,
+    "storage_path": "data/annotations",
+    "allow_post_tagging": true,
+    "allow_insight_rating": true,
+    "rating_scale": {
+      "min": 1,
+      "max": 5,
+      "labels": {
+        "1": "Not useful",
+        "2": "Somewhat useful",
+        "3": "Useful",
+        "4": "Very useful",
+        "5": "Critical insight"
+      }
+    },
+    "allow_notes": true,
+    "preserve_history": true
+  },
+
+  "decision_tracking": {
+    "enabled": true,
+    "storage_path": "data/decisions",
+    "require_rationale": false,
+    "timestamp_decisions": true,
+    "preserve_alternatives": true,
+    "track_decision_changes": true
+  },
+
+  "audit_settings": {
+    "always_include_audit_trail": true,
+    "log_data_sources": true,
+    "log_collection_params": true,
+    "version_analysis_logic": true,
+    "snapshot_config_with_results": true,
+    "preserve_analysis_history": true,
+    "max_history_entries": 50
+  },
+
+  "display_settings": {
+    "show_source_ids": true,
+    "show_example_quotes": true,
+    "show_confidence_badges": true,
+    "show_uncertainty_warnings": true,
+    "show_sample_sizes": true,
+    "show_view_commands": true,
+    "max_inline_quotes": 3,
+    "quote_max_length": 200
+  },
+
+  "user_notes": {
+    "created_by": "Rob",
+    "purpose": "Ensure all analysis is transparent, auditable, and supports informed decision-making",
+    "customizations": []
+  }
+}

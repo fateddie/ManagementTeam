@@ -32,6 +32,9 @@ from core.subagent_coordinator import SubAgentCoordinator
 from core.subagent_triggers import SubAgentTriggerEngine  # Phase 4
 from core.ai_conversation_handler import AIConversationHandler  # AI Conversations
 from core.idea_critic import IdeaCritic  # AI Critique & Grammar Correction
+from core.keyword_generator import KeywordGenerator  # Enhanced Pain Discovery
+from core.pain_discovery_analyzer import PainDiscoveryAnalyzer  # Enhanced Pain Discovery
+from core.competitive_analyzer import CompetitiveAnalyzer  # Enhanced Competitive Analysis
 
 
 class InteractiveOrchestrator(Orchestrator):
@@ -52,19 +55,34 @@ class InteractiveOrchestrator(Orchestrator):
             mode: "guided" or "expert"
             auto_save: Enable auto-save after each field
         """
+        # Track if this is a new project (before super().__init__ assigns ID)
+        is_new_project = (project_id is None)
+
         super().__init__(project_id=project_id)
 
         self.mode = mode
         self.auto_save = auto_save
 
+        # Prompt for project name if new project
+        project_name = None
+        if is_new_project:
+            print("\n🆕 Starting new idea workflow\n")
+            name_input = input("What would you like to call this project?\n(Leave blank for auto-name): ").strip()
+            if name_input:
+                project_name = name_input
+                print(f"\n✅ Project: \"{project_name}\"")
+                print(f"   ID: {self.project_id}\n")
+
         # Ensure project exists in database (fixes FOREIGN KEY constraint errors)
-        if self.context_tracker and project_id is None:
+        if self.context_tracker and is_new_project:
             # New project - create it in database with specific ID
             try:
                 existing_project = self.context_tracker.get_project(self.project_id)
                 if not existing_project:
+                    # Use project_name if provided, otherwise use default
+                    db_name = project_name or f"Idea Validation - {self.session_id}"
                     created_id = self.context_tracker.create_project(
-                        name=f"Idea Validation - {self.session_id}",
+                        name=db_name,
                         description="Interactive workflow project",
                         priority="medium",
                         project_id=self.project_id  # Use the ID orchestrator assigned
@@ -79,7 +97,8 @@ class InteractiveOrchestrator(Orchestrator):
         self.workflow_state = WorkflowState(
             project_id=self.project_id,
             session_id=self.session_id,
-            auto_save=auto_save
+            auto_save=auto_save,
+            project_name=project_name
         )
 
         # Initialize SubAgentCoordinator
@@ -106,6 +125,21 @@ class InteractiveOrchestrator(Orchestrator):
             logger.info("✅ AI-powered critique enabled")
         else:
             logger.info("ℹ️  Using basic critique (AI unavailable)")
+
+        # Enhanced Pain Discovery: Initialize keyword generator and analyzer
+        self.keyword_generator = KeywordGenerator()
+        self.pain_analyzer = PainDiscoveryAnalyzer()
+        if self.keyword_generator.is_available():
+            logger.info("✅ Enhanced pain discovery enabled")
+            print("✅ AI keyword generation enabled")
+        else:
+            logger.warning("⚠️ AI keyword generation unavailable - will use fallback")
+            print("⚠️ AI keyword generation unavailable - will use fallback keywords")
+
+        # Enhanced Competitive Analysis: Initialize competitive analyzer
+        self.competitive_analyzer = CompetitiveAnalyzer()
+        if self.competitive_analyzer.is_available():
+            logger.info("✅ Enhanced competitive analysis enabled")
 
         print(f"\n{'='*60}")
         print(f"🚀 Interactive Workflow - {mode.upper()} MODE")
@@ -200,18 +234,24 @@ class InteractiveOrchestrator(Orchestrator):
         collected = {}
 
         for field_name, field_config in requirements.items():
-            # Skip optional fields if user doesn't want them
+            # Handle optional fields with clearer context
             if field_config.get('optional'):
-                choice = input(f"\n{field_config['prompt']} (optional, press Enter to skip): ").strip()
+                # Show conversation starters if available
+                starters = field_config.get('conversation_starters', [])
+                if starters:
+                    for starter in starters:
+                        print(f"\n💡 {starter}")
+
+                choice = input(f"\n{field_config['prompt']}\n(Press Enter to skip): ").strip()
                 if not choice:
                     continue
-
-            # Ask the question conversationally
-            value = self._ask_conversational(field_name, field_config, collected)
-            collected[field_name] = value
-
-            # Save field immediately (auto-save)
-            self.workflow_state.save_field(field_name, value)
+                collected[field_name] = choice
+                self.workflow_state.save_field(field_name, choice)
+            else:
+                # Ask the question conversationally for required fields
+                value = self._ask_conversational(field_name, field_config, collected)
+                collected[field_name] = value
+                self.workflow_state.save_field(field_name, value)
 
             # Ask follow-up questions if needed
             follow_ups = field_config.get('follow_ups', {})
@@ -583,71 +623,90 @@ class InteractiveOrchestrator(Orchestrator):
         print("\nThis will take a few minutes. I'll search for real data and come back with insights.\n")
 
         try:
-            # Execute research using appropriate agents
-            phase = phase_config['phase']
+            # Route to enhanced analyzers for Step 2 and Step 4
+            if step_name == 'step_2_pain_discovery' and self.keyword_generator.is_available():
+                # Enhanced Pain Discovery
+                keywords = collected.get('research_keywords', [])
+                geography = collected.get('research_geography', 'Ireland/UK')
 
-            # Create AgentContext with collected requirements
-            from core.base_agent import AgentContext
-            from core.cache import Cache
-
-            research_context = AgentContext(
-                session_id=self.session_id,
-                inputs={
-                    'research_query': query,
-                    'collected_requirements': collected,
-                    'step_name': step_name,
-                    'project_id': self.project_id
-                },
-                cache=Cache(),
-                shared_data={}
-            )
-
-            # Map phases to appropriate agents
-            agent_map = {
-                'phase_1': 'TrendResearchAgent',  # Pain Discovery
-                'phase_2': 'StrategyAgent',        # Market Sizing
-                'phase_3': 'StrategyAgent'         # Competitive Analysis
-            }
-
-            agent_name = agent_map.get(phase)
-
-            if agent_name:
-                # Load and execute the agent
-                print(f"🔬 Executing {agent_name}...\n")
-
-                # Import and instantiate the agent
-                if agent_name == 'TrendResearchAgent':
-                    from agents.trend_research_agent.trend_research_agent import TrendResearchAgent
-                    agent = TrendResearchAgent()
-                    # Add required inputs for TrendResearchAgent
-                    research_context.inputs['platforms'] = ['reddit', 'youtube', 'twitter']
-                elif agent_name == 'StrategyAgent':
-                    from agents.strategy_agent.strategy_agent import StrategyAgent
-                    agent = StrategyAgent()
-
-                # Execute the agent
-                if agent.validate_inputs(research_context):
-                    result = agent.execute(research_context)
-
-                    # Display results
-                    print(f"\n{'='*60}")
-                    print("📊 RESEARCH RESULTS")
-                    print(f"{'='*60}\n")
-
-                    if hasattr(result, 'summary'):
-                        print(result.summary)
-
-                    # Store results in workflow state
-                    self.workflow_state.save_field(f'{step_name}_research_results', str(result))
-
-                    print(f"\n✅ Research complete! Results saved.\n")
-
-                    # Optional: Run CriticAgent for adversarial review
-                    self._offer_critic_review(step_name, result, collected)
+                if keywords:
+                    self._execute_enhanced_pain_discovery(keywords, collected, geography)
+                    print(f"\n✅ Enhanced pain discovery complete!\n")
                 else:
-                    print(f"⚠️  Skipping research - agent validation failed")
+                    print("\n⚠️  No keywords available - skipping enhanced analysis")
+
+            elif step_name == 'step_4_competitive_landscape' and self.competitive_analyzer.is_available():
+                # Enhanced Competitive Analysis
+                geography = collected.get('research_geography', 'Ireland/UK')
+                self._execute_enhanced_competitive_analysis(collected, geography)
+                print(f"\n✅ Enhanced competitive analysis complete!\n")
+
             else:
-                print(f"⚠️  No agent mapped for {phase}")
+                # Fallback to original agent-based research
+                phase = phase_config['phase']
+
+                # Create AgentContext with collected requirements
+                from core.base_agent import AgentContext
+                from core.cache import Cache
+
+                research_context = AgentContext(
+                    session_id=self.session_id,
+                    inputs={
+                        'research_query': query,
+                        'collected_requirements': collected,
+                        'step_name': step_name,
+                        'project_id': self.project_id
+                    },
+                    cache=Cache(),
+                    shared_data={}
+                )
+
+                # Map phases to appropriate agents
+                agent_map = {
+                    'phase_1': 'TrendResearchAgent',  # Pain Discovery (fallback)
+                    'phase_2': 'StrategyAgent',        # Market Sizing
+                    'phase_3': 'StrategyAgent'         # Competitive Analysis (fallback)
+                }
+
+                agent_name = agent_map.get(phase)
+
+                if agent_name:
+                    # Load and execute the agent
+                    print(f"🔬 Executing {agent_name}...\n")
+
+                    # Import and instantiate the agent
+                    if agent_name == 'TrendResearchAgent':
+                        from agents.trend_research_agent.trend_research_agent import TrendResearchAgent
+                        agent = TrendResearchAgent()
+                        # Add required inputs for TrendResearchAgent
+                        research_context.inputs['platforms'] = ['reddit', 'youtube', 'twitter']
+                    elif agent_name == 'StrategyAgent':
+                        from agents.strategy_agent.strategy_agent import StrategyAgent
+                        agent = StrategyAgent()
+
+                    # Execute the agent
+                    if agent.validate_inputs(research_context):
+                        result = agent.execute(research_context)
+
+                        # Display results
+                        print(f"\n{'='*60}")
+                        print("📊 RESEARCH RESULTS")
+                        print(f"{'='*60}\n")
+
+                        if hasattr(result, 'summary'):
+                            print(result.summary)
+
+                        # Store results in workflow state
+                        self.workflow_state.save_field(f'{step_name}_research_results', str(result))
+
+                        print(f"\n✅ Research complete! Results saved.\n")
+
+                        # Optional: Run CriticAgent for adversarial review
+                        self._offer_critic_review(step_name, result, collected)
+                    else:
+                        print(f"⚠️  Skipping research - agent validation failed")
+                else:
+                    print(f"⚠️  No agent mapped for {phase}")
 
         except Exception as e:
             print(f"⚠️  Research failed: {e}")
@@ -656,20 +715,30 @@ class InteractiveOrchestrator(Orchestrator):
             traceback.print_exc()
 
     def _explain_pain_discovery_plan(self, collected: Dict[str, Any]):
-        """Explain what Pain Discovery research will do."""
+        """Explain what Pain Discovery research will do, with keyword generation."""
         target = collected.get('target_customer', 'your target customers')
         core_idea = collected.get('core_idea', 'this problem')
 
         print("📍 **What I'll research:**")
         print(f"   • Reddit discussions where {target} talk about {core_idea}")
         print(f"   • X/Twitter conversations about this pain point")
-        print(f"   • YouTube videos/comments from affected users")
+        print(f"   • Google Trends data and search patterns")
         print()
         print("🎯 **What I'll find:**")
         print("   • Real pain points in their own words")
         print("   • How frequently this problem comes up")
-        print("   • Current workarounds they're using")
-        print("   • Emotional intensity (frustration level)")
+        print("   • Willingness-to-pay signals (pricing discussions)")
+        print("   • Urgency indicators (how badly people need this)")
+        print("   • Top complaints and concerns")
+
+        # Generate and edit keywords if generator available
+        if self.keyword_generator.is_available():
+            geography = collected.get('geography', 'Ireland/UK')
+            keywords = self._generate_and_edit_keywords(collected, geography)
+            collected['research_keywords'] = keywords  # Save for later use
+            collected['research_geography'] = geography
+        else:
+            print("\n⚠️  AI keyword generation unavailable - will use manual keywords")
 
     def _explain_market_sizing_plan(self, collected: Dict[str, Any]):
         """Explain what Market Sizing research will do."""
@@ -704,6 +773,379 @@ class InteractiveOrchestrator(Orchestrator):
         print("   • Their pricing, features, and positioning")
         print("   • Gaps in the market (white space)")
         print("   • Competitive advantages you can leverage")
+
+    def _generate_and_edit_keywords(
+        self,
+        collected: Dict[str, Any],
+        geography: str = "Ireland/UK"
+    ) -> List[str]:
+        """
+        Generate keywords with AI and allow user to edit.
+
+        Returns:
+            Final list of keywords to use for research
+        """
+        print("\n🤖 Generating research keywords based on your idea...")
+
+        # Generate keywords
+        keyword_data = self.keyword_generator.generate_keywords(
+            refinement_data=collected,
+            geography=geography
+        )
+
+        # Display generated keywords
+        display_text = self.keyword_generator.format_for_display(keyword_data)
+        print(display_text)
+
+        # User options
+        print(f"\n{'─'*70}")
+        print("What would you like to do?")
+        print("  1) Use all suggested keywords")
+        print("  2) Add more keywords")
+        print("  3) Remove some keywords")
+        print("  4) Start over with manual keywords")
+        print()
+
+        choice = input("Choice [1-4]: ").strip()
+
+        # Extract all keywords into flat list
+        all_keywords = []
+        keywords_by_category = keyword_data.get('keywords_by_category', {})
+        for category, keyword_list in keywords_by_category.items():
+            for kw_obj in keyword_list:
+                all_keywords.append(kw_obj.get('keyword', ''))
+
+        if choice == '1':
+            # Use all
+            final_keywords = all_keywords
+            print(f"\n✅ Using all {len(final_keywords)} keywords")
+
+        elif choice == '2':
+            # Add more
+            final_keywords = all_keywords.copy()
+            print("\nEnter additional keywords (one per line, press Enter twice when done):")
+            while True:
+                kw = input("→ ").strip()
+                if not kw:
+                    break
+                final_keywords.append(kw)
+                print(f"  ✓ Added: {kw}")
+
+            print(f"\n✅ Using {len(final_keywords)} keywords total")
+
+        elif choice == '3':
+            # Remove some
+            print("\n📋 Current keywords:")
+            for i, kw in enumerate(all_keywords, 1):
+                print(f"  {i}. {kw}")
+
+            print("\nEnter numbers to remove (comma-separated, e.g., '2,5,7'):")
+            to_remove = input("→ ").strip()
+
+            if to_remove:
+                try:
+                    indices = [int(x.strip()) - 1 for x in to_remove.split(',')]
+                    final_keywords = [kw for i, kw in enumerate(all_keywords) if i not in indices]
+                    print(f"\n✅ Removed {len(indices)} keywords, {len(final_keywords)} remaining")
+                except (ValueError, IndexError):
+                    print("\n⚠️  Invalid input, using all keywords")
+                    final_keywords = all_keywords
+            else:
+                final_keywords = all_keywords
+
+        else:
+            # Manual entry
+            print("\nEnter your keywords (one per line, press Enter twice when done):")
+            final_keywords = []
+            while True:
+                kw = input("→ ").strip()
+                if not kw:
+                    break
+                final_keywords.append(kw)
+                print(f"  ✓ Added: {kw}")
+
+        return final_keywords
+
+    def _display_enriched_insights(self, enriched: Dict[str, Any]):
+        """
+        Display enriched insights with FULL TRANSPARENCY.
+
+        Shows:
+        - Source post IDs for verification
+        - Confidence levels
+        - Example quotes
+        - Commands to view source data
+        """
+        print("\n" + "="*80)
+        print("📊 ENRICHED INSIGHTS - ICP, Features, Competitors, Pricing")
+        print("="*80)
+
+        # ICP
+        icp = enriched.get("icp", {})
+        if icp:
+            print(f"\n🎯 IDEAL CUSTOMER PROFILE (Overall Confidence: {icp.get('confidence', 0)}%)")
+
+            top_industries = icp.get("top_industries", [])[:3]
+            if top_industries:
+                print("\n✨ Top Industries:")
+                for i, ind in enumerate(top_industries, 1):
+                    conf_badge = self._get_confidence_badge(ind.get('confidence', 'unknown'))
+                    print(f"\n   {i}. {ind['industry'].title()}: {ind['count']} posts ({ind['percentage']}%) {conf_badge}")
+                    print(f"      Avg Urgency: {ind.get('avg_urgency', 'unknown').upper()}")
+
+                    # Show source IDs
+                    source_ids = ind.get('source_posts', [])
+                    if source_ids:
+                        print(f"      Source Posts: {source_ids[:5]}{'...' if len(source_ids) > 5 else ''}")
+
+                    # Show example quote
+                    examples = ind.get('example_quotes', [])
+                    if examples:
+                        print(f"      Example: \"{examples[0][:100]}...\"")
+
+            company_sizes = icp.get("top_company_sizes", [])
+            if company_sizes:
+                print("\n🏢 Company Sizes:")
+                for size in company_sizes:
+                    conf_badge = self._get_confidence_badge(size.get('confidence', 'unknown'))
+                    print(f"   • {size['size'].title()}: {size['count']} posts ({size['percentage']}%) {conf_badge}")
+
+            urgency = icp.get("urgency_profile", {})
+            if urgency:
+                print("\n⚡ Urgency Profile:")
+                for urg, data in sorted(urgency.items(), key=lambda x: x[1]['count'], reverse=True)[:3]:
+                    print(f"   • {urg.upper()}: {data['count']} posts ({data['percentage']}%)")
+
+        # Feature Priorities
+        features = enriched.get("feature_priorities", [])[:5]
+        if features:
+            print(f"\n🔧 TOP REQUESTED FEATURES:")
+            for i, feat in enumerate(features, 1):
+                conf_badge = self._get_confidence_badge(feat.get('confidence', 'unknown'))
+                print(f"\n   {i}. {feat['feature']}: {feat['mentions']} mentions ({feat['percentage']}%) {conf_badge}")
+
+                # Show source IDs
+                source_ids = feat.get('source_posts', [])
+                if source_ids:
+                    print(f"      Source Posts: {source_ids[:5]}{'...' if len(source_ids) > 5 else ''}")
+
+                # Show example quote
+                examples = feat.get('example_quotes', [])
+                if examples and len(examples) > 0:
+                    print(f"      Example: \"{examples[0][:100]}...\"")
+
+        # Pricing
+        pricing = enriched.get("pricing_signals", {})
+        if pricing:
+            print(f"\n💰 PRICING INTELLIGENCE:")
+            print(f"   • Budget concerns: {pricing.get('budget_concern_percentage', 0)}% of posts")
+            if pricing.get("price_examples"):
+                print(f"   • Price examples: {', '.join(pricing['price_examples'][:3])}")
+
+        # Competitors
+        competitors = enriched.get("competitor_intelligence", {})
+        if competitors and competitors.get("top_competitors"):
+            print(f"\n⚔️  TOP COMPETITORS MENTIONED:")
+            for comp in competitors['top_competitors'][:5]:
+                print(f"   • {comp['name']}: {comp['mentions']} mentions")
+
+        # Top Pain Quote
+        top_quotes = enriched.get("top_pain_quotes_ranked", [])
+        if top_quotes:
+            print(f"\n🔥 TOP VALIDATED PAIN QUOTE:")
+            top = top_quotes[0]
+            print(f"   [{top['subreddit']}] {top['upvotes']} upvotes | {top['urgency'].upper()} urgency")
+            print(f"   Industry: {top.get('industry', 'Unknown')}")
+            print(f"   \"{top['text'][:200]}...\"")
+
+        print("\n" + "="*80)
+        print("📂 DATA ACCESS:")
+        print("   • Full data: social_posts_enriched.csv")
+        print("   • JSON report: demand_validation_report.json")
+        print("   • Evidence report: python -c \"from src.analysis.demand_validator import DemandValidator; DemandValidator().export_evidence_report()\"")
+        print("="*80)
+
+    def _get_confidence_badge(self, confidence: str) -> str:
+        """Get visual badge for confidence level."""
+        badges = {
+            "high": "🟢 HIGH",
+            "medium": "🟡 MEDIUM",
+            "low": "🟠 LOW",
+            "insufficient": "🔴 INSUFFICIENT"
+        }
+        return badges.get(confidence.lower(), "⚪ UNKNOWN")
+
+    def _execute_enhanced_pain_discovery(
+        self,
+        keywords: List[str],
+        collected: Dict[str, Any],
+        geography: str
+    ):
+        """
+        Execute enhanced pain discovery with rich analysis and validation gates.
+
+        Args:
+            keywords: Research keywords
+            collected: Refinement data
+            geography: Geographic focus
+        """
+        print(f"\n🔍 Starting pain discovery research...")
+        print(f"   Keywords: {len(keywords)}")
+        print(f"   Geography: {geography}")
+        print(f"\n{'─'*70}\n")
+
+        # VALIDATION GATE 1: Test Reddit credentials
+        print("📋 Step 1: Testing Reddit API credentials...")
+        try:
+            import subprocess
+            result = subprocess.run(
+                ["python", "tests/test_reddit_credentials.py"],
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+            if result.returncode != 0:
+                print("⚠️  Reddit credentials test failed.")
+                print("   Data collection will continue but may have limited results.")
+                print(f"   Error: {result.stdout}")
+        except Exception as e:
+            print(f"⚠️  Could not test credentials: {e}")
+            print("   Continuing anyway...")
+
+        print()
+
+        try:
+            # Run pain discovery analysis (uses V2 collector by default)
+            print("📊 Step 2: Collecting social media data...")
+            analysis_results = self.pain_analyzer.analyze_pain_discovery(
+                keywords=keywords,
+                refinement_data=collected,
+                geography=geography,
+                use_v2=True  # Use improved v2 collector
+            )
+
+            # VALIDATION GATE 2: Validate collection results
+            print("\n📋 Step 3: Validating data quality...")
+            try:
+                from tests.validate_collector_output import validate_collector_output
+                validation_results = validate_collector_output("social_posts.csv")
+
+                # Check quality gates
+                total_posts = validation_results.get('total_posts', 0)
+                weak_keywords = len(validation_results.get('weak_keywords', []))
+                success = validation_results.get('success', False)
+
+                if not success or total_posts < 50:
+                    print(f"\n⚠️  WARNING: Data collection below threshold")
+                    print(f"   Total posts: {total_posts} (target: 100+)")
+                    print(f"   Weak keywords: {weak_keywords}")
+
+                    retry = input("\nRetry with fallback keywords? (y/N): ").strip().lower()
+                    if retry == 'y':
+                        print("\n🔄 Retrying with proven fallback keywords...")
+                        # Use fallback keywords from keyword generator
+                        from core.keyword_generator import KeywordGenerator
+                        fallback_keywords = KeywordGenerator.FALLBACK_KEYWORDS
+
+                        analysis_results = self.pain_analyzer.analyze_pain_discovery(
+                            keywords=fallback_keywords,
+                            refinement_data=collected,
+                            geography=geography,
+                            use_v2=True
+                        )
+
+                        # Re-validate
+                        validation_results = validate_collector_output("social_posts.csv")
+                        print(f"\n✅ Retry complete: {validation_results.get('total_posts', 0)} posts collected")
+
+            except Exception as e:
+                print(f"⚠️  Validation check failed: {e}")
+                print("   Continuing with collected data...")
+
+            print()
+
+            # Display results
+            display_text = self.pain_analyzer.format_for_display(analysis_results)
+            print(display_text)
+
+            # Display enriched insights if available
+            if 'enriched_analysis' in analysis_results:
+                self._display_enriched_insights(analysis_results['enriched_analysis'])
+
+            # Save results to workflow state
+            self.workflow_state.save_field('pain_discovery_results', analysis_results)
+
+            # Record as artifact if context tracker available
+            if self.context_tracker:
+                try:
+                    self.context_tracker.record_note(
+                        self.project_id,
+                        note_type="pain_discovery",
+                        content=f"Pain Discovery Analysis Complete",
+                        metadata=analysis_results
+                    )
+                except Exception as e:
+                    logger.warning(f"Could not record pain discovery artifact: {e}")
+
+        except Exception as e:
+            logger.error(f"Pain discovery analysis failed: {e}", exc_info=True)
+            print(f"\n❌ Research failed: {e}")
+            print("Continuing without enhanced analysis...")
+
+    def _execute_enhanced_competitive_analysis(
+        self,
+        collected: Dict[str, Any],
+        geography: str
+    ):
+        """
+        Execute enhanced competitive analysis.
+
+        Args:
+            collected: Refinement data (includes known_competitors if provided)
+            geography: Geographic focus
+        """
+        print(f"\n⚔️  Starting competitive analysis...")
+        print(f"   Geography: {geography}")
+        print(f"\n{'─'*70}\n")
+
+        try:
+            # Extract known competitors if provided
+            known_competitors = collected.get('known_competitors', '')
+            competitor_list = None
+            if known_competitors:
+                # Parse comma-separated list
+                competitor_list = [c.strip() for c in known_competitors.split(',') if c.strip()]
+
+            # Run competitive analysis
+            analysis_results = self.competitive_analyzer.analyze_competitors(
+                refinement_data=collected,
+                known_competitors=competitor_list,
+                geography=geography
+            )
+
+            # Display results
+            display_text = self.competitive_analyzer.format_for_display(analysis_results)
+            print(display_text)
+
+            # Save results to workflow state
+            self.workflow_state.save_field('competitive_analysis_results', analysis_results)
+
+            # Record as artifact if context tracker available
+            if self.context_tracker:
+                try:
+                    self.context_tracker.record_note(
+                        self.project_id,
+                        note_type="competitive_analysis",
+                        content=f"Competitive Analysis Complete",
+                        metadata=analysis_results
+                    )
+                except Exception as e:
+                    logger.warning(f"Could not record competitive analysis artifact: {e}")
+
+        except Exception as e:
+            logger.error(f"Competitive analysis failed: {e}", exc_info=True)
+            print(f"\n❌ Analysis failed: {e}")
+            print("Continuing without enhanced analysis...")
 
     def _summarize_research_intent(self, step_name: str, collected: Dict[str, Any]):
         """Summarize what research will accomplish."""
