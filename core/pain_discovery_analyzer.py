@@ -123,7 +123,7 @@ class PainDiscoveryAnalyzer:
     def use_v4_enhanced_collector(
         self,
         keywords: List[str],
-        output_path: str = "social_posts_enriched.csv"
+        output_path: str = "data/raw/social_posts_enriched.csv"
     ) -> bool:
         """
         Use the enhanced v4 collector for enriched data gathering.
@@ -256,7 +256,7 @@ class PainDiscoveryAnalyzer:
             if v4_success:
                 try:
                     logger.info("Generating demand validation report...")
-                    validator = DemandValidator("social_posts_enriched.csv")
+                    validator = DemandValidator("data/raw/social_posts_enriched.csv")
                     demand_report = validator.generate_full_report()
                     logger.info("✅ Demand validation report generated")
                 except Exception as e:

@@ -57,12 +57,12 @@ def export_evidence(
 
         if format == "markdown":
             # Generate evidence report
-            output = output_path or "evidence_report.md"
+            output = output_path or "data/reports/evidence_report.md"
             validator.export_evidence_report(output)
 
         elif format == "json":
             # Generate full validation report
-            output = output_path or "demand_validation_report.json"
+            output = output_path or "data/reports/demand_validation_report.json"
             validator.save_report(output)
 
         elif format in ["csv", "excel"]:
@@ -98,10 +98,10 @@ def export_evidence(
 def export_all(csv_path: str):
     """Export all formats."""
     formats = {
-        "markdown": "evidence_report.md",
-        "json": "demand_validation_report.json",
-        "csv": "data_export.csv",
-        "excel": "data_export.xlsx"
+        "markdown": "data/reports/evidence_report.md",
+        "json": "data/reports/demand_validation_report.json",
+        "csv": "data/exports/data_export.csv",
+        "excel": "data/exports/data_export.xlsx"
     }
 
     print("\n" + "="*80)
@@ -144,7 +144,7 @@ Examples:
 
     parser.add_argument(
         '--csv',
-        default='social_posts_enriched.csv',
+        default='data/raw/social_posts_enriched.csv',
         help='Path to enriched CSV file'
     )
 

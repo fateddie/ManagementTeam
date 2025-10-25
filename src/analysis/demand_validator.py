@@ -43,7 +43,7 @@ class DemandValidator:
 
     def __init__(
         self,
-        csv_path: str = "social_posts_enriched.csv",
+        csv_path: str = "data/raw/social_posts_enriched.csv",
         config_path: str = "config/transparency_config.json"
     ):
         """
@@ -484,7 +484,7 @@ class DemandValidator:
         print(f"✅ Exported {len(df_export)} posts to: {output_path}")
         return output_path
 
-    def export_evidence_report(self, output_path: str = "evidence_report.md"):
+    def export_evidence_report(self, output_path: str = "data/reports/evidence_report.md"):
         """
         Generate human-readable evidence report in Markdown.
 

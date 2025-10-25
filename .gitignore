@@ -52,6 +52,11 @@ memory/*.json
 data/raw/
 data/processed/
 data/exports/
+data/reports/*.json
+archive/
+
+# Keep markdown reports for human readability
+!data/reports/*.md
 
 # --- Environment Variables & Secrets ---
 .env

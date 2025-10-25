@@ -133,7 +133,7 @@ Examples:
         """
     )
 
-    parser.add_argument('--csv', default='social_posts_enriched.csv', help='Path to CSV file')
+    parser.add_argument('--csv', default='data/raw/social_posts_enriched.csv', help='Path to CSV file')
     parser.add_argument('--ids', help='Comma-separated post IDs to view')
     parser.add_argument('--industry', help='Filter by industry')
     parser.add_argument('--urgency', help='Filter by urgency (critical, high, medium, low)')

@@ -36,7 +36,7 @@ from src.utils.config_loader import get_env, load_env
 load_env()
 
 # ---------- CONFIG ----------
-OUTPUT_FILE = "social_posts_enriched.csv"
+OUTPUT_FILE = "data/raw/social_posts_enriched.csv"
 MAX_REDDIT_PER_KEYWORD = 50
 MAX_COMMENTS_PER_POST = 10
 

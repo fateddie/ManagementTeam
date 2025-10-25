@@ -955,9 +955,9 @@ class InteractiveOrchestrator(Orchestrator):
 
         print("\n" + "="*80)
         print("📂 DATA ACCESS:")
-        print("   • Full data: social_posts_enriched.csv")
-        print("   • JSON report: demand_validation_report.json")
-        print("   • Evidence report: python -c \"from src.analysis.demand_validator import DemandValidator; DemandValidator().export_evidence_report()\"")
+        print("   • Full data: data/raw/social_posts_enriched.csv")
+        print("   • JSON report: data/reports/demand_validation_report.json")
+        print("   • Evidence report: data/reports/evidence_report.md")
         print("="*80)
 
     def _get_confidence_badge(self, confidence: str) -> str:
