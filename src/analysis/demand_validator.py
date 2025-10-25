@@ -26,6 +26,7 @@ from typing import Dict, List
 import json
 from datetime import datetime
 from pathlib import Path
+from src.utils.config_utils import load_config
 
 
 class DemandValidator:
@@ -56,26 +57,8 @@ class DemandValidator:
         self.total_posts = len(self.df)
         self.csv_path = csv_path
 
-        # Load configuration
-        self.config = self._load_config(config_path)
-        self.config_path = config_path
-
-        # Extract thresholds from config
-        self.thresholds = self.config.get('scoring_config', {}).get('thresholds', {})
-        self.confidence_thresholds = self.config.get('scoring_config', {}).get('confidence_thresholds', {})
-
-    def _load_config(self, config_path: str) -> Dict:
-        """Load transparency configuration."""
-        try:
-            with open(config_path, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            print(f"⚠️  Config not found: {config_path}. Using defaults.")
-            return self._default_config()
-
-    def _default_config(self) -> Dict:
-        """Default configuration if file not found."""
-        return {
+        # Load configuration using shared utility
+        default_config = {
             "scoring_config": {
                 "thresholds": {
                     "minimum_posts": 30,
@@ -89,6 +72,12 @@ class DemandValidator:
                 }
             }
         }
+        self.config = load_config(config_path, default_config)
+        self.config_path = config_path
+
+        # Extract thresholds from config
+        self.thresholds = self.config.get('scoring_config', {}).get('thresholds', {})
+        self.confidence_thresholds = self.config.get('scoring_config', {}).get('confidence_thresholds', {})
 
     def _assess_confidence(self, count: int) -> str:
         """
@@ -375,7 +364,7 @@ class DemandValidator:
         report = {
             "summary": {
                 "total_posts_analyzed": self.total_posts,
-                "data_sources": ["Reddit"],  # TODO: Auto-detect from data
+                "data_sources": self._detect_data_sources(),
                 "collection_date": pd.Timestamp.now().strftime("%Y-%m-%d"),
                 "validation_verdict": self._determine_verdict(),
                 "data_quality": self._assess_data_quality()
@@ -403,6 +392,13 @@ class DemandValidator:
         }
 
         return report
+
+    def _detect_data_sources(self) -> List[str]:
+        """Auto-detect data sources from platform column."""
+        if 'platform' in self.df.columns:
+            sources = self.df['platform'].dropna().unique().tolist()
+            return sorted(sources) if sources else ["Unknown"]
+        return ["Unknown"]
 
     def _determine_verdict(self) -> str:
         """Determine validation verdict based on thresholds."""

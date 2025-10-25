@@ -495,23 +495,18 @@ class InteractiveOrchestrator(Orchestrator):
         print(f"\n{'─'*60}")
         print("What would you like to do?")
         print("  1) Continue - looks good!")
-        print("  2) Refine - I want to add more detail")
-        print("  3) Skip this step (not recommended)")
-        print("  4) Save & exit")
+        print("  2) Skip this step (not recommended)")
+        print("  3) Save & exit")
         print()
 
-        choice = input("Choice [1-4]: ").strip()
+        choice = input("Choice [1-3]: ").strip()
 
         if choice == '1':
             return True
         elif choice == '2':
-            # TODO: Allow refinement
-            print("\n(Refinement not yet implemented - continuing)")
-            return True
-        elif choice == '3':
             confirm = input("\n⚠️  Skip this step? Data may be incomplete. Confirm (y/N): ").strip().lower()
             return confirm == 'y'
-        elif choice == '4':
+        elif choice == '3':
             return False
         else:
             return True
