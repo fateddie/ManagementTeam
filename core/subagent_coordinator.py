@@ -18,6 +18,10 @@ from datetime import datetime
 from pathlib import Path
 
 from core.project_context import ProjectContext
+from core.explorer_agent import ExplorerAgent
+from core.historian_agent import HistorianAgent
+from core.critic_agent import CriticAgent
+from core.research_documenter import ResearchDocumenter
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +64,12 @@ class SubAgentCoordinator:
         self.session_id = session_id
         self.verbose = verbose
         self.context = ProjectContext()
+
+        # Instantiate agents
+        self.explorer = ExplorerAgent()
+        self.historian = HistorianAgent()
+        self.critic = CriticAgent()
+        self.research_documenter = ResearchDocumenter()
 
         # Metrics tracking
         self.execution_metrics = {}
@@ -127,9 +137,15 @@ class SubAgentCoordinator:
         if self.verbose:
             print(f"🔍 {agent_name} running in background...")
 
+        # Use actual agent if agent_callable not provided
         if agent_callable:
             result = agent_callable(agent_context)
+        elif agent_name == 'ExplorerAgent':
+            result = self.explorer.explore(agent_context)
+        elif agent_name == 'HistorianAgent':
+            result = self.historian.create_snapshot(agent_context)
         else:
+            logger.warning(f"No implementation for silent agent: {agent_name}")
             result = {'success': True, 'message': 'Placeholder execution'}
 
         if self.verbose and result.get('success'):
@@ -184,9 +200,15 @@ class SubAgentCoordinator:
         # Execute agent
         print(f"\n🚀 Running {agent_name}...\n")
 
+        # Use actual agent if agent_callable not provided
         if agent_callable:
             result = agent_callable(agent_context)
+        elif agent_name == 'ResearchDocumenter':
+            result = self.research_documenter.research(agent_context)
+        elif agent_name == 'CriticAgent':
+            result = self.critic.review(agent_context)
         else:
+            logger.warning(f"No implementation for interactive agent: {agent_name}")
             result = {'success': True, 'message': 'Placeholder execution'}
 
         # Show conversational summary
