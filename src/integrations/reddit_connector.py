@@ -33,16 +33,19 @@ except ImportError:
 try:
     from textblob import TextBlob
     TEXTBLOB_AVAILABLE = True
-except ImportError:
+except (ImportError, LookupError) as e:
     TEXTBLOB_AVAILABLE = False
-    print("⚠️  Warning: textblob not installed. Install with: pip install textblob")
+    if 'textblob' not in str(e).lower():
+        print("⚠️  Warning: textblob available but NLTK data missing. Sentiment analysis disabled.")
+    else:
+        print("⚠️  Warning: textblob not installed. Install with: pip install textblob")
 
 try:
-    from src.utils.config_loader import load_env, get_env
-    CONFIG_LOADER_AVAILABLE = True
+    from config.env_manager import get_config_cached
+    ENV_MANAGER_AVAILABLE = True
 except ImportError:
-    CONFIG_LOADER_AVAILABLE = False
-    print("⚠️  Warning: config_loader not available. Using os.getenv fallback")
+    ENV_MANAGER_AVAILABLE = False
+    print("⚠️  Warning: env_manager not available. Using os.getenv fallback")
 
 
 class RedditConnector:
@@ -66,14 +69,22 @@ class RedditConnector:
 
     def _load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration from file or environment"""
-        # Load environment variables from config/.env
-        if CONFIG_LOADER_AVAILABLE:
-            load_env()
-            config = {
-                "client_id": get_env("REDDIT_CLIENT_ID"),
-                "client_secret": get_env("REDDIT_CLIENT_SECRET"),
-                "user_agent": get_env("REDDIT_USER_AGENT", "VES Market Research Bot v1.0")
-            }
+        # Load environment variables from config/.env using centralized env_manager
+        if ENV_MANAGER_AVAILABLE:
+            try:
+                env_config = get_config_cached()
+                config = {
+                    "client_id": env_config.reddit_client_id,
+                    "client_secret": env_config.reddit_client_secret,
+                    "user_agent": env_config.reddit_user_agent or "VES Market Research Bot v1.0"
+                }
+            except Exception as e:
+                print(f"⚠️  Warning: Failed to load from env_manager: {e}")
+                config = {
+                    "client_id": os.getenv("REDDIT_CLIENT_ID"),
+                    "client_secret": os.getenv("REDDIT_CLIENT_SECRET"),
+                    "user_agent": os.getenv("REDDIT_USER_AGENT", "VES Market Research Bot v1.0")
+                }
         else:
             # Fallback to os.getenv
             config = {

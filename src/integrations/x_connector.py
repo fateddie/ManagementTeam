@@ -34,15 +34,19 @@ except ImportError:
 try:
     from textblob import TextBlob
     TEXTBLOB_AVAILABLE = True
-except ImportError:
+except (ImportError, LookupError) as e:
     TEXTBLOB_AVAILABLE = False
+    if 'textblob' not in str(e).lower():
+        print("⚠️  Warning: textblob available but NLTK data missing. Sentiment analysis disabled.")
+    else:
+        print("⚠️  Warning: textblob not installed. Install with: pip install textblob")
 
 try:
-    from src.utils.config_loader import load_env, get_env
-    CONFIG_LOADER_AVAILABLE = True
+    from config.env_manager import get_config_cached
+    ENV_MANAGER_AVAILABLE = True
 except ImportError:
-    CONFIG_LOADER_AVAILABLE = False
-    print("⚠️  Warning: config_loader not available. Using os.getenv fallback")
+    ENV_MANAGER_AVAILABLE = False
+    print("⚠️  Warning: env_manager not available. Using os.getenv fallback")
 
 
 class XConnector:
@@ -66,16 +70,26 @@ class XConnector:
 
     def _load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration from file or environment"""
-        # Load environment variables from config/.env
-        if CONFIG_LOADER_AVAILABLE:
-            load_env()
-            config = {
-                "bearer_token": get_env("X_BEARER_TOKEN"),
-                "api_key": get_env("X_API_KEY"),
-                "api_secret": get_env("X_API_SECRET"),
-                "access_token": get_env("X_ACCESS_TOKEN"),
-                "access_token_secret": get_env("X_ACCESS_TOKEN_SECRET")
-            }
+        # Load environment variables from config/.env using centralized env_manager
+        if ENV_MANAGER_AVAILABLE:
+            try:
+                env_config = get_config_cached()
+                config = {
+                    "bearer_token": env_config.x_bearer_token,
+                    "api_key": env_config.x_api_key,
+                    "api_secret": env_config.x_api_secret,
+                    "access_token": env_config.x_access_token,
+                    "access_token_secret": env_config.x_access_token_secret
+                }
+            except Exception as e:
+                print(f"⚠️  Warning: Failed to load from env_manager: {e}")
+                config = {
+                    "bearer_token": os.getenv("X_BEARER_TOKEN"),
+                    "api_key": os.getenv("X_API_KEY"),
+                    "api_secret": os.getenv("X_API_SECRET"),
+                    "access_token": os.getenv("X_ACCESS_TOKEN"),
+                    "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET")
+                }
         else:
             # Fallback to os.getenv
             config = {
