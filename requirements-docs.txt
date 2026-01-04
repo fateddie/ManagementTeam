@@ -1,0 +1,122 @@
+# Documentation Build Dependencies
+# Material for MkDocs with 2026 features + Vector Search
+# Last Updated: 2026-01-03
+
+# Core MkDocs with Material theme
+mkdocs>=1.5.3
+mkdocs-material[recommended]>=9.5.0
+
+# MkDocs Material Plugins (included in [recommended])
+# These are automatically installed with mkdocs-material[recommended]:
+# - mkdocs-material-extensions
+# - pymdown-extensions
+# - pygments (syntax highlighting)
+
+# Vector/Semantic Search Plugin
+# Enables AI-powered semantic search alongside traditional keyword search
+mkdocs-mcp-plugin>=0.1.0
+
+# Embeddings model for vector search (lightweight and fast)
+sentence-transformers>=2.2.0
+
+# Additional MkDocs Plugins
+mkdocs-git-revision-date-localized-plugin>=1.2.0  # Last updated timestamps
+mkdocs-minify-plugin>=0.7.0                        # Minify HTML/CSS/JS
+
+# Optional but recommended plugins
+mkdocs-awesome-pages-plugin>=2.9.0                 # Better navigation
+mkdocs-git-authors-plugin>=0.7.0                   # Show contributors
+
+# Markdown Extensions (included with material[recommended])
+# Already installed via mkdocs-material[recommended]:
+# - pymdown-extensions
+# - markdown
+
+# Development/Testing Tools (optional)
+mkdocs-htmlproofer-plugin>=1.0.0  # Check for broken links (optional)
+
+# Python dependencies for plugins
+Jinja2>=3.1.0           # Template engine
+Markdown>=3.4.0         # Markdown parser
+Pygments>=2.16.0        # Syntax highlighting
+PyYAML>=6.0             # YAML parsing
+
+# Vector search dependencies
+torch>=2.0.0            # PyTorch (required for sentence-transformers)
+# Note: sentence-transformers will auto-install torch if not present
+
+# ===============================================
+# Installation Instructions
+# ===============================================
+#
+# Install all documentation dependencies:
+#   pip install -r requirements-docs.txt
+#
+# Quick install (minimal):
+#   pip install mkdocs-material mkdocs-mcp-plugin
+#
+# Test installation:
+#   mkdocs --version
+#   mkdocs build --strict
+#   mkdocs serve
+#
+# Build documentation:
+#   mkdocs build --strict --verbose
+#
+# Deploy to GitHub Pages:
+#   mkdocs gh-deploy --force
+#
+# ===============================================
+# Features Enabled
+# ===============================================
+#
+# ✅ Material for MkDocs theme (2026 features)
+# ✅ Dark/light mode toggle
+# ✅ Navigation tabs
+# ✅ Search highlighting
+# ✅ Code copy buttons
+# ✅ Full-text indexing
+# ✅ Vector/semantic search (mkdocs-mcp-plugin)
+# ✅ Last updated timestamps
+# ✅ Minified output (faster loading)
+# ✅ Git revision tracking
+#
+# ===============================================
+# Cost & Performance
+# ===============================================
+#
+# Installation size: ~500MB (includes torch for embeddings)
+# Build time: ~10-15 seconds for 120 pages
+# Search index size: ~2MB (cached locally)
+# Vector embeddings: Computed once, cached in .cache/
+#
+# ===============================================
+# Optional Optimizations
+# ===============================================
+#
+# For faster builds without vector search:
+#   Comment out mkdocs-mcp-plugin and sentence-transformers
+#
+# For smaller installation without ML models:
+#   Comment out sentence-transformers and torch
+#   (disables vector search, keeps keyword search)
+#
+# ===============================================
+# Troubleshooting
+# ===============================================
+#
+# If torch installation fails:
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+#
+# If sentence-transformers fails:
+#   Ensure Python 3.8+ is installed
+#   Update pip: pip install --upgrade pip
+#
+# If mkdocs-mcp-plugin not found:
+#   Try: pip install git+https://github.com/mkdocs-mcp/mkdocs-mcp-plugin.git
+#   Or remove from requirements if unavailable
+#
+# Check for conflicts:
+#   pip check
+#
+# ===============================================

@@ -1,0 +1,120 @@
+/* Extra CSS for Material for MkDocs
+ * Custom styles for AI Management Team Documentation
+ * Last Updated: 2026-01-03
+ */
+
+/* Root variables for consistency */
+:root {
+  --custom-accent: #673ab7;
+  --custom-highlight: #ffd54f;
+}
+
+/* Custom styles for homepage dashboard */
+.md-typeset .homepage-stats {
+  background: var(--md-code-bg-color);
+  border-radius: 0.2rem;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+/* Enhanced code copy button visibility */
+.md-clipboard {
+  opacity: 1 !important;
+}
+
+/* Custom admonition colors (if needed) */
+.md-typeset .admonition.tip {
+  border-color: var(--custom-accent);
+}
+
+/* Improve table readability */
+.md-typeset table:not([class]) {
+  font-size: 0.85rem;
+  border-collapse: collapse;
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--md-code-bg-color);
+  font-weight: 600;
+}
+
+/* Navigation badge styles */
+.md-nav__link--active {
+  font-weight: 600;
+}
+
+/* Improve search result highlighting */
+mark {
+  background: var(--custom-highlight);
+  color: inherit;
+  padding: 0 0.2em;
+  border-radius: 0.1em;
+}
+
+/* Custom emoji sizing in navigation */
+.md-nav__item .md-nav__link {
+  font-size: 0.8rem;
+}
+
+/* Footer customization */
+.md-footer-meta {
+  background: var(--md-footer-bg-color);
+}
+
+/* Print styles */
+@media print {
+  .md-header,
+  .md-sidebar,
+  .md-footer {
+    display: none;
+  }
+
+  .md-content {
+    max-width: 100%;
+  }
+}
+
+/* Mobile optimizations */
+@media screen and (max-width: 76.1875em) {
+  .md-typeset {
+    font-size: 0.9rem;
+  }
+}
+
+/* Dark mode specific adjustments */
+[data-md-color-scheme="slate"] {
+  --md-code-hl-string-color: #a5d6a7;
+  --md-code-hl-number-color: #ffb74d;
+}
+
+/* Light mode specific adjustments */
+[data-md-color-scheme="default"] {
+  --md-code-hl-string-color: #2e7d32;
+  --md-code-hl-number-color: #f57c00;
+}
+
+/* Improve link visibility */
+.md-typeset a {
+  text-decoration: underline;
+  text-decoration-thickness: 0.05em;
+  text-underline-offset: 0.15em;
+}
+
+.md-typeset a:hover {
+  text-decoration-thickness: 0.1em;
+}
+
+/* Custom scrollbar (webkit browsers) */
+::-webkit-scrollbar {
+  width: 0.4rem;
+  height: 0.4rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-default-fg-color--lighter);
+  border-radius: 0.2rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-accent-fg-color);
+}

@@ -1,0 +1,310 @@
+# Material for MkDocs Configuration
+# AI Management Team Documentation Portal
+# Last Updated: 2026-01-03
+
+# Site Information
+site_name: AI Management Team
+site_description: Comprehensive documentation portal for the AI Management Team decision support system
+site_author: Rob Freyne
+site_url: https://fateddie.github.io/ManagementTeam
+
+# Repository Information
+repo_name: fateddie/ManagementTeam
+repo_url: https://github.com/fateddie/ManagementTeam
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2025-2026 Rob Freyne
+
+# Theme Configuration
+theme:
+  name: material
+  language: en
+
+  # Color Palette (Dark/Light Mode Toggle)
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  # Features (2026 Enhancements)
+  features:
+    - navigation.instant         # Instant loading
+    - navigation.instant.prefetch  # Prefetch pages
+    - navigation.instant.progress  # Show loading progress
+    - navigation.tracking        # URL updates with scroll
+    - navigation.tabs            # Top-level tabs
+    - navigation.tabs.sticky     # Sticky tabs
+    - navigation.sections        # Section navigation
+    - navigation.expand          # Expand sections by default
+    - navigation.path            # Breadcrumbs
+    - navigation.indexes         # Section index pages
+    - navigation.top             # Back to top button
+    - navigation.footer          # Footer navigation
+    - toc.follow                 # TOC follows scroll
+    - toc.integrate              # TOC integrated into navigation
+    - search.suggest             # Search suggestions
+    - search.highlight           # Highlight search terms (2026 feature)
+    - search.share               # Share search results
+    - header.autohide            # Auto-hide header on scroll
+    - content.code.copy          # Copy code button (2026 feature)
+    - content.code.annotate      # Code annotations
+    - content.tooltips           # Link tooltips
+    - content.tabs.link          # Link content tabs
+
+  # Icons
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/robot
+    admonition:
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/light-bulb-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
+
+  # Font
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+# Plugins
+plugins:
+  - search:
+      # Enhanced keyword search with Material for MkDocs
+      lang: en
+      separator: '[\s\-\.]+'
+
+  # OPTIONAL: mkdocs-mcp-plugin for semantic/vector search
+  # Uncomment when mkdocs-mcp-plugin becomes available
+  # - mkdocs-mcp-plugin:
+  #     enabled: true
+  #     vector_search: true
+  #     embedding_model: 'all-MiniLM-L6-v2'
+  #     index_name: 'management_team_docs'
+
+  # OPTIONAL: git-revision-date-localized plugin
+  # Install with: pip install mkdocs-git-revision-date-localized-plugin
+  # - git-revision-date-localized:
+  #     enable_creation_date: true
+  #     type: timeago
+  #     fallback_to_build_date: true
+
+  # OPTIONAL: minify plugin
+  # Install with: pip install mkdocs-minify-plugin
+  # - minify:
+  #     minify_html: true
+  #     minify_js: true
+  #     minify_css: true
+  #     htmlmin_opts:
+  #       remove_comments: true
+  #     cache_safe: true
+
+# Markdown Extensions
+markdown_extensions:
+  # Python Markdown
+  - abbr                        # Abbreviations
+  - admonition                  # Callouts/admonitions
+  - attr_list                   # Attribute lists
+  - def_list                    # Definition lists
+  - footnotes                   # Footnotes
+  - md_in_html                  # Markdown in HTML
+  - toc:
+      permalink: true           # Permalink to headers
+      permalink_title: Link to this section
+      toc_depth: 3
+  - tables                      # Tables support
+
+  # PyMdown Extensions
+  - pymdownx.arithmatex:        # LaTeX math
+      generic: true
+  - pymdownx.betterem:          # Better emphasis
+      smart_enable: all
+  - pymdownx.caret              # Superscript
+  - pymdownx.mark               # Highlight text
+  - pymdownx.tilde              # Subscript
+  - pymdownx.critic             # Track changes
+  - pymdownx.details            # Collapsible details
+  - pymdownx.emoji:             # Emoji support
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:         # Code highlighting
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+      auto_title: true
+      linenums: true
+  - pymdownx.inlinehilite       # Inline code highlighting
+  - pymdownx.keys               # Keyboard keys
+  - pymdownx.magiclink:         # Auto-link URLs
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: fateddie
+      repo: ManagementTeam
+  - pymdownx.smartsymbols       # Smart symbols
+  - pymdownx.snippets           # Include file snippets
+  - pymdownx.superfences:       # Code blocks
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:            # Content tabs
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:          # Task lists
+      custom_checkbox: true
+      clickable_checkbox: false
+
+# Navigation Structure
+nav:
+  - 🏠 Home: index.md
+
+  - 🚀 Getting Started:
+    - Quick Start: QUICKSTART.md
+    - API Keys Setup: setup/API_KEYS_SETUP_GUIDE.md
+    - Dashboard Setup: setup/DASHBOARD_SETUP.md
+    - Python Setup: setup/PYTHON_SETUP_GUIDE.md
+    - Quick Start Guide: setup/QUICK_START.md
+    - Setup Guide: setup/SETUP_GUIDE.md
+    - Shared Memory: setup/SHARED_MEMORY_GUIDE.md
+    - Trend Research: setup/TREND_RESEARCH_QUICKSTART.md
+    - New Project Checklist: setup/NEW_PROJECT_CHECKLIST.md
+
+  - 📖 Core Concepts:
+    - System Architecture: ARCHITECTURE.md
+    - Core Principles: PRINCIPLES.md
+    - Claude AI Guidelines: CLAUDE.md
+    - System Overview: COMPLETE_SYSTEM_OVERVIEW.md
+    - Quick Reference: QUICK_REFERENCE.md
+    - Audit Checklist: AUDIT_CHECKLIST.md
+    - Rules Database: RULES_DATABASE.md
+
+  - 🤖 AI Agent System:
+    - Sub-Agent Overview: SUB_AGENT_SYSTEM_SUMMARY.md
+    - Claude Integration: SUB_AGENT_CLAUDE_INTEGRATION.md
+    - System Flow: implementation/COMPLETE_SYSTEM_FLOW.md
+    - Implementation Status: implementation/IMPLEMENTATION_COMPLETE.md
+    - Claude Code Assessment: implementation/CLAUDE_CODE_READY_ASSESSMENT.md
+    - Configuration Complete: implementation/CONFIGURATION_COMPLETE.md
+    - Centralized Config: implementation/CENTRALIZED_CONFIG_COMPLETE.md
+
+  - 📋 Planning & PRDs:
+    - Project Index: planning/PROJECT_INDEX.md
+    - PRD Master Overview: prd/PRD_MASTER_OVERVIEW.md
+    - Detailed Implementation: planning/DETAILED_IMPLEMENTATION_PLAN.md
+    - Workshop Guide: planning/WORKSHOP_USAGE_GUIDE.md
+    - Workshop Example: planning/WORKSHOP_EXAMPLE.md
+    - Integration Plan: planning/INTEGRATION_PLAN.md
+    - Phase 2 Summary: planning/PHASE_2_SUMMARY.md
+    - Solo Founder Framework: planning/SOLO_FOUNDER_ANALYSIS_FRAMEWORK.md
+    - PRDs:
+      - 01 Schema Layer: prd/PRD_01_SCHEMA_LAYER.md
+      - 02 Artifact Templates: prd/PRD_02_ARTIFACT_TEMPLATES.md
+      - 03 Agent Roles: prd/PRD_03_AGENT_ROLES_AND_PROMPTS.md
+      - 04 Orchestrator Core: prd/PRD_04_ORCHESTRATOR_CORE.md
+      - 05 Audit & Logging: prd/PRD_05_AUDIT_AND_LOGGING_LAYER.md
+      - 06 Validation Engine: prd/PRD_06_VALIDATION_ENGINE.md
+      - 07 Reporting Dashboard: prd/PRD_07_REPORTING_DASHBOARD_LAYER.md
+
+  - ⚙️ System Documentation:
+    - Technical Architecture:
+      - System Architecture: system/system_architecture.md
+      - File Structure: system/file_structure.md
+      - Orchestrator README: system/orchestrator_README.md
+      - Orchestrator Extensions: system/orchestrator_extensions.md
+      - Environment Setup: system/environment_setup.md
+    - Claude Framework:
+      - Claude Guidelines: system/claude.md
+      - Claude Subagents: system/claude_subagents_rules.md
+      - Framework Analysis: system/CLAUDE_FRAMEWORK_ANALYSIS.md
+      - Workflow v2 Comparison: system/CLAUDE_WORKFLOW_V2_COMPARISON.md
+    - System Guides:
+      - Conversational Workflow: system/CONVERSATIONAL_WORKFLOW_GUIDE.md
+      - CI/CD Setup: system/CI_CD_SETUP.md
+      - Management Charter: system/management_team_charter_v1.0.md
+      - PRD Summary: system/PRD_summary.md
+      - Project Summary: system/PROJECT_SUMMARY.md
+      - Addendum Pattern: system/ADDENDUM_PATTERN.md
+
+  - 🔬 Modules & Features:
+    - Pain Point Radar:
+      - Technical Design: modules/pain_point_radar/TECHNICAL_DESIGN.md
+      - Database Schema: modules/pain_point_radar/DATABASE_SCHEMA.md
+      - Implementation Roadmap: modules/pain_point_radar/IMPLEMENTATION_ROADMAP.md
+      - Integration Guide: modules/pain_point_radar/INTEGRATION_GUIDE.md
+      - Claude Guidelines: modules/pain_point_radar/CLAUDE.md
+    - Cost Optimization: COST_OPTIMIZATION.md
+    - Market Validation: market_validation_engine.md
+
+  - 📊 Status & Reports:
+    - Project Snapshot: PROJECT_SNAPSHOT.md
+    - Final System Status: status/FINAL_SYSTEM_STATUS.md
+    - System Ready: status/SYSTEM_READY.md
+    - Phase Summaries:
+      - Phase 1.1 Status: status/PHASE_1_1_STATUS.md
+      - Phases 12-13 Complete: status/PHASES_12_13_COMPLETE.md
+      - System 100% Complete: status/SYSTEM_100_PERCENT_COMPLETE.md
+      - Final Validation: status/FINAL_VALIDATION_REPORT.md
+
+  - 🏗️ Development:
+    - Folder Structure: FOLDER_STRUCTURE.md
+    - Change Log: CHANGELOG.md
+    - Implementation Guide: IMPLEMENTATION_GUIDE.md
+    - Testing Notes: TESTING_NOTES.md
+
+  - 📚 Archive:
+    - Historical Docs: archive/
+    - Evaluation: evaluation/AKKA_EVALUATION.md
+
+# Extra Settings
+extra:
+  # Social links
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/fateddie/ManagementTeam
+      name: GitHub Repository
+
+  # Analytics (optional - add Google Analytics ID if needed)
+  # analytics:
+  #   provider: google
+  #   property: G-XXXXXXXXXX
+
+  # Version selector (optional)
+  version:
+    provider: mike
+
+  # Generator notice
+  generator: true
+
+# Additional CSS/JS
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
