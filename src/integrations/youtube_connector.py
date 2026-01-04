@@ -33,6 +33,13 @@ except ImportError:
     YOUTUBE_API_AVAILABLE = False
     print("⚠️  Warning: google-api-python-client not installed. Install with: pip install google-api-python-client")
 
+try:
+    from config.env_manager import get_config_cached
+    ENV_MANAGER_AVAILABLE = True
+except ImportError:
+    ENV_MANAGER_AVAILABLE = False
+    print("⚠️  Warning: env_manager not available. Using os.getenv fallback")
+
 
 class YouTubeConnector:
     """Connect to YouTube Data API for trending analysis and market research"""
@@ -78,10 +85,26 @@ class YouTubeConnector:
 
     def _load_config(self, config_path: Optional[str]) -> Dict:
         """Load configuration from file or environment"""
-        config = {
-            "api_key": os.getenv("YOUTUBE_API_KEY"),
-            "quota_limit": int(os.getenv("YOUTUBE_QUOTA_LIMIT", "10000"))
-        }
+        # Load environment variables from config/.env using centralized env_manager
+        if ENV_MANAGER_AVAILABLE:
+            try:
+                env_config = get_config_cached()
+                config = {
+                    "api_key": env_config.youtube_api_key,
+                    "quota_limit": int(os.getenv("YOUTUBE_QUOTA_LIMIT", "10000"))
+                }
+            except Exception as e:
+                print(f"⚠️  Warning: Failed to load from env_manager: {e}")
+                config = {
+                    "api_key": os.getenv("YOUTUBE_API_KEY"),
+                    "quota_limit": int(os.getenv("YOUTUBE_QUOTA_LIMIT", "10000"))
+                }
+        else:
+            # Fallback to os.getenv
+            config = {
+                "api_key": os.getenv("YOUTUBE_API_KEY"),
+                "quota_limit": int(os.getenv("YOUTUBE_QUOTA_LIMIT", "10000"))
+            }
 
         if config_path and Path(config_path).exists():
             with open(config_path, 'r') as f:

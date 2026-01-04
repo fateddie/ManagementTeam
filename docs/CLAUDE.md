@@ -378,6 +378,427 @@ class ValidationScorer:
 
 ---
 
+## 🤝 Hybrid AI Patterns (HuggingFace + OpenAI)
+
+**Status:** Phase 1 Complete ✅ (66-75% cost reduction achieved)
+**Details:** See `docs/COST_OPTIMIZATION.md` and `docs/ARCHITECTURE.md`
+
+### Philosophy: Use the Right Tool for the Job
+
+The system uses a **cost-optimized hybrid approach**:
+
+- **HuggingFace (Free/Local):** Commoditized NLP tasks
+- **OpenAI (Paid API):** Complex reasoning, structured outputs, domain expertise
+
+**Goal:** Minimize cost while maintaining quality and transparency.
+
+---
+
+### Decision Matrix: When to Use Each
+
+#### Use HuggingFace When:
+
+✅ **Commoditized NLP tasks:**
+- Grammar correction
+- Sentiment analysis
+- Keyword extraction (candidates)
+- Named entity recognition
+- Semantic similarity/embeddings
+- Text classification (standard categories)
+
+✅ **High-volume operations:**
+- Batch processing 100+ texts
+- Real-time requirements (<100ms)
+- Privacy-sensitive data (stays local)
+
+✅ **Budget constraints:**
+- Startup/MVP phase
+- High request volume (>1000/day)
+
+#### Use OpenAI When:
+
+✅ **Complex reasoning:**
+- Multi-step analysis
+- Domain-specific expertise
+- Creative content generation
+- Nuanced interpretation
+
+✅ **Structured outputs:**
+- JSON schema validation
+- Complex formatting requirements
+- Precise instruction following
+
+✅ **Quality critical:**
+- User-facing content
+- High-stakes decisions
+- Novel/edge cases
+
+---
+
+### Pattern 1: Hybrid Preprocessing
+
+**Use HuggingFace for preprocessing, OpenAI for value-add.**
+
+```python
+# ✅ GOOD - Hybrid approach
+class IdeaCritic:
+    def __init__(self):
+        # Optional: T5 grammar correction (free)
+        try:
+            from transformers import pipeline
+            self.grammar_corrector = pipeline(
+                "text2text-generation",
+                model="vennify/t5-base-grammar-correction"
+            )
+            self.use_t5 = True
+        except:
+            self.use_t5 = False
+            logger.warning("T5 unavailable, using OpenAI only")
+
+    def critique(self, idea_text: str) -> Dict:
+        """Critique idea with hybrid approach."""
+
+        # STEP 1: Free preprocessing (if available)
+        if self.use_t5:
+            corrected = self._correct_with_t5(idea_text)
+            logger.info("✅ T5 grammar correction applied ($0)")
+        else:
+            corrected = idea_text
+
+        # STEP 2: Paid reasoning
+        critique = self.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{
+                "role": "system",
+                "content": "You are a business critique assistant. Provide reasoning only."
+            }, {
+                "role": "user",
+                "content": f"Critique this business idea:\n\n{corrected}"
+            }]
+        )
+
+        return {
+            "corrected_text": corrected,
+            "critique": critique.choices[0].message.content,
+            "preprocessing": "t5" if self.use_t5 else "none",
+            "cost_savings": "$0.02-0.05" if self.use_t5 else "$0",
+            "_audit_trail": {
+                "grammar_model": "vennify/t5-base-grammar-correction" if self.use_t5 else "none",
+                "critique_model": "gpt-4o-mini",
+                "fallback_used": not self.use_t5
+            }
+        }
+```
+
+**Cost Impact:**
+- Before: $0.05/request
+- After: $0.02/request (60% savings)
+
+---
+
+### Pattern 2: Candidate Generation + Refinement
+
+**Use HuggingFace to generate candidates, OpenAI to refine/categorize.**
+
+```python
+# ✅ GOOD - Hybrid candidate refinement
+class KeywordGenerator:
+    def __init__(self):
+        try:
+            from keybert import KeyBERT
+            self.keybert = KeyBERT(model='all-MiniLM-L6-v2')
+            self.use_keybert = True
+        except:
+            self.use_keybert = False
+            logger.warning("KeyBERT unavailable, using OpenAI only")
+
+    def generate_keywords(self, idea_context: str, n_keywords: int = 50) -> Dict:
+        """Generate keywords with hybrid approach."""
+
+        if self.use_keybert:
+            # STEP 1: Free candidate extraction (50 keywords)
+            candidates = self.keybert.extract_keywords(
+                idea_context,
+                keyphrase_ngram_range=(1, 3),
+                stop_words='english',
+                use_mmr=True,  # Diversity
+                diversity=0.7,
+                top_n=n_keywords
+            )
+            keywords_list = [kw[0] for kw in candidates]
+
+            # STEP 2: Paid categorization (only top 14 keywords)
+            categorized = self._categorize_with_openai(keywords_list[:14])
+
+            logger.info(f"✅ KeyBERT extracted {len(keywords_list)} candidates, GPT categorized top 14")
+
+        else:
+            # Fallback: OpenAI generates all 50
+            categorized = self._generate_with_openai(idea_context, n_keywords)
+
+        return {
+            "keywords": categorized,
+            "method": "keybert_hybrid" if self.use_keybert else "openai_only",
+            "cost_savings": "70%" if self.use_keybert else "0%",
+            "_audit_trail": {
+                "extraction_model": "all-MiniLM-L6-v2" if self.use_keybert else "gpt-4o-mini",
+                "categorization_model": "gpt-4o-mini",
+                "keywords_sent_to_gpt": 14 if self.use_keybert else n_keywords
+            }
+        }
+```
+
+**Cost Impact:**
+- Before: 50 keywords to GPT = $0.10/request
+- After: 14 keywords to GPT = $0.03/request (70% savings)
+
+---
+
+### Pattern 3: Semantic Search (Pure HuggingFace)
+
+**Use HuggingFace for tasks that don't need reasoning.**
+
+```python
+# ✅ GOOD - Pure HuggingFace for semantic search
+class EvidenceSearcher:
+    def __init__(self, data_path: str):
+        from sentence_transformers import SentenceTransformer, util
+        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        self.df = pd.read_csv(data_path)
+
+        # Cache embeddings for performance
+        cache_path = "data/cache/embeddings.pt"
+        if Path(cache_path).exists():
+            self.embeddings = torch.load(cache_path)
+        else:
+            self.embeddings = self.model.encode(
+                self.df['text_excerpt'].tolist(),
+                convert_to_tensor=True,
+                show_progress_bar=True
+            )
+            torch.save(self.embeddings, cache_path)
+
+    def search(self, query: str, top_k: int = 5) -> Dict:
+        """Semantic search - NO OpenAI needed."""
+
+        # Encode query
+        query_emb = self.model.encode(query, convert_to_tensor=True)
+
+        # Compute cosine similarity
+        scores = util.cos_sim(query_emb, self.embeddings)[0]
+        top_results = torch.topk(scores, k=top_k)
+
+        results = []
+        for idx, score in zip(top_results.indices, top_results.values):
+            results.append({
+                "post_id": int(idx),
+                "text": self.df.iloc[idx]['text_excerpt'],
+                "similarity_score": float(score),
+                "industry": self.df.iloc[idx].get('industry', 'unknown'),
+                "urgency": self.df.iloc[idx].get('urgency', 'unknown')
+            })
+
+        return {
+            "query": query,
+            "results": results,
+            "model": "all-MiniLM-L6-v2",
+            "cost": "$0 (local)",
+            "cached": True,
+            "_audit_trail": {
+                "total_posts_searched": len(self.df),
+                "embedding_model": "all-MiniLM-L6-v2",
+                "search_method": "cosine_similarity"
+            }
+        }
+```
+
+**Cost Impact:**
+- Before: Not possible (or $0.05+ per search with OpenAI)
+- After: $0 (local, instant after caching)
+
+---
+
+### Pattern 4: Graceful Degradation (REQUIRED)
+
+**ALWAYS provide fallback to OpenAI if HuggingFace unavailable.**
+
+```python
+# ✅ GOOD - Graceful degradation
+class SentimentAnalyzer:
+    def __init__(self):
+        self.use_local = self._init_local_model()
+
+    def _init_local_model(self) -> bool:
+        """Try to initialize local model, fallback if unavailable."""
+        try:
+            from transformers import pipeline
+            self.sentiment_pipeline = pipeline(
+                "sentiment-analysis",
+                model="cardiffnlp/twitter-roberta-base-sentiment"
+            )
+            logger.info("✅ Local sentiment model loaded (HuggingFace)")
+            return True
+        except Exception as e:
+            logger.warning(f"⚠️ HuggingFace unavailable: {e}")
+            logger.warning("Falling back to OpenAI sentiment analysis")
+            return False
+
+    def analyze(self, text: str) -> Dict:
+        """Analyze sentiment with graceful degradation."""
+
+        if self.use_local:
+            result = self.sentiment_pipeline(text)[0]
+            method = "huggingface"
+            cost = "$0"
+        else:
+            result = self._openai_sentiment(text)
+            method = "openai_fallback"
+            cost = "$0.01"
+
+        return {
+            "sentiment": result['label'],
+            "confidence": result['score'],
+            "method": method,
+            "cost": cost,
+            "_audit_trail": {
+                "model": "cardiffnlp/twitter-roberta-base-sentiment" if self.use_local else "gpt-4o-mini",
+                "fallback_used": not self.use_local
+            }
+        }
+
+# ❌ BAD - Hard dependency
+def analyze_sentiment(text):
+    from transformers import pipeline  # Crashes if not installed
+    pipe = pipeline("sentiment-analysis")
+    return pipe(text)
+```
+
+**Key Points:**
+- System ALWAYS works (even without optional dependencies)
+- User informed of fallback via logging
+- Cost tracked in audit trail
+- No breaking changes for users without HuggingFace
+
+---
+
+### Installation Instructions
+
+**Document optional dependencies clearly:**
+
+```python
+# requirements.txt (REQUIRED)
+openai>=1.0.0
+pandas>=2.0.0
+requests>=2.28.0
+
+# requirements-optional.txt (COST SAVINGS)
+transformers>=4.30.0  # T5 Grammar ($15-30/mo savings)
+keybert>=0.8.0        # KeyBERT Keywords ($30-50/mo savings)
+sentence-transformers>=2.2.0  # Semantic search (new capability)
+torch>=2.0.0          # Required for above
+```
+
+**In documentation:**
+```markdown
+### Cost Optimization (Optional)
+
+Install these dependencies for 66-75% cost reduction:
+
+```bash
+pip install transformers keybert sentence-transformers torch
+```
+
+**Savings:**
+- T5 Grammar: $15-30/month
+- KeyBERT Keywords: $30-50/month
+- Semantic Search: FREE (new capability)
+
+**Total:** $50-100/month savings
+
+**Note:** System works WITHOUT these (falls back to OpenAI).
+```
+
+---
+
+### Transparency Requirements
+
+**Hybrid usage MUST be transparent in outputs:**
+
+```python
+# ✅ GOOD - User knows what was used
+{
+    "analysis": {...},
+    "_audit_trail": {
+        "grammar_correction": "t5-base (local, $0)",
+        "keyword_extraction": "keybert (local, $0)",
+        "keyword_categorization": "gpt-4o-mini (api, $0.03)",
+        "total_cost": "$0.03",
+        "cost_savings_vs_openai_only": "$0.07 (70%)",
+        "models_used": {
+            "local": ["vennify/t5-base-grammar-correction", "all-MiniLM-L6-v2"],
+            "api": ["gpt-4o-mini"]
+        },
+        "fallback_occurred": False
+    }
+}
+```
+
+**Benefits:**
+- Rob knows exactly which models were used
+- Cost tracking is explicit
+- Can verify savings
+- Audit trail maintained
+
+---
+
+### Testing Hybrid Implementations
+
+**Test BOTH paths:**
+
+```python
+# test_hybrid_keyword_generator.py
+
+def test_keybert_available():
+    """Test with KeyBERT installed."""
+    gen = KeywordGenerator()
+    assert gen.use_keybert == True
+    result = gen.generate_keywords("AI receptionist for dentists")
+    assert result['method'] == "keybert_hybrid"
+    assert result['cost_savings'] == "70%"
+
+def test_keybert_unavailable(monkeypatch):
+    """Test fallback when KeyBERT not installed."""
+    def mock_import_error(*args, **kwargs):
+        raise ImportError("KeyBERT not found")
+
+    monkeypatch.setattr("builtins.__import__", mock_import_error)
+
+    gen = KeywordGenerator()
+    assert gen.use_keybert == False
+    result = gen.generate_keywords("AI receptionist for dentists")
+    assert result['method'] == "openai_only"
+    assert result['cost_savings'] == "0%"
+```
+
+---
+
+### Summary: Hybrid AI Checklist
+
+Before implementing any AI feature, ask:
+
+- [ ] Is this a commoditized NLP task? → Try HuggingFace first
+- [ ] Does this need complex reasoning? → Use OpenAI
+- [ ] Can I split into preprocessing + reasoning? → Use hybrid approach
+- [ ] Is there a fallback if HuggingFace unavailable? → REQUIRED
+- [ ] Is model usage transparent in output? → REQUIRED
+- [ ] Is cost savings tracked and reported? → REQUIRED
+- [ ] Are optional dependencies clearly documented? → REQUIRED
+- [ ] Have I tested both HuggingFace and fallback paths? → REQUIRED
+
+**Goal:** Minimize cost while maintaining transparency, quality, and reliability.
+
+---
+
 ## 🚫 Anti-Patterns (DO NOT DO THIS)
 
 ### Anti-Pattern 1: Black Box Scoring

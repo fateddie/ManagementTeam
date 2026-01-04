@@ -89,6 +89,19 @@ class Config:
     mem0_api_key: Optional[str] = None
 
     # ========================================
+    # Social Media APIs (Phase 2)
+    # ========================================
+    reddit_client_id: Optional[str] = None
+    reddit_client_secret: Optional[str] = None
+    reddit_user_agent: Optional[str] = None
+    x_bearer_token: Optional[str] = None
+    x_api_key: Optional[str] = None
+    x_api_secret: Optional[str] = None
+    x_access_token: Optional[str] = None
+    x_access_token_secret: Optional[str] = None
+    youtube_api_key: Optional[str] = None
+
+    # ========================================
     # Neo4j Graph Database
     # ========================================
     neo4j_uri: Optional[str] = None
@@ -225,6 +238,16 @@ def get_config() -> Config:
         github_token=os.getenv("GITHUB_TOKEN"),
         slack_webhook_url=os.getenv("SLACK_WEBHOOK_URL"),
         mem0_api_key=os.getenv("MEM0_API_KEY"),
+        # Social Media APIs
+        reddit_client_id=os.getenv("REDDIT_CLIENT_ID"),
+        reddit_client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
+        reddit_user_agent=os.getenv("REDDIT_USER_AGENT", "VES Market Research Bot v1.0"),
+        x_bearer_token=os.getenv("X_BEARER_TOKEN"),
+        x_api_key=os.getenv("X_API_KEY"),
+        x_api_secret=os.getenv("X_API_SECRET"),
+        x_access_token=os.getenv("X_ACCESS_TOKEN"),
+        x_access_token_secret=os.getenv("X_ACCESS_TOKEN_SECRET"),
+        youtube_api_key=os.getenv("YOUTUBE_API_KEY"),
         # Neo4j
         neo4j_uri=os.getenv("NEO4J_URI"),
         neo4j_username=os.getenv("NEO4J_USERNAME"),
@@ -342,6 +365,15 @@ if __name__ == "__main__":
         )
         print(
             f"  Perplexity: {'✅ Set' if config.perplexity_api_key else '❌ Missing'}"
+        )
+        print(
+            f"  Reddit: {'✅ Set' if config.reddit_client_id else '❌ Missing'}"
+        )
+        print(
+            f"  X/Twitter: {'✅ Set' if config.x_bearer_token else '❌ Missing'}"
+        )
+        print(
+            f"  YouTube: {'✅ Set' if config.youtube_api_key else '❌ Missing'}"
         )
     except ValueError as e:
         print(f"❌ Configuration error:\n{e}")

@@ -1,8 +1,22 @@
 # 🧠 CLAUDE PROJECT GUIDELINES
-**Project:** AI Management-Team System  
-**Version:** 1.0  
-**Maintainer:** Founder (Rob)  
-**Date:** 2025-10-08  
+**Project:** AI Management-Team System
+**Version:** 1.0
+**Maintainer:** Founder (Rob)
+**Date:** 2025-10-08
+
+---
+
+## 📚 Shared Claude Code Framework
+**See:** `../../../../.claude-shared/FEATURE_FRAMEWORK.md`
+
+This project uses the shared Claude Code feature framework for:
+- **Subagents** - Specialized agents for isolated research/analysis
+- **Skills** - Reusable expertise (transparency patterns, hybrid AI)
+- **MCP** - External integrations (Reddit API, databases)
+- **Plugins** - Packaged transparency/auditing tools
+- **Hooks** - Automatic transparency validation
+
+**Quick Commands:** `/agents`, `/context`, `/hooks`, `/plugin`
 
 ---
 

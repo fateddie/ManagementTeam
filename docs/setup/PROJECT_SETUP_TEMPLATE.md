@@ -1,26 +1,143 @@
 # Universal Project Setup Template
 
-**Version:** 1.0
-**Date:** 2025-10-17
-**Purpose:** Reusable template for setting up development tools, libraries, and best practices across all projects
+**Version:** 2.0
+**Date:** 2025-11-06
+**Purpose:** Automated project setup with production-grade tooling and best practices
 
 ---
 
-## 🎯 Quick Start Checklist
+## 🚀 Quick Start (Automated)
+
+### For New Projects
+
+Create a production-ready project in **2 minutes** with all tooling pre-configured:
+
+```bash
+# From ManagementTeam root directory
+./scripts/create_new_project.sh my-new-project
+
+# Or specify custom location
+./scripts/create_new_project.sh my-new-project --path /Users/me/projects
+
+# Then complete setup
+cd projects/my-new-project  # or your custom path
+./scripts/setup.sh           # Automated setup (venv, deps, validation)
+source venv/bin/activate
+nano config/.env             # Add your credentials
+python src/main.py           # Run!
+```
+
+**What You Get Automatically:**
+- ✅ Virtual environment automation (`setup_venv.sh`)
+- ✅ Production tooling (Black, Ruff, Pytest, MyPy)
+- ✅ Centralized credentials (`config/env_manager.py`)
+- ✅ Security best practices (`.gitignore`, no hardcoded secrets)
+- ✅ Development scripts (setup, validation)
+- ✅ Documentation (PRINCIPLES.md, CLAUDE.md)
+- ✅ Git repository with initial commit
+
+### For Existing Projects
+
+Upgrade an existing project to production standards:
+
+```bash
+# From ManagementTeam root directory
+./scripts/migrate_project_to_standards.sh /path/to/existing/project
+
+# Follow the prompts, review changes
+cd /path/to/existing/project
+./scripts/setup.sh           # Complete setup
+```
+
+**Migration Features:**
+- ✅ Non-destructive (backs up existing files)
+- ✅ Preserves your code and .env
+- ✅ Adds production tooling
+- ✅ Creates setup automation scripts
+
+---
+
+## 📦 Universal Template System
+
+### What's Included
+
+The universal template system (`config/templates/universal/`) includes:
+
+#### 1. **Environment Management**
+- `env_manager_template.py` - Centralized credential management with type safety
+- `.env.example` - Comprehensive environment variable template
+- Security: `.gitignore` prevents credential leaks
+
+#### 2. **Production Tooling** (`pyproject.toml`)
+- **Black** (line-length: 100) - Opinionated code formatter
+- **Ruff** (fast linter) - E, W, F, I, N, B, UP, C90, S, T20 rules
+- **Pytest** (test framework) - with coverage reporting
+- **MyPy** (type checking) - optional strict mode
+
+#### 3. **Testing Framework** (`pytest.ini`)
+- Test discovery in `tests/` directory
+- Coverage reporting (term, HTML, XML)
+- Test markers: `slow`, `integration`, `unit`, `api`
+- Parallel execution support
+
+#### 4. **Development Dependencies** (`requirements-dev.txt`)
+- black, ruff, pytest, pytest-cov, pytest-asyncio
+- ipython, ipdb (debugging)
+- pre-commit (git hooks)
+- Optional: mypy (type checking)
+
+#### 5. **Setup Automation**
+- `setup_venv.sh` - Automated virtual environment creation
+- `setup.sh` - Master setup script (venv + deps + validation)
+- `validate_env.py` - Environment configuration validation
+
+#### 6. **Documentation**
+- `PRINCIPLES.md` - System design principles (transparency, human-in-loop, auditability)
+- `CLAUDE.md` - AI assistant implementation guidelines (1000+ lines)
+- Project README template with quick start
+
+### Template Locations
+
+```
+ManagementTeam/
+├── config/templates/universal/          # Universal template files
+│   ├── env_manager_template.py          # Credential management
+│   ├── .env.example                     # Environment variables
+│   ├── .gitignore                       # Security patterns
+│   ├── pyproject.toml                   # Production tooling config
+│   ├── pytest.ini                       # Test framework config
+│   ├── requirements-dev.txt             # Dev dependencies
+│   ├── setup_venv.sh                    # Virtual environment setup
+│   ├── setup.sh                         # Master setup script
+│   ├── validate_env.py                  # Environment validation
+│   ├── PRINCIPLES.md                    # System principles
+│   ├── CLAUDE.md                        # AI guidelines
+│   └── README.md                        # Template documentation
+├── scripts/
+│   ├── create_new_project.sh            # Bootstrap new projects
+│   └── migrate_project_to_standards.sh  # Upgrade existing projects
+└── projects/                            # Your projects live here
+    └── my-project/                      # Created with template
+```
+
+---
+
+## 🎯 Manual Setup Checklist
+
+If you prefer manual setup or need specific configurations:
 
 - [ ] Set up virtual environment (Python venv or Node nvm)
 - [ ] Configure centralized environment variables (`.env`)
-- [ ] Set up code formatting (Prettier + language-specific tools)
-- [ ] Configure linting (ESLint/Ruff/Pylint)
+- [ ] Set up code formatting (Black/Prettier)
+- [ ] Configure linting (Ruff/ESLint)
 - [ ] Create `.editorconfig` for consistent style
 - [ ] Set up pre-commit hooks
-- [ ] Configure CI/CD pipeline (GitHub Actions)
-- [ ] Set up CodeRabbit AI code reviews
-- [ ] Set up testing framework
-- [ ] Add browser automation (Playwright + MCP)
-- [ ] Configure backend (if applicable - Supabase)
+- [ ] Configure testing framework (Pytest/Vitest)
+- [ ] Set up CI/CD pipeline (GitHub Actions)
 - [ ] Add documentation standards
 - [ ] Set up monitoring/logging
+
+**Note:** The automated system handles most of these for you. See sections below for manual configuration details.
 
 ---
 

@@ -73,6 +73,73 @@ python agents/orchestrator/orchestrator.py
 
 ---
 
+## 🧠 Shared Long-Term Memory
+
+**Status:** Active ✅
+**Integration:** AskSharon.ai + ManagementTeam
+
+ManagementTeam uses **Supabase pgvector** for persistent, semantic memory shared with AskSharon.ai:
+
+- ✅ **Agent Decisions** - Store project approvals with semantic search
+- ✅ **Cross-System Intelligence** - Business projects inform personal tasks
+- ✅ **Unified Timeline** - See how work across systems connects
+- ✅ **Free Tier** - $0/month (500MB limit, using <1%)
+
+### Quick Start:
+
+```bash
+# Test connection
+python memory/supabase_memory.py test
+
+# Store a project decision
+python memory/supabase_memory.py store \
+  --project "AI_Receptionist" \
+  --decision approved \
+  --agent strategy_agent
+
+# Search for related projects
+python memory/supabase_memory.py search \
+  --query "healthcare automation"
+```
+
+**📋 Complete Guide:** See [docs/setup/SHARED_MEMORY_GUIDE.md](docs/setup/SHARED_MEMORY_GUIDE.md)
+
+---
+
+## 💰 Cost Optimization
+
+**Status:** Phase 1 Complete ✅
+**Savings:** $50-100/month (66-75% cost reduction)
+
+The system uses a **hybrid AI approach** combining:
+- **HuggingFace models** (free, local) for commoditized tasks
+- **OpenAI API** (paid) for complex reasoning only
+
+### What's Optimized:
+
+- ✅ **Grammar Correction** - T5 model ($15-30/mo savings)
+- ✅ **Keyword Generation** - KeyBERT hybrid ($30-50/mo savings)
+- ✅ **Semantic Search** - sentence-transformers (NEW capability, $0)
+
+### Current Costs:
+
+| Before | After | Savings |
+|--------|-------|---------|
+| $45-100/mo | $10-30/mo | $50-100/mo |
+
+### Installation (Optional):
+
+```bash
+# Install for full cost savings
+pip install transformers keybert sentence-transformers
+
+# System works WITHOUT these (falls back to OpenAI)
+```
+
+**📋 Full Details:** See [docs/COST_OPTIMIZATION.md](docs/COST_OPTIMIZATION.md)
+
+---
+
 ## 📚 Documentation
 
 See `/docs/system/` for complete governance, orchestration, and decision documentation:
@@ -90,14 +157,17 @@ See `/docs/system/` for complete governance, orchestration, and decision documen
 
 ```
 ManagementTeam/
-├── docs/system/          # Governance & architecture
-├── src/                  # Core application logic
-├── scripts/              # Orchestrator & utilities
-├── memory/               # Agent persistent memory
-├── logs/                 # Execution logs
-├── data/                 # Projects & reports
-└── config/               # Environment variables
+├── docs/                 # Documentation (architecture, principles, setup guides)
+├── src/                  # Source code (integrations, analysis, ML models)
+├── core/                 # Core orchestration & workflow
+├── scripts/              # Utility scripts & tools
+├── tests/                # Test suites
+├── data/                 # Data (raw/, reports/, exports/, cache/)
+├── agents/               # Agent implementations
+└── .checkpoints/         # Workflow state checkpoints
 ```
+
+**📋 Complete Structure:** See [docs/FOLDER_STRUCTURE.md](docs/FOLDER_STRUCTURE.md) for detailed organization guide
 
 ---
 

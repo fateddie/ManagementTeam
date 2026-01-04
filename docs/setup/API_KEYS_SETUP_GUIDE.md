@@ -19,12 +19,14 @@ Follow the prompts to enter your credentials.
 ### Option 2: Manual Setup
 
 ```bash
-# Copy template
-cp .env.example .env
+# Copy template from config directory (single source of truth)
+cp config/.env.example config/.env
 
 # Edit with your credentials
-nano .env  # or vim, code, etc.
+nano config/.env  # or vim, code, etc.
 ```
+
+**Note:** All credentials are now managed in `config/.env` through the centralized `env_manager.py` system.
 
 ---
 
@@ -48,10 +50,11 @@ nano .env  # or vim, code, etc.
    - **Secret**: Next to the word "secret"
      - Example: `1234567890abcdefghijklmnop`
 
-**Add to .env:**
+**Add to config/.env:**
 ```bash
 REDDIT_CLIENT_ID=abc123XYZ_defGHI
 REDDIT_CLIENT_SECRET=1234567890abcdefghijklmnop
+REDDIT_USER_AGENT=VES Market Research Bot v1.0
 ```
 
 ---
@@ -68,7 +71,7 @@ REDDIT_CLIENT_SECRET=1234567890abcdefghijklmnop
 6. Copy the Bearer Token
    - Example: `AAAAAAAAAAAAAAAAAAAAAMLheAAAAAAA0%2BuSeid...`
 
-**Add to .env:**
+**Add to config/.env:**
 ```bash
 X_BEARER_TOKEN=AAAAAAAAAAAAAAAAAAAAAMLheAAAAAAA0%2BuSeid...
 ```
@@ -92,21 +95,23 @@ Google Trends works automatically via the `pytrends` library.
 
 ## 🔧 Configuration Methods
 
-### Method 1: .env File (Recommended)
+### Method 1: Centralized .env File (Recommended)
 
-**Create .env:**
+**Create config/.env:**
 ```bash
-cp .env.example .env
+cp config/.env.example config/.env
 ```
 
-**Edit .env:**
+**Edit config/.env:**
 ```bash
 REDDIT_CLIENT_ID=your_actual_client_id
 REDDIT_CLIENT_SECRET=your_actual_secret
+REDDIT_USER_AGENT=VES Market Research Bot v1.0
 X_BEARER_TOKEN=your_actual_bearer_token
+YOUTUBE_API_KEY=your_actual_youtube_key
 ```
 
-**The code loads it automatically!** (via `python-dotenv`)
+**The code loads it automatically!** (via centralized `config/env_manager.py`)
 
 ---
 
@@ -123,16 +128,20 @@ python test_phase2.py
 
 ---
 
-### Method 3: Python Script
+### Method 3: Python Script (Using Centralized Config)
 
 ```python
-import os
+from config.env_manager import get_config
 
-os.environ['REDDIT_CLIENT_ID'] = 'your_client_id'
-os.environ['REDDIT_CLIENT_SECRET'] = 'your_secret'
-os.environ['X_BEARER_TOKEN'] = 'your_bearer_token'
+# Load configuration (validates credentials automatically)
+config = get_config()
 
-# Now run your code
+# Access credentials via type-safe properties
+print(f"Reddit configured: {bool(config.reddit_client_id)}")
+print(f"X configured: {bool(config.x_bearer_token)}")
+print(f"YouTube configured: {bool(config.youtube_api_key)}")
+
+# Now run your code - connectors will use env_manager automatically
 from src.integrations.evidence_collector import EvidenceCollector
 collector = EvidenceCollector()
 ```
@@ -198,10 +207,11 @@ python test_phase2.py
 - ✅ Use read-only API permissions
 
 ### ❌ DON'T:
-- ❌ Commit `.env` to git (it's in `.gitignore`)
+- ❌ Commit `config/.env` to git (it's in `.gitignore`)
 - ❌ Share credentials in public repos
 - ❌ Hardcode keys in code
 - ❌ Use production keys in development
+- ❌ Bypass `env_manager.py` - always use centralized config system
 
 ---
 
@@ -210,14 +220,17 @@ python test_phase2.py
 ### "Reddit API not configured"
 **Solution:**
 ```bash
-# Check if .env exists
-ls -la .env
+# Check if config/.env exists
+ls -la config/.env
+
+# Test env_manager
+python config/env_manager.py
 
 # Check if variables are set
 echo $REDDIT_CLIENT_ID
 
-# Load .env manually
-export $(cat .env | xargs)
+# If using shell, load config/.env manually
+export $(cat config/.env | xargs)
 ```
 
 ### "X API rate limited"
@@ -260,9 +273,7 @@ pip install python-dotenv
 ### Example 1: Full Evidence Collection
 
 ```python
-from dotenv import load_dotenv
-load_dotenv()  # Load .env file
-
+# Credentials loaded automatically via env_manager.py
 from src.integrations.evidence_collector import EvidenceCollector
 
 collector = EvidenceCollector()
@@ -280,9 +291,7 @@ print(f"Recommendation: {evidence['unified_insights']['recommendation']}")
 ### Example 2: Reddit Only
 
 ```python
-from dotenv import load_dotenv
-load_dotenv()
-
+# Credentials loaded automatically via env_manager.py
 from src.integrations.reddit_connector import RedditConnector
 
 reddit = RedditConnector()
@@ -312,11 +321,30 @@ print(f"Trend: {results['interest_over_time']['summary']['trend']}")
 
 ## 🎯 Next Steps
 
-1. ✅ Get API credentials (Reddit, X)
-2. ✅ Create `.env` file
-3. ✅ Add credentials to `.env`
-4. ✅ Run `python test_phase2.py`
-5. ✅ Start collecting real evidence!
+1. ✅ Get API credentials (Reddit, X, YouTube)
+2. ✅ Create `config/.env` file from template
+3. ✅ Add credentials to `config/.env`
+4. ✅ Test configuration: `python config/env_manager.py`
+5. ✅ Run `python test_phase2.py`
+6. ✅ Start collecting real evidence!
+
+---
+
+## 📚 Centralized Credential Management
+
+**All credentials are now managed through `config/env_manager.py`:**
+
+- ✅ **Single source of truth:** `config/.env`
+- ✅ **Type-safe access:** Python dataclass with validation
+- ✅ **Automatic loading:** No manual `load_dotenv()` needed
+- ✅ **Graceful fallback:** Works without optional API keys
+- ✅ **Easy testing:** `python config/env_manager.py` shows status
+
+**Benefits:**
+- No scattered `os.getenv()` calls throughout codebase
+- Validation on startup (fail fast with helpful errors)
+- Consistent credential management across all integrations
+- Easy to add new credentials (single file to update)
 
 ---
 

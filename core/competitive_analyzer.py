@@ -27,6 +27,7 @@ try:
     from openai import OpenAI
     from src.utils.config_loader import get_env, load_env
     from src.integrations.evidence_collector import EvidenceCollector
+    from src.analysis.competitor_semantic_matcher import CompetitorSemanticMatcher
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
@@ -81,16 +82,39 @@ class CompetitiveAnalyzer:
         self,
         model: str = "gpt-4o-mini",
         temperature: float = 0.7,
-        max_tokens: int = 2000
+        max_tokens: int = 2000,
+        use_semantic_matching: bool = True
     ):
-        """Initialize competitive analyzer."""
+        """
+        Initialize competitive analyzer.
+
+        Args:
+            model: OpenAI model for GPT fallback
+            temperature: Temperature for GPT
+            max_tokens: Max tokens for GPT
+            use_semantic_matching: Use HuggingFace semantic matching ($0) instead of GPT ($)
+        """
         self.model = model
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.use_semantic_matching = use_semantic_matching
         self.client = None
         self.available = False
         self.evidence_collector = None
+        self.semantic_matcher = None
 
+        # Initialize semantic matcher (free)
+        if use_semantic_matching:
+            try:
+                self.semantic_matcher = CompetitorSemanticMatcher()
+                if self.semantic_matcher.is_available():
+                    logger.info("✅ Semantic competitor matching enabled ($0/query)")
+                else:
+                    logger.warning("⚠️  Semantic matching unavailable, will use GPT fallback")
+            except Exception as e:
+                logger.warning(f"Failed to initialize semantic matcher: {e}")
+
+        # Initialize OpenAI (paid fallback)
         if OPENAI_AVAILABLE:
             load_env()
             api_key = get_env("OPENAI_API_KEY")
@@ -99,7 +123,7 @@ class CompetitiveAnalyzer:
                     self.client = OpenAI(api_key=api_key)
                     self.evidence_collector = EvidenceCollector()
                     self.available = True
-                    logger.info("✅ Competitive Analyzer initialized")
+                    logger.info("✅ Competitive Analyzer initialized (GPT fallback available)")
                 except Exception as e:
                     logger.warning(f"Failed to initialize CompetitiveAnalyzer: {e}")
 
@@ -202,7 +226,12 @@ class CompetitiveAnalyzer:
         known_competitors: Optional[List[str]]
     ) -> List[str]:
         """
-        Identify competitors using AI.
+        Identify competitors using semantic matching (free) or GPT (paid fallback).
+
+        Cost Impact:
+        - Semantic matching: $0 per query (HuggingFace local)
+        - GPT fallback: $0.10-0.50 per query
+        - Savings: $10-20/month with semantic matching
 
         Args:
             refinement_data: Idea context
@@ -211,6 +240,36 @@ class CompetitiveAnalyzer:
         Returns:
             List of competitor names
         """
+        # Try semantic matching first (free)
+        if self.semantic_matcher and self.semantic_matcher.is_available():
+            try:
+                logger.info("🔍 Using semantic matching for competitor identification ($0)")
+                result = self.semantic_matcher.find_competitors_with_audit(
+                    refinement_data,
+                    top_k=15
+                )
+
+                semantic_competitors = result['competitors']
+
+                # Combine semantic + user-provided
+                all_competitors = list(set(
+                    (known_competitors or []) + semantic_competitors
+                ))
+
+                logger.info(f"✅ Identified {len(all_competitors)} competitors via semantic matching")
+                logger.info(f"💰 Cost: $0 (saved $0.10-0.50 vs GPT)")
+                return all_competitors
+
+            except Exception as e:
+                logger.warning(f"Semantic matching failed, falling back to GPT: {e}")
+
+        # Fallback to GPT (paid)
+        logger.info("⚠️  Using GPT for competitor identification ($0.10-0.50)")
+
+        if not self.client:
+            logger.warning("GPT unavailable, returning user-provided competitors only")
+            return known_competitors or []
+
         try:
             prompt = self._build_competitor_identification_prompt(refinement_data)
 
@@ -234,7 +293,7 @@ class CompetitiveAnalyzer:
                 (known_competitors or []) + ai_competitors
             ))
 
-            logger.info(f"Identified {len(all_competitors)} competitors")
+            logger.info(f"Identified {len(all_competitors)} competitors via GPT")
             return all_competitors
 
         except Exception as e:
